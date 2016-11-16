@@ -16,3 +16,4 @@ layout: feed
 
 	{% for post in site.posts %}
 		<entry>
+	<% endfor %}
