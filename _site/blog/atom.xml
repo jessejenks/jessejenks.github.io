@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+	<title>Jesse Jenks' Blog</title>
+	<link href="http://jessejenks.github.io/blog/atom.xml" rel="self"/>
+	<link href="http://jessejenks.github.io/blog"/>
+	<updated>2016-11-16T20:07:16-08:00</updated>
+	<id>http://jessejenks.github.io/blog</id>
+	<author>
+		<name>Jesse Jenks</name>
+		<email>jjenks@pugetsound.edu</email>
+	</author>
+
+	
+		<entry>
+			<title>Logical Consequence</title>
+			<link href="http://jessejenks.github.io/blog/2016/11/16/Logical-Consequence"/>
+			<updated>2016-11-16T00:00:00-08:00</updated>
+			<id>http://jessejenks.github.io//blog/2016/11/16/Logical-Consequence</id>
+			<content type="html">&lt;p&gt;This past summer I got to work with Professor Douglas Cannon to write a paper on John Etchemendy’s book, &lt;em&gt;The Concept of Logical Consequence&lt;/em&gt;. As soon as the school journal publishes it, a link to the paper will appear here. Be warned, I find this topic fascinating and the paper ended up being very long!&lt;/p&gt;
+</content>
+		</entry>
+	
+		<entry>
+			<title>Continued Fractions</title>
+			<link href="http://jessejenks.github.io/blog/2016/11/16/Continued-Fractions"/>
+			<updated>2016-11-16T00:00:00-08:00</updated>
+			<id>http://jessejenks.github.io//blog/2016/11/16/Continued-Fractions</id>
+			<content type="html">&lt;p&gt;Welcome to my first ever blog post!
+Every since reading Silverman’s &lt;em&gt;A Friendly Introduction to Number Theory&lt;/em&gt;, I have been somewhat obsessed with continued fractions. Here is a slideshow I made for the ACM club on using continued fractions to store high precision. I wrote code for python and java but I also plan to implement Gosper’s algorithm to do arithmetic with continued fractions.&lt;/p&gt;
+
+&lt;iframe src=&quot;https://docs.google.com/presentation/d/1-TmhFQGjL59omLF0K89yh0RkPcxI2JkNjmjev9p5hoU/embed?start=false&amp;loop=false&amp;delayms=3000&quot; frameborder=&quot;0&quot; width=&quot;960&quot; height=&quot;569&quot; allowfullscreen=&quot;true&quot; mozallowfullscreen=&quot;true&quot; webkitallowfullscreen=&quot;true&quot;&gt;&lt;/iframe&gt;
+</content>
+		</entry>
+	
+
+</feed>
