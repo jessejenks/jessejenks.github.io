@@ -44,6 +44,10 @@ ul.posts li {
     padding-bottom: 8px;
 }
 
+iframe {
+  float: none;
+}
+
 .details {
   font-family:'Helvetica', 'Arial', 'Monospace';/*'Sans-Serif';*/
   float: right;

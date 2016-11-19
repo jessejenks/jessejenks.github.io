@@ -4,7 +4,7 @@
 	<title>Jesse Jenks' Blog</title>
 	<link href="http://jessejenks.github.io/blog/atom.xml" rel="self"/>
 	<link href="http://jessejenks.github.io/blog"/>
-	<updated>2016-11-16T20:07:16-08:00</updated>
+	<updated>2016-11-19T15:04:40-08:00</updated>
 	<id>http://jessejenks.github.io/blog</id>
 	<author>
 		<name>Jesse Jenks</name>
@@ -14,10 +14,13 @@
 	
 		<entry>
 			<title>Logical Consequence</title>
-			<link href="http://jessejenks.github.io/blog/2016/11/16/Logical-Consequence"/>
-			<updated>2016-11-16T00:00:00-08:00</updated>
-			<id>http://jessejenks.github.io//blog/2016/11/16/Logical-Consequence</id>
+			<link href="http://jessejenks.github.io/blog/2016/11/19/Logical-Consequence"/>
+			<updated>2016-11-19T00:00:00-08:00</updated>
+			<id>http://jessejenks.github.io//blog/2016/11/19/Logical-Consequence</id>
 			<content type="html">&lt;p&gt;This past summer I got to work with Professor Douglas Cannon to write a paper on John Etchemendy’s book, &lt;em&gt;The Concept of Logical Consequence&lt;/em&gt;. As soon as the school journal publishes it, a link to the paper will appear here. Be warned, I find this topic fascinating and the paper ended up being very long!&lt;/p&gt;
+
+&lt;p&gt;In the meantime, &lt;a href=&quot;/../data/logic_poster.pdf&quot;&gt;here&lt;/a&gt; is a poster I made for the research symposium:
+&lt;img src=&quot;/../data/logic_poster.pdf&quot; alt=&quot;Poster&quot; width=&quot;100%&quot; /&gt;&lt;/p&gt;
 </content>
 		</entry>
 	
