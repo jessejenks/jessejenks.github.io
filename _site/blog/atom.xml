@@ -4,7 +4,7 @@
 	<title>Jesse Jenks' Blog</title>
 	<link href="http://jessejenks.github.io/blog/atom.xml" rel="self"/>
 	<link href="http://jessejenks.github.io/blog"/>
-	<updated>2016-11-27T11:54:56-08:00</updated>
+	<updated>2016-11-27T15:24:21-08:00</updated>
 	<id>http://jessejenks.github.io/blog</id>
 	<author>
 		<name>Jesse Jenks</name>
@@ -13,19 +13,17 @@
 
 	
 		<entry>
-			<title>Maximally Unpredictable sequences</title>
-			<link href="http://jessejenks.github.io/blog/2016/11/22/Unpredictable-Sequence"/>
+			<title>Binary Sequences</title>
+			<link href="http://jessejenks.github.io/blog/2016/11/22/Binary-Sequences"/>
 			<updated>2016-11-22T00:00:00-08:00</updated>
-			<id>http://jessejenks.github.io//blog/2016/11/22/Unpredictable-Sequence</id>
+			<id>http://jessejenks.github.io//blog/2016/11/22/Binary-Sequences</id>
 			<content type="html">&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;../../../../css/unpredictable.css&quot; /&gt;
 
 &lt;script src=&quot;../../../../js/sequence.js&quot;&gt;&lt;/script&gt;
 
-&lt;script src=&quot;../../../../js/thue-morse/libraries/p5.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../../../js/p5libraries/p5.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
 
-&lt;script src=&quot;../../../../js/thue-morse/libraries/p5.dom.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-
-&lt;script src=&quot;../../../../js/thue-morse/sketch.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;../../../../js/p5libraries/p5.dom.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
 
 &lt;p&gt;Recently, my abstract algebra teacher mentioned a very interesting class of binary sequences called “maximally unpredictable” sequences, so I decided to make a simple generator. Hit &lt;code class=&quot;highlighter-rouge&quot;&gt;Generate Sequence&lt;/code&gt; if you want to see the original sequence(&lt;a href=&quot;https://oeis.org/A038219&quot;&gt;A038219&lt;/a&gt;), or type in any binary sequence and this will generate the “most unpredictable” sequence based off of your input.&lt;/p&gt;
 
@@ -40,6 +38,8 @@ function doStuff() {
   var input = document.getElementById(&quot;inputSequence&quot;).value.split(&quot;,&quot;).map(function(num){
       if (num === &quot;0&quot; || num === &quot;1&quot;){
         return parseInt(num);
+      } else if (num === &quot; 0&quot; || num === &quot; 1&quot;){
+        return parseInt(num.slice(1))
       }
     });
     if (input[0]===undefined){ input = [0];}
@@ -47,7 +47,7 @@ function doStuff() {
 }
 &lt;/script&gt;
 
-&lt;p&gt;I first got interested in binary sequences two summers ago when I came across the Thue-Morse sequence (&lt;a href=&quot;https://oeis.org/A010060&quot;&gt;A010060&lt;/a&gt;). This sequence is defined recursively:&lt;/p&gt;
+&lt;p&gt;I first got interested in binary sequences in the summer of 2014 when I came across the Thue-Morse sequence (&lt;a href=&quot;https://oeis.org/A010060&quot;&gt;A010060&lt;/a&gt;). This sequence is defined recursively:&lt;/p&gt;
 
 &lt;p&gt;&lt;a target=&quot;_blank&quot;&gt;&lt;img src=&quot;http://latex.codecogs.com/png.latex?\dpi{150}&amp;space;\begin{align*}&amp;space;T_0&amp;space;&amp;amp;=&amp;space;0\\&amp;space;T_{2n}&amp;space;&amp;amp;=&amp;space;T_n\\&amp;space;T_{2n&amp;plus;1}&amp;space;&amp;amp;=&amp;space;1&amp;space;-&amp;space;T_n&amp;space;\end{align*}&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
@@ -56,10 +56,20 @@ function doStuff() {
 &lt;div id=&quot;showSequence2&quot;&gt;&lt;/div&gt;
 &lt;script&gt;document.getElementById(&quot;showSequence2&quot;).innerText = generate_thm();&lt;/script&gt;
 
-&lt;p&gt;I was able to work out a (messy) closed form solution&lt;/p&gt;
+&lt;p&gt;That summer I spent an inordinate amount of time working out this (messy) closed form solution&lt;/p&gt;
 
 &lt;p&gt;&lt;a target=&quot;_blank&quot;&gt;&lt;img src=&quot;http://latex.codecogs.com/png.latex?\dpi{100}&amp;space;\large&amp;space;T_n&amp;space;=&amp;space;1&amp;plus;\left(\sum_{k=0}^{\lfloor\log_2(n)\rfloor-1}\left\lfloor\frac{n}{2^k}\right\rfloor&amp;space;\mod&amp;space;2&amp;space;\right&amp;space;)&amp;space;\mod&amp;space;2&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;div id=&quot;thue-morse_sketch&quot;&gt;&lt;/div&gt;
+
+&lt;p&gt;There are other closed form solutions involving sines and binomial coefficients, but I have not seen this particular solution anywhere.&lt;/p&gt;
+
+&lt;p&gt;This sequence has some very interesting ‘fractal’ properties. For example, if you break up the sequence into ‘chunks’ of length 2^n, and stack these chunks on top of each other, we get some cool patterns. For example if n=2, we take the first 4 terms of the sequence as a row, then the next row has the 5th through 8th term, and so on. Here are those patterns for n = 1, 2, 3, and 4.&lt;/p&gt;
+
+&lt;iframe src=&quot;../../../../js/thue.html&quot;, width=&quot;671px&quot;, height=&quot;161px&quot;&gt;&lt;/iframe&gt;
+&lt;p&gt;But the coolest property has got to be this: if you interpret the sequence as a set of instructions where 0 means move forward, and 1 means rotate π/3, a familiar pattern begins to emerge…&lt;/p&gt;
+
+&lt;iframe src=&quot;../../../../js/thue-turtle.html&quot;, width=&quot;512px&quot;, height=&quot;512px&quot;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;Details on why this happens can be found &lt;a href=&quot;http://personal.kenyon.edu/holdenerj/StudentResearch/WhenThueMorsemeetsKochJan222005.pdf&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h4 id=&quot;ehrenfeucht-a--mycielski-j-1992-a-pseudorandom-sequence--how-random-is-it-the-american-mathematical-monthly-994-373-375-doi1023072324917&quot;&gt;&lt;em&gt;Ehrenfeucht, A., &amp;amp; Mycielski, J. (1992). A Pseudorandom Sequence–How Random Is It? The American Mathematical Monthly, 99(4), 373-375. doi:10.2307/2324917&lt;/em&gt;&lt;/h4&gt;
 </content>

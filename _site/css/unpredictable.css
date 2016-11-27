@@ -38,3 +38,15 @@ input[type=text]:focus {
   /*padding-top: 15px;*/
   padding-bottom: 15px;
 }
+#showSequence2 {
+  white-space: none;
+  overflow-x: scroll;
+  /*margin: 5px;*/
+  /*padding: 15px;*/
+  /*padding-top: 15px;*/
+  padding-bottom: 15px;
+}
+iframe {
+  border: none;
+  /*align-content: center;*/
+}

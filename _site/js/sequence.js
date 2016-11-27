@@ -72,7 +72,7 @@ function generate_thm(){
   var sequence = []
   sequence[0] = 0;
   var output=""
-  for (var i = 0; i<=80; i++){
+  for (var i = 0; i<=100; i++){
     sequence[2*i] = sequence[i];
     sequence[2*i + 1] = 1-sequence[i];
     // if (i % 4 === 0) output+="\n";
