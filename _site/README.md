@@ -1,1 +1,1 @@
-### Welcome! The associated github page can be found [here](https://jessejenks.github.io).
+### Welcome! You can see my page [here](https://jessejenks.github.io).
