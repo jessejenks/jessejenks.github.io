@@ -10,8 +10,8 @@ date: 2016-11-22
 <script src="../../../../js/libraries/p5.js" type="text/javascript"></script>
 <script src="../../../../js/libraries/p5.dom.js" type="text/javascript"></script>
 <!-- Sage Stuff  -->
-<script src="http://sagecell.sagemath.org/static/jquery.min.js"></script>
-<script src="http://sagecell.sagemath.org/embedded_sagecell.js"></script>
+<script src="https://sagecell.sagemath.org/static/jquery.min.js"></script>
+<script src="https://sagecell.sagemath.org/embedded_sagecell.js"></script>
 <!-- Create a sage cell -->
 <script>
 $(function() {
@@ -109,7 +109,7 @@ Details on why this happens can be found [here](http://personal.kenyon.edu/holde
 ---
 The final binary sequence I want to talk about here is another class of binary sequences called De Bruijn sequences. These are not necessarily binary sequences, but the easiest to visually see in binary. De Bruijn sequences are, in a sense the most efficient way of encoding permutations. These sequences are named after Nicolaas Govert de Bruijn, a Dutch mathematician who probably deserves his own post. But for now, here is an embedded Sagemath cell.
 
-A (2,3) De Bruijn sequence looks like this: <code>00010111</code>. This string contains every possible 8-bit sequence which you can see by looking at consecutive strings of length 3. 
+A (2,3) De Bruijn sequence looks like this: <code>00010111</code>. This string contains every possible 8-bit sequence which you can see by looking at consecutive strings of length 3.
 <!-- <code> 000 1011100</code><br>
 <code>0 001 011100</code><br>
 <code>00 010 11100</code><br>
