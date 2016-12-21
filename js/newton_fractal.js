@@ -1,38 +1,41 @@
 var max, mult, scale;// = 0.125;
 
 //int multCol = 15;
-var tol, t, cr, ci;//0.03;
+var tol, cr, ci;//0.03;
+// t,
 //Complex a = new Complex(-0.5,0);
-
 function setup() {
-  var cv = createCanvas(300, 600);
+  var cv = createCanvas(400, 400);
   cv.parent('newton-fractal');
   //size(200,200);
   //colorMode(HSB);
-  max = 255;
-  mult = 3;
-  scale = 0.125;
+  max = 50;
+  mult = 1;
+  scale = 1;
+  // console.log(scale);
 
-  tol = 0.1;//0.00002;
-  t = -1;//-0.72;
+  tol = 0.05;// 0.00002;
+  // t = 0;//-0.72;
   cr = 0;
   ci = 0;
+
   background(0);
 }
 function draw() {
   for (var i = 0; i<width*height; i++) {
-    if (i<width*height/2) {
-      var n = newton((i%width - width/2)*scale/width + cr, (floor(2*i/width) - height/2)*scale/height - ci)/max;
-      colorMode(HSB);
-      set((i%width), floor(i/width), color(170*n,255,255));
-    } else {
-      var n = newton(((i-width*height/2)%width - width/2)*scale/width + cr, (floor((2*i-width*height)/width) - height/2)*scale/height - ci)/max;
+    // if (i<width*height/2) {
+      // var n = newton((i%width - width/2)*scale/width + cr, (floor(2*i/width) - height/2)*scale/height - ci)/max;
+      var n = newton((i%width - width/2)*scale/width + cr, floor(i/width - height/2)*scale/height - ci)/max;
+      // colorMode(HSB);
+      // set((i%width), floor(i/width), color(170*n,255,255));
+    // } else {
+      // var n = newton(((i-width*height/2)%width - width/2)*scale/width + cr, (floor((2*i-width*height)/width) - height/2)*scale/height - ci)/max;
       colorMode(RGB);
       set(i%width, floor(i/width), cubehelix(n,0,-1,3));
       // set(i%width, floor(i/width), color(255*i/(width*height)));
       //color((newton((i%width - width/2)*scale +10, (i/width - height/2)*scale -10*(1-var)/2 +2)+170)%255,255,255);
       //cubehelix((float)newton((i%width - width/2)*scale, (i/width - height/2)*scale)/(float)max, 0.5, -10, 1, 0.2);
-    }
+    // }
   }
   updatePixels();
   //noLoop();
@@ -46,15 +49,23 @@ function draw() {
 function newton(real, imag) {
   var z = new Complex(real, imag);
   for (var j = 0; j<max; j++) {
-    var top = z.power(3).subtract(z.power(2)).subtract(z).addReal(t);
-    var bottom = z.power(2).scalarMult(3).subtract(z.scalarMult(2)).addReal(-1);
+    var top = z.power(4).subtract(z.power(2).scalarMult(3)).addReal(2);
+    // z.add(z.power(2)).add(z.power(3)).add(z.power(4)); // 4
+    // z.e_to_the().addReal(-2); // 3 (boring)
+    // z.power(3).add(z.power(2)).subtract(z).addReal(t); // 2
+    // z.power(3).subtract(z.power(2)).subtract(z).addReal(t); // 1
+    var bottom = z.power(3).scalarMult(4).subtract(z.scalarMult(6));
+    // z.scalarMult(2).add(z.power(2).scalarMult(3)).add(z.power(3).scalarMult(4)).addReal(1); // 4
+    // z.e_to_the(); // 3
+    // z.power(2).scalarMult(3).add(z.scalarMult(2)).addReal(-1); // 2
+    // z.power(2).scalarMult(3).subtract(z.scalarMult(2)).addReal(-1); // 1
 
     var newZ = z.subtract(top.divide(bottom));
 
     if (newZ.distance_sqr(z) < tol*tol) return mult*j;
     z = newZ;
   }
-  return 255;
+  return max;
 }
 //*
 function cubehelix(lambda, s, r, hue) {
@@ -104,6 +115,10 @@ Complex.prototype.subtract = function(z) {
 // }
 Complex.prototype.divide = function(z) {
   return new Complex( (this.real*z.real + this.imag*z.imag)/ (z.real*z.real + z.imag*z.imag), ( z.real*this.imag - this.real*z.imag )/(z.real*z.real + z.imag*z.imag));
+}
+
+Complex.prototype.e_to_the = function() {
+  return new Complex(exp(this.real)*cos(this.imag),exp(this.real)*sin(this.imag));
 }
 
 Complex.prototype.distance_sqr = function(z){

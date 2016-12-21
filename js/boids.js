@@ -13,7 +13,7 @@ function setup() {
 
   boids = [];
   boidVel = [];
-  n = 80;
+  n = 100;
   xMin = 20;
   yMin = 20;
   xMax = width-xMin;
@@ -53,24 +53,24 @@ function update() {
   for (var i = 0; i<n; i++) {
     // boidVel[i] = createVector(0,0);
     // var v = createVector(0,0);
-    var r1 = rule1(i);
+    // var r1 = rule1(i);
     var r2 = rule2(i);
     var r3 = rule3(i);
     var m = attractMouse({x:mouseX,y:mouseY}, i);
-    var rand = noise(boids[i].x/50,boids[i].y/50, frameCount/100  )*TWO_PI;
+    var rand = noise(boids[i].x/50,boids[i].y/50, frameCount/500  )*TWO_PI;
     boidVel[i].x +=
-    r1.x*0.01 +
+    // r1.x*0.01 +
     r2.x +
     r3.x*0.125 +
     m.x +
-    cos(rand)*5;
+    cos(rand);
 
     boidVel[i].y +=
-    r1.y*0.01 +
+    // r1.y*0.01 +
     r2.y +
     r3.y*0.125 +
     m.y +
-    sin(rand)*5;
+    sin(rand);
 
     limitVelocity(i);
     // boids[i].add(boidVel[i].mult(dt));
