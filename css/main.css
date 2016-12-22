@@ -15,10 +15,16 @@ nav ul, footer ul {
     list-style: none;
     /*font-weight: bold;*/
 }
-nav ul li, footer ul li {
+nav ul li {
     display: inline;
-    margin-right: 4%;
+    margin-right: 20px;
     vertical-align: bottom;
+}
+footer ul li {
+  display: inline;
+  margin-left: 1%;
+  margin-right: 1%;
+  vertical-align: bottom;
 }
 footer ul li img {
     vertical-align: middle;
@@ -127,7 +133,7 @@ div.panel {
 }
 div.panel.show {
     opacity: 1;
-    max-height: 1000px;
+    max-height: 2000px;
 }
 #automata {
   margin: none;

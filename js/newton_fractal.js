@@ -5,16 +5,16 @@ var tol, cr, ci;//0.03;
 // t,
 //Complex a = new Complex(-0.5,0);
 function setup() {
-  var cv = createCanvas(400, 400);
+  var cv = createCanvas(420, 630);
   cv.parent('newton-fractal');
   //size(200,200);
   //colorMode(HSB);
-  max = 50;
-  mult = 1;
-  scale = 1;
+  max = 80;
+  mult = 1.8;
+  scale = 0.5;
   // console.log(scale);
 
-  tol = 0.05;// 0.00002;
+  tol = 0.1;// 0.00002;
   // t = 0;//-0.72;
   cr = 0;
   ci = 0;
@@ -23,21 +23,23 @@ function setup() {
 }
 function draw() {
   for (var i = 0; i<width*height; i++) {
-    // if (i<width*height/2) {
-      // var n = newton((i%width - width/2)*scale/width + cr, (floor(2*i/width) - height/2)*scale/height - ci)/max;
-      var n = newton((i%width - width/2)*scale/width + cr, floor(i/width - height/2)*scale/height - ci)/max;
-      // colorMode(HSB);
-      // set((i%width), floor(i/width), color(170*n,255,255));
-    // } else {
-      // var n = newton(((i-width*height/2)%width - width/2)*scale/width + cr, (floor((2*i-width*height)/width) - height/2)*scale/height - ci)/max;
-      colorMode(RGB);
-      set(i%width, floor(i/width), cubehelix(n,0,-1,3));
+      set(i%width, floor(i/width), cubehelix(newton(2*(i%width - width/2)/width + cr, 3*(floor(i/width) - height/2)/height - ci)/max,0,-1,4));
       // set(i%width, floor(i/width), color(255*i/(width*height)));
       //color((newton((i%width - width/2)*scale +10, (i/width - height/2)*scale -10*(1-var)/2 +2)+170)%255,255,255);
       //cubehelix((float)newton((i%width - width/2)*scale, (i/width - height/2)*scale)/(float)max, 0.5, -10, 1, 0.2);
-    // }
   }
+  // console.log(max+', '+mult+', '+scale+', '+tol+', '+cr+', '+ci);
   updatePixels();
+  // if (mouseX>0 && mouseY>0 && mouseX<width && mouseY<height) {
+  //   stroke(128);
+  //   strokeWeight(5);
+  //   point(mouseX, mouseY);
+  //   var mZ = new Complex(2*(floor(mouseX) - width/2)*scale/width + cr, 2*(floor(mouseY) - height/2)*scale/height - ci);
+  //   for (var j = 0; j<5; j++) {
+  //     mZ = mZ.subtract(mZ.power(4).subtract(mZ.power(2).scalarMult(3)).addReal(2).divide(mZ.power(3).scalarMult(4).subtract(mZ.scalarMult(6))));
+  //     point(mZ.real*width/(2*scale) + width/2, mZ.imag*height/(2*scale) + height/2)
+  //   }
+  // }
   //noLoop();
   // if (t < -0.7) t +=0.00004;
   //if(c<100) c++;
