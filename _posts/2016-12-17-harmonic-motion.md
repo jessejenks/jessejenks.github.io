@@ -16,3 +16,20 @@ date: 2016-12-17
 <div id="non_linear_restoring" style="display: flex;justify-content: center;text-align: center;"></div>
 </main>
 <div>$$\theta$$</div>
+<br>
+<button class="accordion">What's this?</button>
+<div class="panel">
+<p>
+Physicists love using the "small angle approximation". Often when dealing with things that are being rotated by some angle \(\theta\), describing the motion accurately will often involve taking the sine of that angle \(\sin(\theta)\). However this often makes the math much more complicated, so physicists will use the fact that for small values of \(\theta\) (like really small angles) \(\sin(\theta)\approx\theta\). This comes from what is known as the Taylor series for the sine function:
+$$\sin(x) = x - \frac{x^3}{3!} + \frac{x^5}{5!} - \frac{x^7}{7!} + \cdots$$
+so if \(x\) or \(\theta\) is tiny, all of the stuff after the first term is pretty tiny, so you can write
+$$\sin(x) = x \pm \text{some stuff.}$$
+But how much difference does that stuff make?
+<br><br>
+To describe the angle of a pendulum (as a function of time) we can derive an implicit definition
+$$\frac{d^2\theta}{dt^2}=-\frac{g}{l}\sin(\theta)$$
+which is a problem in the field of differential equations. But unfortunately, it's not possible to write down an explicit solution (or at least not a simple finite equation). But if we assume the pendulum starts of with a really shallow angle, we can use the small angle approximation to get
+$$\frac{d^2\theta}{dt^2}=-\frac{g}{l}\theta$$
+which has a very nice simple solution. It is also exactly the equation to describe the motion of a spring.
+</p>
+</div>

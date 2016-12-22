@@ -17,7 +17,7 @@ nav ul, footer ul {
 }
 nav ul li, footer ul li {
     display: inline;
-    margin-right: 20px;
+    margin-right: 4%;
     vertical-align: bottom;
 }
 footer ul li img {
@@ -30,7 +30,7 @@ a {
 }
 a:hover {
     /*text-decoration: underline;*/
-    text-shadow: 1px 1px 3px #84b3ff;
+    text-shadow: 1px 0px 3px #84b3ff;
 }
 h1 {
     font-size: 1.5em;
@@ -88,11 +88,47 @@ input[type="submit"]{
   border-radius: 4px;
   /*margin-bottom: 10px;*/
 }
-
 input[type=text]:focus {
   border: 2px solid #5e9bff;
 }
 
+button.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
+}
+button.accordion.active, button.accordion:hover {
+    background-color: #ddd;
+}
+button.accordion:after {
+    content: '\002B';
+    color: #777;
+    font-weight: bold;
+    float: right;
+    margin-left: 5px;
+}
+button.accordion.active:after {
+    content: "\2212";
+}
+div.panel {
+    padding: 0 18px;
+    background-color: white;
+    max-height: 0;
+    overflow: hidden;
+    transition: 0.6s ease-in-out;
+    opacity: 0;
+}
+div.panel.show {
+    opacity: 1;
+    max-height: 1000px;
+}
 #automata {
   margin: none;
   display: flex;

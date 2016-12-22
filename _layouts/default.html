@@ -16,6 +16,7 @@
 	    		<ul>
 	        		<li><a href="/">Home</a></li>
 		        	<li><a href="/about">About</a></li>
+							<li><a href="/code">Code</a></li>
 	        		<li><a href="/blog">Blog</a></li>
 	    		</ul>
 			</nav>
@@ -24,12 +25,25 @@
 			{{ content }}
 
 			</div><!-- /.container -->
+			<script>
+			var acc = document.getElementsByClassName("accordion");
+			var pan = document.getElementsByClassName("panel");
+			var i;
+			for (var i = 0; i<acc.length; i++) {
+			  acc[i].onclick = function(){
+			    // console.log('why is javascript the most nonsensical language of all time?');
+			    this.classList.toggle("active");
+			    pan[i-1].classList.toggle("show");
+			  };
+			};
+			</script>
 			<footer>
     		<ul>
       		<li><a href="mailto:jjenks@pugetsound.edu">email</a></li>
       		<li><a href="https://www.github.com/jessejenks">github.com/jessejenks</a></li>
 					<li>Math, Computer Science student at <a href="http://www.pugetsound.edu/">UPS</a></li>
-					<li><a href="http://p5js.org/"><img title="p5js" src="https://raw.githubusercontent.com/jessejenks/jessejenks.github.io/master/data/p5js.png" height="25px" border="0"></a></li>
+					<!-- <li><a href="http://p5js.org/"><img title="p5js" src="https://raw.githubusercontent.com/jessejenks/jessejenks.github.io/master/data/p5js.png" height="25px" border="0"></a></li> -->
+					<li><a href="http://p5js.org/"><img title="p5js" src="/data/p5js.png" height="25px" border="0"></a></li>
 					<li><a href="https://www.mathjax.org"><img title="Powered by MathJax" src="https://cdn.mathjax.org/mathjax/badge/badge.gif" height="25px" border="0" alt="Powered by MathJax"></a></li>
 					<li><a href="http://mathworld.wolfram.com/LiouvillesConstant.html">\(\sum_{n=1}^{\infty}10^{-n!}\)</a></li>
 				</ul>
