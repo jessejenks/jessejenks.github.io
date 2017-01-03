@@ -7,7 +7,7 @@ var y = 128;
 var t = 0;
 var init_freq = 440;
 var user_freq = 220;
-var buffer = 25;
+var buffer = 400;
 // var osc, osc2;
 function setup() {
   var cv = createCanvas(x,y+buffer);
@@ -26,17 +26,19 @@ function setup() {
   colorMode(HSB);
   background(255);
   textAlign(CENTER);
+  ellipseMode(RADIUS);
+  noFill();
 
-  osc = new p5.Oscillator();
-  osc.setType('sine');
-  osc.freq(init_freq);
-  osc.amp(0.5);
-  osc.start();
-  osc2 = new p5.Oscillator();
-  osc2.setType('sine');
-  osc2.freq(user_freq);
-  osc2.amp(0.5);
-  osc2.start();
+  // osc = new p5.Oscillator();
+  // osc.setType('sine');
+  // osc.freq(init_freq);
+  // osc.amp(0.5);
+  // osc.start();
+  // osc2 = new p5.Oscillator();
+  // osc2.setType('sine');
+  // osc2.freq(user_freq);
+  // osc2.amp(0.5);
+  // osc2.start();
 }
 function draw() {
   background(255);
@@ -52,21 +54,24 @@ function draw() {
     line(i, (y/2)*(1-realIn[i]), i+1, (y/2)*(1-realIn[i+1]));
     // line(i, (y)*(1-(sqrt(realOut[i]*realOut[i] + imagOut[i]*imagOut[i]))/2), i+1, (y)*(1-(sqrt(realOut[i+1]*realOut[i+1] + imagOut[i+1]*imagOut[i+1]))/2));
     if (i < realOut.length/2) {
-      stroke((realOut[i]+1)*170/2, 255,255)
+      stroke((2*realOut[i]+1)*170/2, 255,255)
       line(2*i, y*(3/4-realOut[i]/4), 2*i+2, y*(3/4-realOut[i+1]/4));
-      stroke((imagOut[i]+1)*170/2, 255,255)
+      stroke((2*imagOut[i]+1)*170/2, 255,255)
       line(2*i, y*(1-imagOut[i]/4), 2*i+2, y*(1-imagOut[i+1]/4));
       // line(2*i, (y)*(1-(sqrt(realOut[i]*realOut[i] + imagOut[i]*imagOut[i]))/2), 2*i+2, (y)*(1-(sqrt(realOut[i+1]*realOut[i+1] + imagOut[i+1]*imagOut[i+1]))/2));
+      // line(width/2, height-buffer/2, width/2+(buffer/2)*realOut[i], height-buffer/2+(buffer/2)*imagOut[i]);
     }
+    // noFill();
+    // ellipse(width/2, height-buffer/2, buffer/4, buffer/4);
   }
   // noLoop();
   fft();
   t+=0.1;
   fill(0);
   noStroke();
-  text(init_freq+'Hz', init_freq, height-2);
-  text(user_freq+'Hz', user_freq, height-2);
-  osc2.freq(user_freq);
+  text(init_freq+'Hz', init_freq, height-3*buffer/4);
+  text(user_freq+'Hz', user_freq, height-3*buffer/4);
+  // osc2.freq(user_freq);
 }
 function keyPressed() {
   if (keyCode === RIGHT_ARROW) {
