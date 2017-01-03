@@ -1,8 +1,11 @@
 var radius = 195;
 var g = 9.8;
+var c = -g/radius;
 var theta_0 = 1.4;
+var theta0 = theta_0;
 var theta1 = theta_0;
 var theta2 = theta_0;
+var omega0 = 0;
 var omega1 = 0;
 var omega2 = 0;
 var t = 0;
@@ -14,7 +17,8 @@ function setup() {
 function draw() {
   background(255);
   strokeWeight(1);
-  drawPendulum(theta_0*cos(sqrt(g/radius)*t), -sqrt(g/radius)*theta_0*sin(sqrt(g/radius)*t), width/2, 0, color(179,62,102));
+  // drawPendulum(theta_0*cos(sqrt(g/radius)*t), -sqrt(g/radius)*theta_0*sin(sqrt(g/radius)*t), width/2, 0, color(179,62,102));
+  drawPendulum(theta0, omega0, width/2, 0, color(179,62,102));
   drawPendulum(theta1, omega1, width/2, 0, color(73,198,180));
   drawPendulum(theta2, omega2, width/2, 0, color(48,136,174));
   strokeWeight(2);
@@ -32,12 +36,13 @@ function draw() {
   update();
 }
 function update() {
-  omega1 -= (g/radius)*theta1*(1 - theta1*theta1/6)*dt;
-  theta1 += omega1*dt;
-  // if (theta1 > TWO_PI) theta1-=TWO_PI;
-  // else if (theta1 < 0) theta1+=TWO_PI;
+  omega0 += c*theta0*dt;
+  theta0 += omega0*dt;
 
-  omega2 -= (g/radius)*theta2*(1 - theta2*theta2/6 + theta2*theta2*theta2*theta2/120)*dt;
+  omega1 += c*theta1*(1 - theta1*theta1/6)*dt;
+  theta1 += omega1*dt;
+
+  omega2 += c*theta2*(1 - theta2*theta2/6 + theta2*theta2*theta2*theta2/120)*dt;
   theta2 += omega2*dt;
   // if (theta2 > TWO_PI) theta2-=TWO_PI;
   // else if (theta2 < 0) theta2+=TWO_PI;
