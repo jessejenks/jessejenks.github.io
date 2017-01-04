@@ -3,12 +3,17 @@ var q_init;
 var current_num, max_num;
 var max_dist;
 var dq = 8;
+var check;
 function setup() {
-  var cv = createCanvas(600,400);
+  var cv = createCanvas(700,300);
   cv.parent('rrt');
 
+  document.getElementById('check').innerText = 'Find Paths';
+  check = createCheckbox('', false);
+  check.parent('check');
+
   var q_init = {
-    x: width/2,
+    x: width-30,
     y: height/2,
     index: 0
   };
@@ -21,28 +26,28 @@ function setup() {
     }
   ];
 
-  max_num = 600;
+  max_num = 500;
   current_num = 1;
 
   max_dist = 0;
 
   colorMode(HSB);
   noFill();
-
+  // background(255);
 };
 
 function draw() {
   background(255);
   for (var i = 1; i<V.length; i++) {
-    // edges
-    strokeWeight(4 - 2*E[i].dist/max_dist);
-    stroke(255*E[i].dist/max_dist,255,255);
-    line(V[i].x, V[i].y, E[i].adj_vert.x, E[i].adj_vert.y);
     // vertices
-    // strokeWeight(5);
-    // stroke(0);
-    // point(V[i].x, V[i].y);
+    stroke(255*E[i].dist/max_dist,255,255);
+    strokeWeight(5);
+    point(V[i].x, V[i].y);
+    //edges
+    strokeWeight(4 - 2*E[i].dist/max_dist);
+    line(V[i].x, V[i].y, E[i].adj_vert.x, E[i].adj_vert.y);
   }
+
   // origin
   strokeWeight(2);
   stroke(0,255,255);
@@ -50,20 +55,18 @@ function draw() {
 
   if (current_num<max_num) {
     build_rrt();
-  } else {
-    // console.log('done: '+V.length);
-    if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-      var current = nearest_vertex({x:mouseX, y:mouseY})[0];
-      // noStroke();
-      // fill(0)
-      // text('path length: '+E[current.index].dist,mouseX+10,mouseY+10);
-      stroke(0);
-      strokeWeight(4);
-      // while we haven't hit the origin
-      while(E[current.index].adj_vert) {
-        line(current.x, current.y, E[current.index].adj_vert.x, E[current.index].adj_vert.y);
-        current = E[current.index].adj_vert;
-      }
+  } // else console.log('done: '+V.length);
+  if (check.checked() && mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+    var current = nearest_vertex({x:mouseX, y:mouseY})[0];
+    noStroke();
+    fill(0)
+    text('path length: '+E[current.index].dist,mouseX+10,mouseY-10);
+    stroke(0);
+    strokeWeight(4);
+    // while we haven't hit the origin
+    while(E[current.index].adj_vert) {
+      line(current.x, current.y, E[current.index].adj_vert.x, E[current.index].adj_vert.y);
+      current = E[current.index].adj_vert;
     }
   }
 };
@@ -82,14 +85,14 @@ function build_rrt() {
   var q_new = new_conf(q_near, q_rand);
 
   // make sure it didn't get too close to another vertex
-  if (nearest_vertex(q_new)[1] >= dq*dq) {
+  // if (nearest_vertex(q_new)[1] >= dq) {
     V.push(q_new);
     E.push({
       dist: new_dist,
       adj_vert: q_near
     });
     current_num++;
-  }
+  // }
 };
 
 // TODO: Someday I'll implement a quadtree or voronoi thing
@@ -117,11 +120,13 @@ function new_conf(q_n, q_r) {
 };
 
 function distance(p,q) {
-  return (p.x-q.x)*(p.x-q.x) + (p.y-q.y)*(p.y-q.y);
+  var delta_x = p.x-q.x;
+  var delta_y = p.y-q.y;
+  return delta_x*delta_x + delta_y*delta_y;
 };
 
 function mousePressed() {
-  if (mouseY < height+50) {
+  if (mouseX > -20 && mouseX < width+20 && mouseY > -20 && mouseY < height+20) {
     V = [{
       x: mouseX,
       y: mouseY,
