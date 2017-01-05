@@ -3,14 +3,27 @@ var q_init;
 var current_num, max_num;
 var max_dist;
 var dq = 8;
-var check;
+var path_check, edge_check, vert_check;
+var q_slider;
 function setup() {
   var cv = createCanvas(700,300);
   cv.parent('rrt');
 
-  document.getElementById('check').innerText = 'Find Paths';
-  check = createCheckbox('', false);
-  check.parent('check');
+  document.getElementById('path_check').innerText = 'Find Paths';
+  path_check = createCheckbox('', false);
+  path_check.parent('path_check');
+
+  document.getElementById('edge_check').innerText = 'Show Edges';
+  edge_check = createCheckbox('', true);
+  edge_check.parent('edge_check');
+
+  document.getElementById('vert_check').innerText = 'Show Vertices';
+  vert_check = createCheckbox('', false);
+  vert_check.parent('vert_check');
+
+  // document.getElementById('q_slider').innerText = 'edge lengths';
+  // vert_check = createCheckbox('', false);
+  // vert_check.parent('vert_check');
 
   var q_init = {
     x: width-30,
@@ -39,13 +52,21 @@ function setup() {
 function draw() {
   background(255);
   for (var i = 1; i<V.length; i++) {
-    // vertices
+
     stroke(255*E[i].dist/max_dist,255,255);
-    strokeWeight(5);
-    point(V[i].x, V[i].y);
+    // stroke(cubehelix((E[i].dist+5)/(max_dist+10), 0, -1, 2));
+
+    // vertices
+    if (vert_check.checked()) {
+      strokeWeight(5);
+      point(V[i].x, V[i].y);
+    }
+
     //edges
-    strokeWeight(4 - 2*E[i].dist/max_dist);
-    line(V[i].x, V[i].y, E[i].adj_vert.x, E[i].adj_vert.y);
+    if (edge_check.checked()) {
+      strokeWeight(4 - 3*E[i].dist/max_dist);
+      line(V[i].x, V[i].y, E[i].adj_vert.x, E[i].adj_vert.y);
+    }
   }
 
   // origin
@@ -56,7 +77,7 @@ function draw() {
   if (current_num<max_num) {
     build_rrt();
   } // else console.log('done: '+V.length);
-  if (check.checked() && mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+  if (path_check.checked() && mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
     var current = nearest_vertex({x:mouseX, y:mouseY})[0];
     noStroke();
     fill(0)
@@ -124,6 +145,18 @@ function distance(p,q) {
   var delta_y = p.y-q.y;
   return delta_x*delta_x + delta_y*delta_y;
 };
+
+function cubehelix(lambda, s, r, hue) {
+  if (lambda >= 1) return color(255);
+
+  var amp = hue*lambda*(1-lambda)/2;
+  var phi = 2*PI*(s/3 + r*lambda);
+
+  var red = lambda + amp*(-0.14861*cos(phi) + 1.78277*sin(phi));
+  var green = lambda + amp*(-0.29227*cos(phi) -0.90649*sin(phi));
+  var blue = lambda + amp*(1.97294*cos(phi));
+  return color(red*255, green*255, blue*255);
+}
 
 function mousePressed() {
   if (mouseX > -20 && mouseX < width+20 && mouseY > -20 && mouseY < height+20) {
