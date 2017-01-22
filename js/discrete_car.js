@@ -74,8 +74,8 @@ function setup() {
   stats = new Array(max_N/interval_N)
   // [];
   // for (var i = 0; i<max_N/interval_N; i++) stats[i] = undefined;
-  console.log('probabilty (humans): '+p_human+'spacing (humans): '+car_gap_human);
-  console.log('probabilty (self_d): '+p_selfDriving+'spacing (self_d): '+car_gap_selfDriving);
+  console.log('probabilty (humans): '+p_human+'\tspacing (humans): '+car_gap_human);
+  console.log('probabilty (self_d): '+p_selfDriving+'\tspacing (self_d): '+car_gap_selfDriving);
   console.log('number of cars,percent_selfDriving,avg_density,avg_flux,avg_velocity,length_of_track,_num_iterations');
 }
 
