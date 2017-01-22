@@ -37,14 +37,14 @@ var current_iteration = 0;
 
 var avg_ro;
 var avg_flow;
-var avg_vel;
+// var avg_vel;
 
 // array for data
 var stats;
 
 function setup() {
   // var cv = createCanvas(L, num_iterations)
-  var cv = createCanvas(400,1200)
+  var cv = createCanvas(400,800)
   cv.parent('cars')
 
   reset_sim();
@@ -69,14 +69,14 @@ function setup() {
   strokeWeight(4);
   avg_ro = 0;
   avg_flow = 0;
-  avg_vel = 0;
+  // avg_vel = 0;
 
   stats = new Array(max_N/interval_N)
   // [];
   // for (var i = 0; i<max_N/interval_N; i++) stats[i] = undefined;
   console.log('probabilty (humans): '+p_human+'\tspacing (humans): '+car_gap_human);
   console.log('probabilty (self_d): '+p_selfDriving+'\tspacing (self_d): '+car_gap_selfDriving);
-  console.log('number of cars,percent_selfDriving,avg_density,avg_flux,avg_velocity,length_of_track,_num_iterations');
+  // console.log('number of cars,percent_selfDriving,avg_density,avg_flux,avg_velocity,length_of_track,_num_iterations');
 }
 
 function draw() {
@@ -97,7 +97,7 @@ function draw() {
   } else {
     avg_ro/=num_iterations;
     avg_flow/=num_iterations;
-    avg_vel/=num_iterations;
+    // avg_vel/=num_iterations;
     // console.log('number of iterations '+num_iterations)
     // console.log('actual density '+ N/L);
     // console.log('average density '+avg_ro);
@@ -106,14 +106,14 @@ function draw() {
     // 
     // format
     // number of cars, percent self-driving, average density for center, average flow, average velocity, length of track, number of iterations
-    console.log(N+','+percent_selfDriving.toFixed(2)+','+avg_ro+','+avg_flow+','+avg_vel.toFixed(2)+','+L+','+num_iterations);
+    console.log(N+','+percent_selfDriving.toFixed(2)+','+avg_ro+','+avg_flow+','+L+','+num_iterations);
 
-    stats[current_iteration] = {ro: avg_ro, flow: avg_flow, vel: avg_vel, percent: percent_selfDriving}
+    // stats[current_iteration] = {ro: avg_ro, flow: avg_flow, vel: avg_vel, percent: percent_selfDriving}
     current_iteration++;
 
     avg_ro = 0;
     avg_flow = 0;
-    avg_vel = 0;
+    // avg_vel = 0;
     time = 0;
     if (percent_selfDriving < 0.9) {
       if (percent_selfDriving === 0) percent_selfDriving = 0.1;
@@ -131,9 +131,9 @@ function draw() {
         // plotting
         for (var i = 0; i<stats.length; i++) {
           stroke(stats[i].percent*255, 255, 255);
-          point(width*stats[i].ro, height/3 - height*stats[i].flow/3);
-          point(width*stats[i].ro, 2*height/3 - height*stats[i].flow/(3*stats[i].ro));
-          point(width*stats[i].ro, height - height*stats[i].vel/3);
+          point(width*stats[i].ro, height/2 - height*stats[i].flow/2);
+          point(width*stats[i].ro, height - height*stats[i].flow/(2*v_max*stats[i].ro));
+          // point(width*stats[i].ro, height - height*stats[i].vel/3);
         }
         // stroke(0);
         // line(0,height/2-5,width,height/2-5);
@@ -258,7 +258,7 @@ function update() {
 
       // collect data
       if (time > t_0 && i <= L/2 && new_pos > L/2) {
-        avg_vel+= (temp_cars[i].vel/v_max);
+        // avg_vel+= (temp_cars[i].vel/v_max);
         if (temp_cars[i].vel>0) avg_flow++;
       }
       // debugging
