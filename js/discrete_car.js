@@ -3,7 +3,7 @@
 // maximum number of cars
 var max_N = 400;
 // number of cars to increase by on each simulation
-var interval_N = 20;
+var interval_N = 10;
 
 var cars;
 // number of cars, initially
@@ -17,7 +17,7 @@ var percent_selfDriving = 0;
 
 // probabilities for human and self-driving cars of slowing down
 var p_human = 0.1;
-var p_selfDriving = 0;
+var p_selfDriving = p_human;
 
 // minimum distance to next car for humans and self-driving
 var car_gap_human = 2;
@@ -29,9 +29,9 @@ var v_max = 5;
 // time counter
 var time = 0;
 // timestep to start collecting data
-var t_0 = 100;
+var t_0 = 500;
 // max number of iterations per simulation
-var num_iterations = 1000; // 21000;
+var num_iterations = 10000; // 21000;
 // keep track of which simulation
 var current_iteration = 0;
 
@@ -44,7 +44,7 @@ var stats;
 
 function setup() {
   // var cv = createCanvas(L, num_iterations)
-  var cv = createCanvas(400,400)
+  var cv = createCanvas(400,1200)
   cv.parent('cars')
 
   reset_sim();
@@ -102,7 +102,7 @@ function draw() {
     // 
     // format
     // number of cars, percent self-driving, average density for center, average flow, average velocity, length of track, number of iterations
-    console.log(N+','+percent_selfDriving.toFixed(2)+','+avg_ro+','+avg_flow+','+avg_vel+','+L+','+num_iterations);
+    console.log(N+','+percent_selfDriving.toFixed(2)+','+avg_ro+','+avg_flow+','+avg_vel.toFixed(2)+','+L+','+num_iterations);
 
     stats[current_iteration] = {ro: avg_ro, flow: avg_flow, vel: avg_vel, percent: percent_selfDriving}
     current_iteration++;
@@ -126,23 +126,29 @@ function draw() {
         // plotting
         for (var i = 0; i<stats.length; i++) {
           stroke(stats[i].percent*255, 255, 255);
-          point(width*stats[i].ro, height - height*stats[i].flow);
+          point(width*stats[i].ro, height/3 - height*stats[i].flow/3);
+          point(width*stats[i].ro, 2*height/3 - height*stats[i].flow/(3*stats[i].ro));
+          point(width*stats[i].ro, height - height*stats[i].vel/3);
         }
-        stroke(0)
-        line(0,height-5,width,height-5);
-        line(5,0,5,height);
-        line(0,height - height*0.1 ,10, height - height*0.1);
-        line(0,height - height*0.5 ,10, height - height*0.5);
-        line(0,height - height*0.9 ,10, height - height*0.9);
+        // stroke(0);
+        // line(0,height/2-5,width,height/2-5);
+        // line(0,height-5,width,height-5);
+        // line(5,0,5,height);
+        // line(0,height - height*0.1 ,10, height - height*0.1);
+        // line(0,height - height*0.5 ,10, height - height*0.5);
+        // line(0,height - height*0.9 ,10, height - height*0.9);
         for (var r = 1; r<10; r++) {
           var x = r*width/10;
           stroke(0);
           noFill();
+          // line(x, height/2, x, height/2-10);
           line(x, height, x, height-10);
+          // line(0,height - x ,10, height - x);
           noStroke();
           fill(0);
           text(r/10, x, height-15)
         }
+
         noLoop();
       }// else
     }// else
@@ -193,16 +199,23 @@ function update() {
       temp_cars[i] = {vel:cars[i].vel, self_driving: cars[i].self_driving, id: cars[i].id}
 
       // acceleration
-      // if (cars[i].vel < v_max && next > cars[i].vel+1) {
+      if (cars[i].vel < v_max && next > cars[i].vel+1) {
       // adding space
-      if ( (!cars[i].self_driving && cars[i].vel + car_gap_human - 1 < v_max && next > cars[i].vel + car_gap_human) ||
-        (cars[i].self_driving && cars[i].vel + car_gap_selfDriving - 1 < v_max && next > cars[i].vel + car_gap_selfDriving)) {
+      // if ( (!cars[i].self_driving && cars[i].vel + car_gap_human - 1 < v_max && next > cars[i].vel + car_gap_human) ||
+              // (cars[i].self_driving && cars[i].vel + car_gap_selfDriving - 1 < v_max && next > cars[i].vel + car_gap_selfDriving)) {
         temp_cars[i].vel++
       }
 
       // slowing down
       if (next <= cars[i].vel) {
+        // decelerate to be at most within allowable gap
         temp_cars[i].vel = next - 1;
+        
+        // if (cars[i].self_driving) temp_cars[i].vel = next - car_gap_selfDriving;
+        // else temp_cars[i].vel = next - car_gap_human;
+
+        // if (temp_cars[i].vel < 0) temp_cars[i].vel = 0;
+        
         // if (temp_cars[i].vel < 0) console.log('NEGATIVE DUE TO SLOW DOWN')
       }
 
@@ -239,7 +252,7 @@ function update() {
 
       // collect data
       if (time > t_0 && i <= L/2 && new_pos > L/2) {
-        avg_vel+=temp_cars[i].vel;
+        avg_vel+= (temp_cars[i].vel/v_max);
         if (temp_cars[i].vel>0) avg_flow++;
       }
       // debugging
@@ -263,9 +276,9 @@ function update() {
 
 function reset_sim() {
   // console.log('Number of cars: '+N+', % self-driving: '+percent_selfDriving);
-  cars = [];
-  for (var i = 0; i<L; i++) cars[i] = undefined;
-
+  // cars = [];
+  // for (var i = 0; i<L; i++) cars[i] = undefined;
+  cars = new Array(L);
   // number of self-driving cars
   var num_selfDriving = Math.floor(N*percent_selfDriving);
   var counter = num_selfDriving;
