@@ -17,7 +17,7 @@ var percent_selfDriving = 0;
 
 // probabilities for human and self-driving cars of slowing down
 var p_human = 0.1;
-var p_selfDriving = p_human;
+var p_selfDriving = p_human/2;
 
 // minimum distance to next car for humans and self-driving
 var car_gap_human = 2;
@@ -29,9 +29,9 @@ var v_max = 5;
 // time counter
 var time = 0;
 // timestep to start collecting data
-var t_0 = 500;
+var t_0 = 100;
 // max number of iterations per simulation
-var num_iterations = 10000; // 21000;
+var num_iterations = 2000; // 21000;
 // keep track of which simulation
 var current_iteration = 0;
 
@@ -71,8 +71,9 @@ function setup() {
   avg_flow = 0;
   avg_vel = 0;
 
-  stats = [];
-  for (var i = 0; i<max_N/interval_N; i++) stats[i] = undefined;
+  stats = new Array(max_N/interval_N)
+  // [];
+  // for (var i = 0; i<max_N/interval_N; i++) stats[i] = undefined;
 }
 
 function draw() {
@@ -162,8 +163,9 @@ function update() {
   // var num_cars = 0;
   // var num_sd = 0;
 
-  var temp_cars = [];
-  for (var i = 0; i<cars.length; i++) temp_cars[i] = undefined;
+  var temp_cars = new Array(cars.length);
+  // [];
+  // for (var i = 0; i<cars.length; i++) temp_cars[i] = undefined;
 
   for (var i = 0; i<cars.length; i++) {
     if (cars[i]) {
@@ -173,7 +175,7 @@ function update() {
       // if (cars[i].self_driving)num_sd++;
 
       // distance to the next car
-      var next = undefined;
+      var next;// = undefined;
       for (var j = i+1; j<cars.length; j++) {
         if (cars[j]) {
           next = j-i;
@@ -199,22 +201,22 @@ function update() {
       temp_cars[i] = {vel:cars[i].vel, self_driving: cars[i].self_driving, id: cars[i].id}
 
       // acceleration
-      if (cars[i].vel < v_max && next > cars[i].vel+1) {
+      // if (cars[i].vel < v_max && next > cars[i].vel+1) {
       // adding space
-      // if ( (!cars[i].self_driving && cars[i].vel + car_gap_human - 1 < v_max && next > cars[i].vel + car_gap_human) ||
-              // (cars[i].self_driving && cars[i].vel + car_gap_selfDriving - 1 < v_max && next > cars[i].vel + car_gap_selfDriving)) {
+      if ( (!cars[i].self_driving && cars[i].vel + car_gap_human - 1 < v_max && next > cars[i].vel + car_gap_human) ||
+              (cars[i].self_driving && cars[i].vel + car_gap_selfDriving - 1 < v_max && next > cars[i].vel + car_gap_selfDriving)) {
         temp_cars[i].vel++
       }
 
       // slowing down
       if (next <= cars[i].vel) {
         // decelerate to be at most within allowable gap
-        temp_cars[i].vel = next - 1;
+        // temp_cars[i].vel = next - 1;
         
-        // if (cars[i].self_driving) temp_cars[i].vel = next - car_gap_selfDriving;
-        // else temp_cars[i].vel = next - car_gap_human;
+        if (cars[i].self_driving) temp_cars[i].vel = next - car_gap_selfDriving;
+        else temp_cars[i].vel = next - car_gap_human;
 
-        // if (temp_cars[i].vel < 0) temp_cars[i].vel = 0;
+        if (temp_cars[i].vel < 0) temp_cars[i].vel = 0;
         
         // if (temp_cars[i].vel < 0) console.log('NEGATIVE DUE TO SLOW DOWN')
       }
