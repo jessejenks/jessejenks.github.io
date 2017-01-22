@@ -224,8 +224,8 @@ function update() {
       // randomization
       // if (temp_cars[i].vel > 0 && Math.random() < p) {
       // with self-driving cars
-      if (temp_cars[i].vel > 0 && ((!cars[i].self_driving && cars[i].vel > 0 && Math.random() < p_human) || 
-              (cars[i].self_driving && cars[i].vel > 0 && Math.random() < p_selfDriving))) {
+      if (temp_cars[i].vel > 0 && ((!cars[i].self_driving && Math.random() < p_human) || 
+              (cars[i].self_driving && Math.random() < p_selfDriving))) {
         // if (temp_cars[i].vel < 0) console.log('NEGATIVE BEFORE RANDOMIZATION')
         temp_cars[i].vel--;
         // if (temp_cars[i].vel < 0) console.log('NEGATIVE DUE TO RANDOMIZATION')
