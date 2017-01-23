@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Traffic Model"
+title: "Traffic Model 2"
 date: 2017-01-20
 ---
 <script src="/js/libraries/p5.js" type="text/javascript"></script>
