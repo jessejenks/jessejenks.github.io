@@ -1,7 +1,7 @@
 // based on https://hal.archives-ouvertes.fr/file/index/docid/246697/filename/ajp-jp1v2p2221.pdf
 // 'use strict'
 // maximum number of cars
-var max_N = 400;
+var max_N = 800;
 // number of cars to increase by on each simulation
 var interval_N = 10;
 
