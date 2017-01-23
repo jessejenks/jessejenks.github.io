@@ -9,7 +9,7 @@ var cars;
 // number of cars, initially
 var N = interval_N;
 // length of circular track
-var L = 1000;
+var L = 500;
 // actual density of cars (constant for circular track by conservation of cars)
 var ro = N/L;
 // initial percentage of self-driving cars
