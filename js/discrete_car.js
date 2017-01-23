@@ -7,7 +7,7 @@ var interval_N = 10;
 
 var cars;
 // number of cars, initially
-var N = interval_N;
+var N = 410;
 // length of circular track
 var L = 1000;
 // actual density of cars (constant for circular track by conservation of cars)
