@@ -17,7 +17,7 @@ var percent_selfDriving = 0.1;
 
 // probabilities for human and self-driving cars of slowing down
 var p_human = 0.1;
-var p_selfDriving = 0.01;
+var p_selfDriving = 0.05;
 
 // minimum distance to next car for humans and self-driving
 var car_gap_human = 2;
