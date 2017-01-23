@@ -29,9 +29,9 @@ var v_max = 5;
 // time counter
 var time = 0;
 // timestep to start collecting data
-var t_0 = 200;
+var t_0 = 100;
 // max number of iterations per simulation
-var num_iterations = 1600; // 21000;
+var num_iterations = 800; // 21000;
 // keep track of which simulation
 var current_iteration = 0;
 
