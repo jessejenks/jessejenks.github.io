@@ -108,7 +108,8 @@ function draw() {
     // number of cars, percent self-driving, average density for center, average flow, average velocity, length of track, number of iterations
     console.log(N+','+percent_selfDriving.toFixed(2)+','+avg_ro+','+avg_flow+','+L+','+num_iterations);
 
-    stats[current_iteration] = {ro: avg_ro, flow: avg_flow, vel: avg_vel, percent: percent_selfDriving}
+    stats[current_iteration] = {ro: avg_ro, flow: avg_flow, percent: percent_selfDriving}
+    // {ro: avg_ro, flow: avg_flow, vel: avg_vel, percent: percent_selfDriving}
     current_iteration++;
 
     avg_ro = 0;
