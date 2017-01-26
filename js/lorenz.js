@@ -10,8 +10,8 @@ var values
 var buffer
 function setup() {
   buffer = 50
-  var cv = createCanvas(400,400+buffer)
-  // var cv = createCanvas(400,400)
+  // var cv = createCanvas(400,400+buffer)
+  var cv = createCanvas(400,400)
   cv.parent('lorenz')
   rho = 28
   sigma = 10
@@ -47,12 +47,13 @@ function draw() {
       width/2 + scale*cos(t)*values[i][0] + scale*sin(t)*values[i][2],
       height/2 - buffer/2 - scale*values[i][1]
     )
+    // point(width*i/index, height - buffer/2 - (values[i][0]+values[i][1]+values[i][2])/3)
     // stroke(0,255,255)
-    point(width*i/index, height - buffer/2 - (values[i][0]+values[i][1]+values[i][2])/3)
+    // point(width*i/index, height - buffer/2 - values[i][0])
     // stroke(170,255,255)
-    // point(width*i/index, height - buffer/2 - values[i].y)
+    // point(width*i/index, height - buffer/2 - values[i][1])
     // stroke(255,255,255)
-    // point(width*i/index, height - buffer/2 - values[i].z)
+    // point(width*i/index, height - buffer/2 - values[i][2])
   }
   if (index < maxIndex) update()
   t+=dt
