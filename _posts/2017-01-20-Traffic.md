@@ -1,4 +1,5 @@
 ---
+layout: post
 title: "Traffic Model"
 date: 2017-01-20
 ---

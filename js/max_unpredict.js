@@ -5,12 +5,19 @@ setup = function() {
   var cv = createCanvas(scl*32+1, scl*32+1);
   cv.parent('max_unpredict_sketch');
   // sequence = generate_em([0], 32*32);
+  // input = createInput();
+  // input.position(20, 65);
+  //
+  // button = createButton('submit');
+  // button.position(150, 65);
+  // button.mousePressed(generate);
+
   textAlign(CENTER, CENTER);
   textSize(18);
   textFont("Helvetica");
 };
 
-draw = function() {
+function draw() {
   background(255);
   for (var i =0; i<sequence.length; i++) {
     var t = '';

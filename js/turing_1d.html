@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>turing_1d</title>
+    <script src="libraries/p5.js" type="text/javascript"></script>
+    <script src="libraries/p5.dom.js" type="text/javascript"></script>
+    <!-- <script src="libraries/p5.sound.js" type="text/javascript"></script> -->
+
+    <script>
+    var pad = 30;
+    var oldA = [],
+      oldB = [],
+      newA = [],
+      newB = [];
+    var dt = 0.2;
+    var da = 0.25,
+      db = 0.0625,
+      k = 0.0625;
+    // var maxValue = 7;
+    var button = true,
+      at = true,
+      bt = false;
+    var x = 256,
+      y = 128;
+
+    function setup() {
+      createCanvas(2*x, 2*y + pad);//, WEBGL);
+
+      for (var i = 0; i < x; i++) {
+
+        oldA[i] = random(3, 5);
+        oldB[i] = 3 + 2 * noise(i); //random(3,5);
+        newA[i] = 0;
+        newB[i] = 0;
+
+      }
+      colorMode(HSB);
+      textAlign(CENTER, CENTER);
+
+      frameRate(500);
+    }
+
+    function draw() {
+      background(0);
+    strokeWeight(2);
+    noFill();
+      if (mouseIsPressed) {
+        if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+          if (at) oldA[floor(mouseX / 2)] = 7 * (height - mouseY) / (2 * height);
+          else if (bt) oldB[floor(mouseX / 2)] = 7 * (height - mouseY) / (2 * height);
+        }
+      }
+      if (button && focused) {
+        update();
+      };
+      for (var i = 0; i < x; i++) {
+
+        stroke(255, 255, 255);
+        point(2 * i, height - 4 * oldA[i]);
+        stroke(183, 255, 255);
+        point(2 * i, height - 4 * oldB[i]);
+        stroke(map(oldA[i], 0, 7, 255 * 0.66, 0), 255, 255);
+        line(2 * i, 0, 2 * i, height / 4);
+        stroke(map(oldB[i], 0, 7, 255 * 0.66, 0), 255, 255);
+        line(2 * i, height / 4, 2 * i, height / 2);
+
+      };
+      stroke(255);
+      strokeWeight(1);
+
+      fill(255);
+      noStroke();
+      if (at) {
+        text("a", width / 4, height - 5);
+      }
+      if (bt) {
+        text("b", 3 * width / 4, height - 5);
+      }
+
+      if (!focused) {
+        textSize(18);
+        text("click me", width/2, 2*height/3);
+      }
+    };
+
+
+    function update() {
+      for (var i = 1; i < x - 1; i++) {
+        var a = oldA[i];
+        var laplacianA = oldA[i + 1] + oldA[i - 1] - 2 * oldA[i];
+        var b = oldB[i];
+        var laplacianB = oldB[i + 1] + oldB[i - 1] - 2 * oldB[i];
+
+        newA[i] = a + (k * (16.0 - a * b) + da * laplacianA) * dt;
+        newB[i] = b + (max(-b, k * (a * b - b - 12.0) + db * laplacianB)) * dt;
+
+      }
+      for (var i = 0; i < x; i++) {
+        // for (var j = 0; j < y; j++) {
+          oldA[i] = newA[i];
+          oldB[i] = newB[i];
+        // }
+      }
+    }
+
+    function keyTyped() {
+      if (key === 'd') button = !button;
+      else if (key === 'r') setup();
+      else if (key === 'a') at = !at;
+      else if (key === 'b') bt = !bt;
+    }
+    </script>
+
+    <style> body {padding: 0; margin: 0;} canvas {vertical-align: top;} </style>
+  </head>
+  <body>
+  </body>
+</html>

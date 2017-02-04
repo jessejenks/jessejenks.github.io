@@ -1,0 +1,5 @@
+<br><br>
+The Fundamental Theorem of Algebra(FTA) tells us that a particular type of functions called polynomials (like the function \(p(z)\) above) will <em>always</em> have solutions. You can see how this works with a simple function here. The image above, however, is the same technique applied to a complex function. That's right, a function with real and imaginary numbers like \(i=\sqrt{-1}\) (or as Gauss called them "lateral" numbers).
+<br><br>
+It turns out that what the FTA really says there are always solutions to our problem <em>as long as you include imaginary numbers</em>. It actually can tell us exactly how many solutions there are too. For example, \(3x+2=0\) has one solution \(\{-\frac{2}{3}\}\), \(3x^2+2=0\) has two solutions \(\{i\sqrt{\frac{2}{3}}, -i\sqrt{\frac{2}{3}}\}\) (notice that without imaginary numbers we would have no solutions), \(3x^3+2\) has three solutions ... it gets a bit messy but you get the point. (Can you guess how many solutions \(p(z)\) from the top of the page has?)
+<br><br>

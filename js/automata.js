@@ -45,8 +45,8 @@ var rule = 4;
 var paused = false;
 var message = 0;
 function setup() {
-  var cv = createCanvas(3*x, 3*y);
-  cv.parent('automata');
+  var cnv = createCanvas(3*x, 3*y);
+  cnv.parent('automata');
   var row = [];
   for (var i = 0; i<welcome[message].length; i++) {
     row.push(welcome[message][i])

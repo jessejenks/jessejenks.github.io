@@ -5,7 +5,6 @@ date: 2016-11-22
 ---
 
 <link rel="stylesheet" type="text/css" href="../../../../css/unpredictable.css">
-<!-- <script src="../../../../js/sequence.js"></script> -->
 <script src="../../../../js/max_unpredict.js"></script>
 <script src="../../../../js/libraries/p5.js" type="text/javascript"></script>
 <script src="../../../../js/libraries/p5.dom.js" type="text/javascript"></script>

@@ -1,4 +1,4 @@
-function generate_em(initial){
+function generate_em(initial, num){
 
   var sequence = initial; // [0]; // [0,1,1,1,0,1,1];
   if (sequence === null){
@@ -9,7 +9,7 @@ function generate_em(initial){
   }
 
   var iteration = 0;
-  var maxIter = 150;
+  var maxIter = num;
 
   var sum = 0;
 
@@ -62,11 +62,7 @@ function generate_em(initial){
   };
 
   // return sequence;
-  var output=""
-  for (var k = 0; k<sequence.length;k++) {
-    output+=sequence[k];
-  };
-  return output;
+  return sequence;
 }
 function generate_thm(){
   var sequence = []
@@ -78,5 +74,13 @@ function generate_thm(){
     // if (i % 4 === 0) output+="\n";
     output+=sequence[i];
   }
+  return output;
+}
+function getString_em(input, num) {
+  var sequence = generate_em(input, num);
+  var output=""
+  for (var k = 0; k<sequence.length;k++) {
+    output+=sequence[k];
+  };
   return output;
 }

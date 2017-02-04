@@ -3,7 +3,7 @@ var R;
 var q_init;
 var current_num, max_num;
 var max_dist;
-var dq = 8;
+var dq = 5;
 var max_samples; // for mitchell's best
 var path_check, edge_check, vert_check, rando_check, sample_check;
 // var q_slider;

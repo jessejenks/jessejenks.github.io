@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8">
     <title>Untitled</title>
-    <script src="p5libraries/p5.js" type="text/javascript"></script>
+    <script src="libraries/p5.js" type="text/javascript"></script>
 
-    <script src="p5libraries/p5.dom.js" type="text/javascript"></script>
-    <script src="p5libraries/p5.sound.js" type="text/javascript"></script>
+    <script src="libraries/p5.dom.js" type="text/javascript"></script>
+    <script src="libraries/p5.sound.js" type="text/javascript"></script>
 
     <script>
     var sequence = [];
@@ -36,7 +36,7 @@
     function draw() {
       // var p = floor(sequence.length*mouseX/width);
       for (var i =0; i<sequence.length; i++) {
-        console.log(sequence.length);
+        // console.log(sequence.length);
         if (!sequence[i]) {
           theta+=PI/3;
           theta%=TWO_PI;

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>turing_2d</title>
+    <script src="libraries/p5.js" type="text/javascript"></script>
+    <script src="libraries/p5.dom.js" type="text/javascript"></script>
+    <!-- <script src="libraries/p5.sound.js" type="text/javascript"></script> -->
+
+    <script>
+    var oldA = [],
+      oldB = [],
+      newA = [],
+      newB = [];
+    var dt = 0.15;
+    var da = 0.25,
+      db = 0.0625,
+      k = 0.05; //k = 0.0625
+    var maxValue = 7;
+    var x = 200,
+      y = 200;
+    var button = true;
+
+    function setup() {
+      createCanvas(x, y);//, WEBGL);
+      for (var i = 0; i < x * y; i++) {
+        //if (((i>8 && i<24)||(i>50&&i<80)) && j>16 && j<40) {//(((i>10 && i<width-80) || (i>width-70 && i<width-20))&& (j>50 && j<height-50)){
+        oldA[i] = random(0, maxValue); //2*noise(i, j) - 1;
+        oldB[i] = random(0, maxValue); //noise(i, j);//2*noise(i, j) - 1;
+        newA[i] = 0;
+        newB[i] = 0;
+        //}
+      }
+      // colorMode(HSB);
+      textAlign(CENTER, CENTER);
+      textSize(20);
+      //strokeWeight(2);
+      // noFill();
+    }
+
+    function draw() {
+      background(0);
+
+      if (button && focused) {
+        update();
+      }
+      // loadPixels();
+      // console.log(oldA[x*y/2])
+      for (var i = 0; i < x * y; i++) {
+        /*
+                  if (oldA[i][j] < 0.85) {
+               stroke(map(oldA[i][j], 0, maxValue, 255*0.66, 0), 255, 255);
+               point(i, j);
+               }*/
+        //if (oldA[i]>4) {
+
+        var c = cubehelix(oldA[i]/maxValue, 0.5, -1.5, 1);
+        // color(map(oldA[i], 0, maxValue, 172, 0), 255, 255);
+        set(i % width, floor(i / width), c);
+        //cubehelix(oldB[i]/maxValue, 0.5, -1.5, 1);
+        //}
+      }
+      //text("a",width/4,height-5);
+      //text("b",3*width/4,height-5);
+      //text(frameRate, width/2, height-5);
+      updatePixels();
+      // noLoop();
+      if (!focused) {
+        text("click me", width/2, height/2);
+      }
+    }
+
+    function update() {
+      for (var i = x; i < x * y - x; i++) {
+        var a = oldA[i];
+        var laplacianA = oldA[i - 1] + oldA[i + 1] + oldA[i - x] + oldA[i + x] - 4 * a;
+        var b = oldB[i];
+        var laplacianB = oldB[i - 1] + oldB[i + 1] + oldB[i - x] + oldB[i + x] - 4 * b;
+
+        newA[i] = a + (k * (16.0 - a * b) + da * laplacianA) * dt;
+        newB[i] = b + (max(-b, k * (a * b - b - 12.0) + db * laplacianB)) * dt;
+      }
+      for (var i = 0; i < x * y; i++) {
+        oldA[i] = newA[i];
+        oldB[i] = newB[i];
+      }
+    }
+
+    function cubehelix(lambda, s, r, hue) {
+      //float lambdaPow = pow(lambda, gamma);
+      amp = hue*lambda*(1-lambda)/2;
+      phi = 2*PI*(s/3 + r*lambda);
+
+      red = lambda + amp*(-0.14861*cos(phi) + 1.78277*sin(phi));
+      green = lambda + amp*(-0.29227*cos(phi) -0.90649*sin(phi));
+      blue = lambda + amp*(1.97294*cos(phi));
+      return color(red*255, green*255, blue*255);
+    }
+    function keyTyped() {
+      if (key === 'd') button = !button;
+      if (key === 'r') setup();
+      if (key === 'c') {
+        for (var i = 0; i < x * y; i++) {
+          oldA[i] = 0;
+          oldB[i] = 0;
+        }
+      }
+    }
+    </script>
+
+    <style> body {padding: 0; margin: 0;} canvas {vertical-align: top;} </style>
+  </head>
+  <body>
+  </body>
+</html>
