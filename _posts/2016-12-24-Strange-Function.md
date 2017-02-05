@@ -23,7 +23,6 @@ Why is this called the Time-Travelling function? In 2015 I took a philosophy cou
 <br>
 What if the percieved order of the seqeunce of events was slightly different than the "actual" order of events? For example, you run from the 50 yard mark to the 100 yard mark believing you have already run the first 50 yards. But in reality, You run the last half of the race <em>before</em> you run the first half. And yet, because the state of your brain, recall having run the first half before you actually do.
 But then the same argument applies recursively to the first half of the first half of the race, and the first half of the first half of the first half, and so one. Now what if we plot a graph of our perception of time versus "real" time<sup>1</sup>, or the perceived sequence of events, and the "actual" sequence? We get the graph we see above.
-<br>Implicit in this interpretation is a realist view of time, but a rejection of causal relationships. But this is not that crazy of an idea. One of the strangest parts of general relativity is that there is no "correct" reference frame, meaning there are circumstances in which it is impossible to tell what the "true" order of events, and thus if any kind of causal relationship exists between them. Of course general relativity also assumes continuous space and time, hence the famous space-time continuum.
 <br><br>
 This is somewhat similar to Zeno's paradoxes.
 Some technical details.<br>

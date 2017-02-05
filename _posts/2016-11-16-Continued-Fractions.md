@@ -4,6 +4,8 @@ title: "Continued Fractions"
 date: 2016-12-23
 ---
 <script src="/js/cfraction.js"></script>
+### A quick guide to my continued fraction library so far.
+This will be updated and reformatted as I work out bugs and add features.
 <div id = "euler"></div>
 In general the continued fraction
 <div id = "general"></div>
