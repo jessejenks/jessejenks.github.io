@@ -29,6 +29,5 @@ Some technical details.<br>
 Let \(u_n:[0,1)\rightarrow[0,1)\) be defined as $$u_n(x) = x + 1 - (\frac{2k+1}{2^n})$$ if \(\frac{k}{2^n} \leq x < \frac{k+1}{2^n}\). In other words \(k=\lfloor2^n x\rfloor\)Then \(u_0(x) = x\), and for \(n>0\), \(u_n(x)\) is discontinuous at \(2^n\) points, but \(lim_{n\to\infty}u_n(x)=1-x\), a continuous function.
 
 However, we don't need to chop up the line in exactly one half. In fact, we can chop it at any point for each "sub-square", but that makes for a much more complicated equation.<br><br>
-
 <sup>1</sup> Not the Bill Maher show.
-</div>
+<!-- </div> -->
