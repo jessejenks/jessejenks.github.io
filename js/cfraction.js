@@ -1,6 +1,5 @@
 // Continued Fraction library for js by Jesse Jenks
-// Based on results in Khinchin's continued fractions
-// And the work of the mighty Bill Gosper
+// Based on the work of the mighty Bill Gosper
 // http://www.tweedledum.com/rwg/cfup.htm
 // And slides by Mark J. Dominus from
 // http://perl.plover.com/yak/cftalk/
