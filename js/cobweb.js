@@ -3,10 +3,10 @@ function setup() {
   r = 4;
   xVal = 0;//1-1/r;//(1+sqrt((4-3*r)/r))/2; //1-1/r;//
   max = 1;
-  w = 500;//350;
+  w = 450;//350;
   increaseMax = true;
   totalMax = 300;
-  c = 0
+  c = -0.8
   //size(3*(int)w, (int)w);
   var cv = createCanvas(2*w, w);
   // createCanvas(1050,350);
@@ -20,19 +20,19 @@ function draw() {
   background(255)
   fill(0)
   noStroke()
-  text(c.toFixed(4),w/2,100)
+  text("c = "+c.toFixed(4),w/2,100)
   stroke(0);
   noFill()
-  for (var i = -w; i<w; i++) {
-    point((w+i)/2, height/2-i/2);
+  for (var i = -2*w; i<w; i++) {
+    point((2*w+i)/3, height/2-i/3);
     // point(i, height*(1 - r*(i/w)*(1-(i/w))));
-    point((w+i)/2, height/2 - height*(i*i/(w*w) + c)/2)
+    point((2*w+i)/3, height/2 - height*(i*i/(w*w) + c)/3)
   }
   // if (mouseX<w && mouseX > 0) xVal = mouseX/w;
   // text("x="+xVal, 10, 24);
   stroke(0, 255, 255);
   // line(xVal*w, height, xVal*w, height-height*(r*xVal*(1-xVal)));
-  line((w+xVal*w)/2, height/2, (w+xVal*w)/2, height/2 - height*(xVal*xVal + c)/2)
+  line((2*w+xVal*w)/3, height/2, (2*w+xVal*w)/3, height/2 - height*(xVal*xVal + c)/3)
   if (increaseMax) {
     recurse(xVal, 0);
     if (max < totalMax) {
@@ -50,13 +50,13 @@ function recurse(x, current) {
     stroke(current*255/max, 255, 255);
     // stroke(cubehelix(current/max, 1, -1.5, 1))
 
-    line((w+x*w)/2, height/2-xNew*height/2, (w+xNew*w)/2, height/2-xNew*height/2);
+    line((2*w+x*w)/3, height/2-xNew*height/3, (2*w+xNew*w)/3, height/2-xNew*height/3);
 
     // line(xNew*w, height-xNew*height, xNew*w, height-height*(r*xNew*(1-xNew)));
-    line((w+xNew*w)/2, height/2-xNew*height/2, (w+xNew*w)/2, height/2-height*(xNew*xNew + c)/2);
+    line((2*w+xNew*w)/3, height/2-xNew*height/3, (2*w+xNew*w)/3, height/2-height*(xNew*xNew + c)/3);
     // line(w+current*2*width/(3*max), height-x*height, w+(current+1)*2*width/(3*max), height-xNew*height);
     // line(w+current*2*width/(3*max), height-x*height, w+(current+1)*2*width/(3*max), height-xNew*height);
-    line(w+current*width/(max), height/2-x*height/2, w+(current+1)*width/(max), height/2-xNew*height/2);
+    line(w+current*width/(max), height/2-x*height/3, w+(current+1)*width/(max), height/2-xNew*height/3);
     recurse(xNew, current+1);
   }
 }
