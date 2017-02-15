@@ -49,7 +49,7 @@ function draw() {
 	for (var i = 0; i<width*height; i++) {
 		var x = (i%width)
 		var y = floor(i/width)
-		var c = color(4*mandelbrot(x/width,y/width), 255, 255)
+		var c = color(2*mandelbrot(x/width,y/width), 255, 255)
 		set(x, y, c)
 	}
 	updatePixels()
