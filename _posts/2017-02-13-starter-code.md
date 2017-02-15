@@ -57,8 +57,6 @@ function draw() {
 }
 function mandelbrot(x,y) {
 	// Code goes here
-	var x = (p % width) / width
-	var y = floor(p / width) / width
 	var a = 0
 	var b = 0
 	var t = 0
@@ -66,6 +64,7 @@ function mandelbrot(x,y) {
 		var temp = a*a - b*b + rmin + (rmax - rmin) * x
 		b = 2*a*b + imax + (imin - imax) * y
 		a = temp
+		t++
 	}
 	return t
 }
