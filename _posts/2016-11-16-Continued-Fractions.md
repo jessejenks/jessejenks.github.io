@@ -9,6 +9,7 @@ This will be updated and reformatted as I work out bugs and add features.
 <div id = "euler"></div>
 In general the continued fraction
 <div id = "general"></div>
+
 can be constructed like so:
 ~~~ javascript
 var myNumber = new Cfraction([a_0,a_1,a_2,a_3,a_4],[b_0,b_1,b_2,b_3,b_4]);
