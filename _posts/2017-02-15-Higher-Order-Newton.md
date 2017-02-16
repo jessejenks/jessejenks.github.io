@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Higher Order Newton Fractals"
+date: 2017-02-15
+---
+<script src="/js/libraries/p5.js" type="text/javascript"></script>
+<script src="/js/libraries/p5.dom.js" type="text/javascript"></script>
+<script src="/js/complex.js"></script>
+<script src="/js/newton_fractal_2nd_order.js"></script>
+<div id="equation">$$z_{n+1} = z_{n} - \frac{p(z_n)}{p'(z_n)}\left(1+\frac{p(z_n)p''(z_n)}{2p'(z_n)^2}\right)$$</div>
+<div>$$p(z)=z^4 - 3z^2+2$$</div>
+<!-- <div>$$p'(z)=4z^3 - 6z$$</div>
+<div>$$p''(z)=12z^2 - 6$$</div> -->
+<br>
+<div id="newton-fractal" style="display: flex;justify-content: center;"></div>
+<br>
+<button class="accordion">What's this?</button>
+<div class="panel">
+<p>
+A root of a function \(f(x)\) is a number \(c\) such that \(f(c)=0\). Finding roots of functions is an important problem in many fields and Newton's method reduces the problem of finding roots of a function to finding roots of a simpler function. This is an extension of <a href="../../../2016/12/19/newton-fractal">this</a> post. Fundamentally, Newton's method uses something called Taylor's theorem, briefly discussed <a href="../../../2016/12/17/harmonic-motion">here</a>. However, Newton's original method uses a first-order approximation, but we can get faster convergence, that is we can find a root in less time with a second order approximation. But in some cases the increased rate of convergence is outweighed by the greater complexity involved in computation. So people have come up with similar techniques which lie in a good middle ground between fast convergence and fast computation.<br><br>This fractal is generated using a technique called Householder's method.
