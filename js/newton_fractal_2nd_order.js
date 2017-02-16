@@ -10,8 +10,8 @@ function setup() {
   //size(200,200);
   //colorMode(HSB);
   max = 80;
-  mult = 1;
-  rScale = 1;
+  mult = 2;
+  rScale = 2;
   iScale = rScale*height/width;
   cr = 0;
   ci = 0;
@@ -34,7 +34,7 @@ function draw() {
     var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
     // set(i%width, floor(i/width), cubehelix(newton(2*(i%width)/width - 1 + cr, 3*floor(i/width)/height - 3/2 - ci)/max,0,-1,4));
     // set(i%width, floor(i/width), cubehelix(newton(cr + rMin + (rMax-rMin)*(i%width)/width, ci + iMax + (iMin-iMax)*floor(i/width)/height)/max,0,-1,4));
-    set(i%width, floor(i/width), color(cubehelix(newton(x, y)/max, 0, 1, 4), 255, 255));
+    set(i%width, floor(i/width), cubehelix(newton(x, y)/max, 0.5, -1.5, 2));
   }
   updatePixels();
   noLoop();

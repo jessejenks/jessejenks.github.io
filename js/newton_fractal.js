@@ -1,27 +1,51 @@
-var max, mult, scale;// = 0.125;
-
+var max, mult, rScale, iScale;// = 0.125;
+var rMin, rMax, iMin, iMax;
 //int multCol = 15;
 var tol, cr, ci;//0.03;
 
+var shift;
 function setup() {
   var cv = createCanvas(420, 630);
   cv.parent('newton-fractal');
   //size(200,200);
   //colorMode(HSB);
   max = 80;
-  mult = 1.8;
-  scale = 0.5;
+  mult = 2;
+  rScale = 2;
+  iScale = rScale*height/width;
+
+  cr = 0;
+  ci = 0;
+
+  rMin = cr - rScale/2
+  rMax = cr + rScale/2
+
+  iMin = ci - iScale/2
+  iMax = ci + iScale/2
 
   tol = 0.1;// 0.00002;
   // t = 0;//-0.72;
   cr = 0;
   ci = 0;
 
+  shift = 2;
+
   background(0);
 }
 function draw() {
   for (var i = 0; i<width*height; i++) {
-    set(i%width, floor(i/width), cubehelix(newton(2*(i%width)/width - 1 + cr, 3*floor(i/width)/height - 3/2 - ci)/max,0,-1,4));
+    if (i%width >= width/2 - 1) {
+      var x = cr + rMin + (rMax-rMin)*((i+shift)%width)/width
+      var y = ci + iMax + (iMin-iMax)*floor((i+shift)/width)/height
+      // set((i+shift)%width, floor((i+shift)/width), cubehelix(newton(x, y)/max,0.5,-1.5,3));
+    } else {
+      var x = cr + rMin + (rMax-rMin)*(i%width)/width
+      var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
+      // set(i%width, floor(i/width), cubehelix(newton(x, y)/max,0.5,-1.5,3));
+    }
+    // var x = cr + rMin + (rMax-rMin)*(i%width)/width
+    // var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
+    set(i%width, floor(i/width), cubehelix(newton(x, y)/max,0.5,-1.5,3));
   }
   updatePixels();
   noLoop();
@@ -30,14 +54,14 @@ function newton(real, imag) {
   var z = new Complex(real, imag);
   for (var j = 0; j<max; j++) {
 
-    var top = z.power(4).subtract(z.power(2).scalarMult(3)).addReal(2);
+    var top = z.power(4).subtract(z.multiply(z).scalarMult(3)).addReal(2);
     var bottom = z.power(3).scalarMult(4).subtract(z.scalarMult(6));
     var newZ = z.subtract(top.divide(bottom));
 
     if (newZ.distance_sqr(z) < tol*tol) return mult*j;
     z = newZ;
   }
-  return max;
+  return mult*max;
 }
 
 function cubehelix(lambda, s, r, hue) {
