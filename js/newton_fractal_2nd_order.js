@@ -3,7 +3,7 @@ var max, mult, rScale, iScale;// = 0.125;
 var rMin, rMax, iMin, iMax;
 //int multCol = 15;
 var tol, cr, ci;//0.03;
-
+var shift;
 function setup() {
   var cv = createCanvas(420,630);// (420, 630);
   cv.parent('newton-fractal');
@@ -24,14 +24,25 @@ function setup() {
 
   tol = 0.1;// 0.00002;
   // t = 0;//-0.72;
+  
+  shift = 2;
 
   // colorMode(HSB)
   background(0);
 }
 function draw() {
   for (var i = 0; i<width*height; i++) {
-    var x = cr + rMin + (rMax-rMin)*(i%width)/width
-    var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
+    if (i%width >= width/2 - 1) {
+      var x = cr + rMin + (rMax-rMin)*((i+shift)%width)/width
+      var y = ci + iMax + (iMin-iMax)*floor((i+shift)/width)/height
+      // set((i+shift)%width, floor((i+shift)/width), cubehelix(newton(x, y)/max,0.5,-1.5,3));
+    } else {
+      var x = cr + rMin + (rMax-rMin)*(i%width)/width
+      var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
+      // set(i%width, floor(i/width), cubehelix(newton(x, y)/max,0.5,-1.5,3));
+    }
+    // var x = cr + rMin + (rMax-rMin)*(i%width)/width
+    // var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
     // set(i%width, floor(i/width), cubehelix(newton(2*(i%width)/width - 1 + cr, 3*floor(i/width)/height - 3/2 - ci)/max,0,-1,4));
     // set(i%width, floor(i/width), cubehelix(newton(cr + rMin + (rMax-rMin)*(i%width)/width, ci + iMax + (iMin-iMax)*floor(i/width)/height)/max,0,-1,4));
     set(i%width, floor(i/width), cubehelix(newton(x, y)/max, 0.5, -1.5, 2));
