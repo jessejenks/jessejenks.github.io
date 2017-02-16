@@ -14,6 +14,9 @@ date: 2017-02-15
 <br>
 <div id="newton-fractal" style="display: flex;justify-content: center;"></div>
 <br>
+<div style="display: flex;justify-content: center; text-align:center;">Warning: this may take a while to render</div>
+<div id="method" style="display: flex;justify-content: center;"></div>
+<br>
 <button class="accordion">What's this?</button>
 <div class="panel">
 <p>

@@ -4,13 +4,19 @@ var rMin, rMax, iMin, iMax;
 //int multCol = 15;
 var tol, cr, ci;//0.03;
 var shift;
+var method;
 function setup() {
-  var cv = createCanvas(420,630);// (420, 630);
+  var cv = createCanvas(300,420);// (420, 630);
   cv.parent('newton-fractal');
-  //size(200,200);
-  //colorMode(HSB);
-  max = 80;
-  mult = 2;
+
+  method = createSelect();
+  method.parent('method')
+  method.option('Householder\'s method');
+  method.option('Halley\'s method');
+  method.changed(draw);
+
+  max = 25;
+  mult = 1;
   rScale = 2;
   iScale = rScale*height/width;
   cr = 0;
@@ -32,20 +38,25 @@ function setup() {
 }
 function draw() {
   for (var i = 0; i<width*height; i++) {
-    if (i%width >= width/2 - 1) {
-      var x = cr + rMin + (rMax-rMin)*((i+shift)%width)/width
-      var y = ci + iMax + (iMin-iMax)*floor((i+shift)/width)/height
-      // set((i+shift)%width, floor((i+shift)/width), cubehelix(newton(x, y)/max,0.5,-1.5,3));
+    // to remove imaginary axis
+    if (method.value() === 'Householder\'s method') {      
+      if (i%width >= width/2 - 1) {
+        var x = cr + rMin + (rMax-rMin)*((i+shift)%width)/width
+        var y = ci + iMax + (iMin-iMax)*floor((i+shift)/width)/height
+      } else {
+        var x = cr + rMin + (rMax-rMin)*(i%width)/width
+        var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
+      }
     } else {
       var x = cr + rMin + (rMax-rMin)*(i%width)/width
       var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
-      // set(i%width, floor(i/width), cubehelix(newton(x, y)/max,0.5,-1.5,3));
     }
+    
     // var x = cr + rMin + (rMax-rMin)*(i%width)/width
     // var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
     // set(i%width, floor(i/width), cubehelix(newton(2*(i%width)/width - 1 + cr, 3*floor(i/width)/height - 3/2 - ci)/max,0,-1,4));
     // set(i%width, floor(i/width), cubehelix(newton(cr + rMin + (rMax-rMin)*(i%width)/width, ci + iMax + (iMin-iMax)*floor(i/width)/height)/max,0,-1,4));
-    set(i%width, floor(i/width), cubehelix(newton(x, y)/max, 0.5, -1.5, 2));
+    set(i%width, floor(i/width), cubehelix(newton(x, y)/max, 0.5, -1.5, 1.4));
   }
   updatePixels();
   noLoop();
@@ -68,7 +79,12 @@ function newton(real, imag) {
     // }
     
     // Householder's iteration
-    var newZ = z.subtract(eff.divide(eff_prime).multiply(eff.multiply(eff_prime_prime).divide(eff_prime.multiply(eff_prime).scalarMult(2)).addReal(1)))
+    if (method.value() === 'Householder\'s method') { 
+      var newZ = z.subtract(eff.divide(eff_prime).multiply(eff.multiply(eff_prime_prime).divide(eff_prime.multiply(eff_prime).scalarMult(2)).addReal(1)))
+    } else if (method.value() === 'Halley\'s method') {
+      var newZ = z.subtract(eff.divide(eff_prime).multiply(eff.multiply(eff_prime_prime).divide(eff_prime.multiply(eff_prime).scalarMult(-2)).addReal(1)))
+    }
+
     if (newZ.distance_sqr(z) < tol*tol) return mult*j;
     // if (newZ.manhattan(z) < tol) return mult*j;
     z = newZ;
