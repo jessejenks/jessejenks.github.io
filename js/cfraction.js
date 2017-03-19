@@ -29,6 +29,7 @@ function Cfraction(a, b) {
 
   // toString method
   this.toString = function() {
+    if (!this.a) return 'blah'
     if (this.a.length===1) return 'a: '+this.a[0]+', b: '+this.b[1];
     var ts = 'a:['+this.a[0]+'; ';
     for (var i = 1; i<this.a.length-1; i++) {
@@ -56,15 +57,27 @@ function Cfraction(a, b) {
   }
 
   this.decimal_string;
-}; // end constructor
+}; // end toTex
+
+Cfraction.from_decimal = function(expansion) {
+  // assert that expansion is a number?
+  var num = expansion
+  var a = []
+  a.push(Math.floor(num))
+  while (a.length < 10 && num-a[a.length-1] > 0) {
+    num = 1/(num-a[a.length-1])
+    a.push(Math.floor(num))
+  }
+  return new Cfraction(a)
+};
 
 Cfraction.prototype.construct_numerators_and_denominators = function () {
   var p = [];
   var q = [];
-  p[0] = 1;//this.a[0];
-  q[0] = 0;//this.b[0]; // always 1
-  p[1] = this.a[0];//this.a[0]*this.a[1] + this.b[1];
-  q[1] = 1;//this.a[1];
+  p[0] = 1;
+  q[0] = 0;
+  p[1] = this.a[0];
+  q[1] = 1;
   if (this.a.length>1) {
     for (var i = 2; i<this.a.length+1; i++) {
       p[i] = this.a[i-1]*p[i-1] + this.b[i-1]*p[i-2];
@@ -267,12 +280,26 @@ Cfraction.LOG = function(k,z,y) {
 }
 
 // pi like 3.14 that pi
-Cfraction.PI = new Cfraction([
+var pirray = [
   3,7,15,1,292,1,1,1,2,1,3,1,14,2,1,1,2,2,2,2,1,84,2,1,
   1,15,3,13,1,4,2,6,6,99,1,2,2,6,3,5,1,1,6,8,1,7,1,2,3,
   7,1,2,1,1,12,1,1,1,3,1,1,8,1,1,2,1,6,1,1,5,2,2,3,1,2,
   4,4,16,1,161,45,1,22,1,2,2,1,4,1,2,24,1,2,1,3,1,2,1
-]);
+]
+// Cfraction.PI = new Cfraction([
+//   3,7,15,1,292,1,1,1,2,1,3,1,14,2,1,1,2,2,2,2,1,84,2,1,
+//   1,15,3,13,1,4,2,6,6,99,1,2,2,6,3,5,1,1,6,8,1,7,1,2,3,
+//   7,1,2,1,1,12,1,1,1,3,1,1,8,1,1,2,1,6,1,1,5,2,2,3,1,2,
+//   4,4,16,1,161,45,1,22,1,2,2,1,4,1,2,24,1,2,1,3,1,2,1
+// ]);
+
+Cfraction.PI = function(n) {
+  if (n>pirray.length) {
+    return new Cfraction(pirray)
+  } else {
+    return new Cfraction(pirray.slice(0,n))
+  }
+}
 // euler mascheroni gamma constant
 Cfraction.GAMMA = new Cfraction([
   0,1,1,2,1,2,1,4,3,13,5,1,1,8,1,2,4,1,1,40,1,11,3,7,1,
@@ -326,11 +353,11 @@ Cfraction.expand = function(k,n) {
 };
 
 // possible unnecessary
-function flr(x) {
-  if (x>=0) return Math.floor(x);
-  else return -Math.ceil(-x);
+// function flr(x) {
+//   if (x>=0) return Math.floor(x);
+//   else return -Math.ceil(-x);
 
-}
+// }
 
 // ax + b/ cx + d
 Cfraction.prototype.general_2d = function(ap,bp,cp,dp) {
@@ -430,18 +457,43 @@ Cfraction.prototype.div_rational = function(x,y) {
 // a*y.a_0+b c*y.a_0+d a c
 // e*y.a_0+f g*y.a_0+h e g
 
+Cfraction.prototype.add = function (that) {
+  // 0 1 1 0
+  // 0 0 0 1
+  return this.general_4d(0,1,1,0,0,0,0,1,that);
+};
+Cfraction.prototype.sub = function (that) {
+  // 0 1 -1 0
+  // 0 0  0 1
+  return this.general_4d(0,1,-1,0,0,0,0,1,that);
+};
+Cfraction.prototype.multiply = function (that) {
+  // 1 0 0 0
+  // 0 0 0 1
+  return this.general_4d(1,0,0,0,0,0,0,1,that);
+};
+Cfraction.prototype.divide = function (that) {
+  // 0 1 0 0
+  // 0 0 1 0
+  return this.general_4d(0,1,0,0,0,0,1,0,that);
+};
+
 Cfraction.prototype.general_4d = function(a,b,c,d,e,f,g,h,that) {
-  // var matrix = [
-  //   a,b,c,d,
-  //   e,f,g,h
-  // ];
+  var testing_string = ''
   var output = [];
   var this_index = 0;
   var that_index = 0;
 
   while (this_index < this.a.length && that_index < that.a.length) {
-    if (Math.floor(a/e)===Math.floor(b/f) && Math.floor(b/f)===Math.floor(c/g)&& Math.floor(c/g)===Math.floor(d/h)) {
+    if (!(e===0 || f===0 || g===0 || h===0) && Math.floor(a/e)===Math.floor(b/f) && Math.floor(b/f)===Math.floor(c/g)&& Math.floor(c/g)===Math.floor(d/h)) {
       console.log('output');
+      console.log(
+        '\n'+
+        b+'   '+d+'\n'+
+        ' '+f+'   '+h+'\n'+
+        a+'   '+c+'\n'+
+        ' '+e+'   '+g
+      );
       var q = Math.floor(a/e);
       output.push(q);
       console.log(output);
@@ -459,15 +511,32 @@ Cfraction.prototype.general_4d = function(a,b,c,d,e,f,g,h,that) {
       b = init_f;
       c = init_g;
       d = init_h;
-    } else if (that_index===1 || Math.abs(c/g-d/h)>Math.abs(b/f-d/h)) {
-      console.log('this');
+
       console.log(
-        '[\n'+b+'   '+d+'\n'+
+        '\n'+
+        b+'   '+d+'\n'+
         ' '+f+'   '+h+'\n'+
         a+'   '+c+'\n'+
         ' '+e+'   '+g
       );
-      // console.log('[\n'+a+', '+b+', '+c+', '+d+',\n'+e+', '+f+', '+g+', '+h+'\n]');
+      // e===0 || f===0 || g===0 || h===0 || 
+    } 
+    // else if (Math.abs(c/g-d/h)>Math.abs(b/f-d/h)) {
+    else if (Math.abs(b/f-a/e)<=Math.abs(c/g-a/e)) {
+      console.log('this');
+      console.log(
+        'a/e = '+Math.floor(a/e)+'\n'+
+        'b/f = '+Math.floor(b/f)+'\n'+
+        'c/g = '+Math.floor(c/g)+'\n'+
+        'd/h = '+Math.floor(d/h)
+      );
+      console.log(
+        '\n'+
+        b+'   '+d+'\n'+
+        ' '+f+'   '+h+'\n'+
+        a+'   '+c+'\n'+
+        ' '+e+'   '+g
+      );
       // input from this
       var this_a = this.a[this_index];
       var init_a = a
@@ -483,15 +552,28 @@ Cfraction.prototype.general_4d = function(a,b,c,d,e,f,g,h,that) {
       g = init_e
       h = init_f
       this_index++;
-    } else {
-      console.log('that');
       console.log(
-        '[\n'+b+'   '+d+'\n'+
+        '\n'+
+        b+'   '+d+'\n'+
         ' '+f+'   '+h+'\n'+
         a+'   '+c+'\n'+
         ' '+e+'   '+g
       );
-      // console.log('[\n'+a+', '+b+', '+c+', '+d+',\n'+e+', '+f+', '+g+', '+h+'\n]');
+    } else {
+      console.log('that');
+      console.log(
+        'a/e = '+Math.floor(a/e)+'\n'+
+        'b/f = '+Math.floor(b/f)+'\n'+
+        'c/g = '+Math.floor(c/g)+'\n'+
+        'd/h = '+Math.floor(d/h)
+      );
+      console.log(
+        '\n'+
+        b+'   '+d+'\n'+
+        ' '+f+'   '+h+'\n'+
+        a+'   '+c+'\n'+
+        ' '+e+'   '+g
+      );
       // input from that
       var that_a = that.a[that_index];
       var init_a = a
@@ -507,28 +589,31 @@ Cfraction.prototype.general_4d = function(a,b,c,d,e,f,g,h,that) {
       f = init_e
       h = init_g
       that_index++;
+      console.log(
+        '\n'+
+        b+'   '+d+'\n'+
+        ' '+f+'   '+h+'\n'+
+        a+'   '+c+'\n'+
+        ' '+e+'   '+g
+      );
     }
-  }
+  } // end while
+  console.log('this is the output')
+  console.log(output)
   return new Cfraction(output);
-}
+};
 
-Cfraction.prototype.add = function (that) {
-  // 0 1 1 0
-  // 0 0 0 1
-  return general_4d(0,1,1,0,0,0,0,1,that);
-};
-Cfraction.prototype.sub = function (that) {
-  // 0 1 -1 0
-  // 0 0  0 1
-  return general_4d(0,1,-1,0,0,0,0,1,that);
-};
-Cfraction.prototype.multiply = function (that) {
-  // 1 0 0 0
-  // 0 0 0 1
-  return general_4d(1,0,0,0,0,0,0,1,that);
-};
-Cfraction.prototype.divide = function (that) {
-  // 0 1 0 0
-  // 0 0 1 0
-  return general_4d(0,1,0,0,0,0,1,0,that);
-};
+
+// matrix transformations on
+// (axy + bx + cy + d)/(exy + fx + gy + h)
+// [  a,  b,  c,  d,
+//    e,  f,  g,  h
+// ]
+// "input from x = [x_0; x_1, x_2, ..., x_k, ...]"
+// [  a*x_k+c,  b*x_k+d,  a,  b,
+//    e*x_k+g,  f*x_k+h,  e,  f
+// ]
+// "input from y = [y_0; y_1, y_2, ..., y_k, ...]"
+// [  a*y_k+b,  a,  c*x_k+d,  c,
+//    e*y_k+f,  e,  g*x_k+h,  g
+// ]
