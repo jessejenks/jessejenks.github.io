@@ -43,9 +43,20 @@ Complex.prototype.arg = function () {
   return Math.atan2(this.imag, this.real);
 };
 Complex.prototype.raise_to = function (c) {
-  var theta = this.imag*Math.log(c);
-  var coeff = Math.pow(c,this.real);
-  return new Complex(coeff*Math.cos(theta),coeff*Math.sin(theta));
+  // if (c == 0) return 1
+  // var isNegative = (c<0)
+  // if (isNegative) c = -c
+  // var theta = this.imag*Math.log(c);
+  // var coeff = Math.pow(c,this.real);
+
+  // return (isNegative)? new Complex(1,0).divide(new Complex(coeff*Math.cos(theta),coeff*Math.sin(theta))): new Complex(coeff*Math.cos(theta),coeff*Math.sin(theta));
+  // 
+  // z^c = (x+iy)^c = |z|^c e^i arg(z) c
+  var mag = this.magnitude()
+  var coeff = Math.pow(mag, c)
+  var arg = this.arg()
+  var theta = arg*c
+  return new Complex(coeff*Math.cos(theta), coeff*Math.sin(theta));
 };
 Complex.prototype.e_to_the = function() {
   return new Complex(exp(this.real)*cos(this.imag),exp(this.real)*sin(this.imag));
@@ -111,6 +122,9 @@ Complex.prototype.distance_sqr = function(z){
 Complex.prototype.magnitude = function() {
   return sqrt(this.real*this.real + this.imag*this.imag);
 };
-Complex.prototype.mag_sqr = function(){
+Complex.prototype.mag_sqr = function() {
   return this.real*this.real + this.imag*this.imag;
+};
+Complex.prototype.manhattan = function(z) {
+  return Math.abs(this.real - z.real) + Math.abs(this.imag - z.imag)
 };

@@ -24,10 +24,13 @@ Why is this called the Time-Travelling function? In 2015 I took a philosophy cou
 What if the percieved order of the seqeunce of events was slightly different than the "actual" order of events? For example, you run from the 50 yard mark to the 100 yard mark believing you have already run the first 50 yards. But in reality, You run the last half of the race <em>before</em> you run the first half. And yet, because the state of your brain, recall having run the first half before you actually do.
 But then the same argument applies recursively to the first half of the first half of the race, and the first half of the first half of the first half, and so one. Now what if we plot a graph of our perception of time versus "real" time<sup>1</sup>, or the perceived sequence of events, and the "actual" sequence? We get the graph we see above.
 <br><br>
-This is somewhat similar to Zeno's paradoxes.
+This is similar to Zeno's paradoxes in some ways.
+<br>
 Some technical details.<br>
 Let \(u_n:[0,1)\rightarrow[0,1)\) be defined as $$u_n(x) = x + 1 - (\frac{2k+1}{2^n})$$ if \(\frac{k}{2^n} \leq x < \frac{k+1}{2^n}\). In other words \(k=\lfloor2^n x\rfloor\)Then \(u_0(x) = x\), and for \(n>0\), \(u_n(x)\) is discontinuous at \(2^n\) points, but \(lim_{n\to\infty}u_n(x)=1-x\), a continuous function.
 
-However, we don't need to chop up the line in exactly one half. In fact, we can chop it at any point for each "sub-square", but that makes for a much more complicated equation.<br><br>
+<br>
+Letting \(u(x)=1-x\), for any \(\epsilon>0\), if \(n>-\log_2(\epsilon)\) (in other words \(\frac{1}{2^n}<\epsilon\)), then $$\lvert u(x) - u_n(x)\rvert < \epsilon$$ for any \(x\in[0,1)\). 
+We don't need to chop up the line exactly in half. In fact, we can chop it at any point for each "sub-square", but that makes for a much more complicated equation.<br><br>
 <sup>1</sup> Not the Bill Maher show.
 <!-- </div> -->

@@ -29,31 +29,31 @@ function Cfraction(a, b) {
 
   // toString method
   this.toString = function() {
-    if (!this.a) return 'blah'
+    if (!this.a) return 'no representation'
     if (this.a.length===1) return 'a: '+this.a[0]+', b: '+this.b[1];
-    var ts = 'a:['+this.a[0]+'; ';
+    var output_string = 'a:['+this.a[0]+'; ';
     for (var i = 1; i<this.a.length-1; i++) {
-      ts+=(this.a[i]+',');
+      output_string+=(this.a[i]+',');
     }
-    ts+= this.a[this.a.length-1]+']';
+    output_string+= this.a[this.a.length-1]+']';
     if (!this.isSimple) {
-      ts += '\nb:['+this.b[1]+'; ';
+      output_string += '\nb:['+this.b[1]+'; ';
       for (var i = 2; i<this.b.length-1; i++) {
-        ts+=(this.b[i]+',');
+        output_string+=(this.b[i]+',');
       }
-      ts+=(this.b[this.b.length-1]+']');
+      output_string+=(this.b[this.b.length-1]+']');
     }
-    return ts;
+    return output_string;
   };
 
   // toTex method
   this.toTex = function() {
-    return r(this.a, this.b, 0);
+    return recurse(this.a, this.b, 0);
   }
   // recursion is fun
-  function r(a,b,i) {
+  function recurse(a,b,i) {
     if (i===a.length-1) if (a.length===1) return ''+a[i]; else return ''+a[i]+'+'+b[i+1];
-    else return ''+a[i]+'+\\cfrac{'+b[i+1]+'}{'+r(a,b,i+1)+'}';
+    else return ''+a[i]+'+\\cfrac{'+b[i+1]+'}{'+recurse(a,b,i+1)+'}';
   }
 
   this.decimal_string;
@@ -65,7 +65,10 @@ Cfraction.from_decimal = function(expansion) {
   var a = []
   a.push(Math.floor(num))
   while (a.length < 10 && num-a[a.length-1] > 0) {
+    var str = '1/('+num+' - floor['+a[a.length-1]+']) \n\t= 1/('+(num-a[a.length-1])+') \n\t\t= '
     num = 1/(num-a[a.length-1])
+    str += num
+    console.log(str)
     a.push(Math.floor(num))
   }
   return new Cfraction(a)
@@ -280,7 +283,7 @@ Cfraction.LOG = function(k,z,y) {
 }
 
 // pi like 3.14 that pi
-var pirray = [
+var pi_array = [
   3,7,15,1,292,1,1,1,2,1,3,1,14,2,1,1,2,2,2,2,1,84,2,1,
   1,15,3,13,1,4,2,6,6,99,1,2,2,6,3,5,1,1,6,8,1,7,1,2,3,
   7,1,2,1,1,12,1,1,1,3,1,1,8,1,1,2,1,6,1,1,5,2,2,3,1,2,
@@ -294,19 +297,27 @@ var pirray = [
 // ]);
 
 Cfraction.PI = function(n) {
-  if (n>pirray.length) {
-    return new Cfraction(pirray)
+  if (n>pi_array.length) {
+    return new Cfraction(pi_array)
   } else {
-    return new Cfraction(pirray.slice(0,n))
+    return new Cfraction(pi_array.slice(0,n))
   }
 }
 // euler mascheroni gamma constant
-Cfraction.GAMMA = new Cfraction([
+gamma_array = [
   0,1,1,2,1,2,1,4,3,13,5,1,1,8,1,2,4,1,1,40,1,11,3,7,1,
   7,1,1,5,1,49,4,1,65,1,4,7,11,1,399,2,1,3,2,1,2,1,5,3,
   2,1,10,1,1,1,1,2,1,1,3,1,4,1,1,2,5,1,3,6,2,1,2,1,1,1,
   2,1,3,16,8,1,1,2,16,6,1,2,2,1,7,2,1,1,1,3,1,2,1,2,13,5
-]);
+]
+
+Cfraction.GAMMA = function(n) {
+  if (n>gamma_array.length) {
+    return new Cfraction(gamma_array)
+  } else {
+    return new Cfraction(gamma_array.slice(0,n))
+  }
+}
 
 Cfraction.ARCTAN = function(k,x,y) {
   if (k === 1) return new Cfraction([0]);
@@ -360,20 +371,22 @@ Cfraction.expand = function(k,n) {
 // }
 
 // ax + b/ cx + d
-Cfraction.prototype.general_2d = function(ap,bp,cp,dp) {
-  var a = ap;
-  var b = bp;
-  var c = cp;
-  var d = dp;
-  var matrix = [
-    a, b,
-    c, d
-  ];
+Cfraction.prototype.general_2d = function(a,b,c,d) {
+// function(ap,bp,cp,dp) {
+  // var a = ap;
+  // var b = bp;
+  // var c = cp;
+  // var d = dp;
+  // var matrix = [
+  //   a, b,
+  //   c, d
+  // ];
   var index = 0;
   var output = [];
   // console.log('init\t'+a+', '+b+',\n\t'+c+', '+d);
   while(index <= this.a.length) {
-    if (Math.abs(a*d - b*c) < c*d) { // equivalent to floor(a/c) === floor(b/d)
+    if (Math.floor(a/c) === Math.floor(b/d)) {
+    // if (Math.abs(a*d - b*c) < c*d) { // equivalent to floor(a/c) === floor(b/d)
       // console.log(Math.abs(a*d - b*c)+' < '+c*d);
       if (index === this.a.length) {
         b = a;
@@ -522,8 +535,10 @@ Cfraction.prototype.general_4d = function(a,b,c,d,e,f,g,h,that) {
       // e===0 || f===0 || g===0 || h===0 || 
     } 
     // else if (Math.abs(c/g-d/h)>Math.abs(b/f-d/h)) {
-    else if (Math.abs(b/f-a/e)<=Math.abs(c/g-a/e)) {
-      console.log('this');
+    // else if (Math.abs(b/f-a/e)<=Math.abs(c/g-a/e)) {
+    else if (Math.abs(b*e-a*f)/f<=Math.abs(c*e-a*g)/g) {
+      // console.log('this');
+      console.log('input from x');
       console.log(
         'a/e = '+Math.floor(a/e)+'\n'+
         'b/f = '+Math.floor(b/f)+'\n'+
@@ -560,7 +575,8 @@ Cfraction.prototype.general_4d = function(a,b,c,d,e,f,g,h,that) {
         ' '+e+'   '+g
       );
     } else {
-      console.log('that');
+      // console.log('that');
+      console.log('input from y');
       console.log(
         'a/e = '+Math.floor(a/e)+'\n'+
         'b/f = '+Math.floor(b/f)+'\n'+

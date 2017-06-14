@@ -4,13 +4,14 @@ var rMin, rMax, iMin, iMax;
 var tol, cr, ci;//0.03;
 
 var shift;
+
 function setup() {
   var cv = createCanvas(420, 630);
   cv.parent('newton-fractal');
   //size(200,200);
   //colorMode(HSB);
-  max = 80;
-  mult = 2;
+  max = 24;
+  mult = 1;//1.4;
   rScale = 2;
   iScale = rScale*height/width;
 
@@ -30,6 +31,8 @@ function setup() {
 
   shift = 2;
 
+  maxValue = 0
+
   background(0);
 }
 function draw() {
@@ -37,16 +40,15 @@ function draw() {
     if (i%width >= width/2 - 1) {
       var x = cr + rMin + (rMax-rMin)*((i+shift)%width)/width
       var y = ci + iMax + (iMin-iMax)*floor((i+shift)/width)/height
-      // set((i+shift)%width, floor((i+shift)/width), cubehelix(newton(x, y)/max,0.5,-1.5,3));
     } else {
       var x = cr + rMin + (rMax-rMin)*(i%width)/width
       var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
-      // set(i%width, floor(i/width), cubehelix(newton(x, y)/max,0.5,-1.5,3));
     }
     // var x = cr + rMin + (rMax-rMin)*(i%width)/width
     // var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
-    set(i%width, floor(i/width), cubehelix(newton(x, y)/max,0.5,-1.5,3));
+    set(i%width, floor(i/width), cubehelix(newton(x, y)/max,0.5,-1.5,2));
   }
+  console.log(maxValue)
   updatePixels();
   noLoop();
 }
@@ -61,7 +63,7 @@ function newton(real, imag) {
     if (newZ.distance_sqr(z) < tol*tol) return mult*j;
     z = newZ;
   }
-  return mult*max;
+  return max;
 }
 
 function cubehelix(lambda, s, r, hue) {

@@ -51,6 +51,10 @@ function draw() {
       var x = cr + rMin + (rMax-rMin)*(i%width)/width
       var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
     }
+
+    var equation = (method.value() === 'Householder\'s method')? "$$z_{n+1} = z_{n} - \\frac{p(z_n)}{p'(z_n)}\\left(1+\\frac{p(z_n)p''(z_n)}{2p'(z_n)^2}\\right)$$": "$$z_{n+1} = z_{n} - \\frac{p(z_n)}{p'(z_n)}\\left(1+\\frac{p(z_n)p''(z_n)}{2p'(z_n)^2}\\right)$$";
+
+    document.getElementById('equation').innerText = equation
     
     // var x = cr + rMin + (rMax-rMin)*(i%width)/width
     // var y = ci + iMax + (iMin-iMax)*floor(i/width)/height
