@@ -28,13 +28,11 @@
 			<!-- for the "What's this?" tabs -->
 			<script>
 			var acc = document.getElementsByClassName("accordion");
-			var pan = document.getElementsByClassName("panel");
 			var i;
-			for (var i = 0; i<acc.length; i++) {
+			for (i = 0; i<acc.length; i++) {
 			  acc[i].onclick = function(){
-			    // console.log('why is javascript the most nonsensical language of all time?');
 			    this.classList.toggle("active");
-			    pan[i-1].classList.toggle("show");
+			    this.parentNode.nextElementSibling.classList.toggle("show");
 			  };
 			};
 			</script>
