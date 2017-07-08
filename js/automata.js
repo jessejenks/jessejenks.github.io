@@ -84,7 +84,7 @@ function setup() {
   }
 
 
-  main_color = color(90,200,255)
+  main_color = color(90,165,255)
   white = color(255)
   // For generating a random rule
   var randRule = ['randomly generated rule', [], []];
