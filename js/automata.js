@@ -122,7 +122,7 @@ function draw() {
     set(3*xPos+1, 3*yPos+1, c);
   }
   
-  if (!paused && frameCount > 45) {
+  if (focused && !paused && frameCount > 40) {
     update();
     updatePixels();
   }
