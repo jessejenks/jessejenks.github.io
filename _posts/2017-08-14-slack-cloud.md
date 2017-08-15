@@ -9,7 +9,7 @@ date: 2017-08-14
 
 Word frequency data from the #general channel of the honeyfire slack
 
-<div id="vis"></div>
+<div id="vis" style="display: flex;justify-content: center;"></div>
 
 <script type="text/javascript">
 // https://stackoverflow.com/questions/26881137/create-dynamic-word-cloud-using-d3-js
