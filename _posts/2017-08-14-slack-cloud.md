@@ -23,22 +23,22 @@ Word frequency data from the #general channel of the honeyfire slack
 
 	var color_scale = d3.scale.category20();
 
-	d3.json("../../../../data/slack_data/slack.json", function(error, data) {
+	d3.json("../../../../data/slack_data/cleaned_data.json", function(error, data) {
 		if (error) throw error;
 		var w;
 		var avoid;
 		data.messages.forEach(function(m) {
-			if (m.type === "message" && m.text) {
-				var list = m.text.split(" ");
-				for (var i = 0; i<list.length; i++) {
-					w = list[i].toLowerCase();
+			// if (m.type === "message" && m.text) {
+				// var list = m.text.split(" ");
+				// for (var i = 0; i<list.length; i++) {
+					w = m.word.toLowerCase();
 					if (w === "i") w = "I";
-					avoid = w.substring(0,3)
-					if (avoid[0] !== "<" && avoid !== "```") {
+					// avoid = w.substring(0,3)
+					// if (avoid[0] !== "<" && avoid !== "```") {
 						words[w] = words.hasOwnProperty(w) ? words[w] + 1: 1;
-					}
-				}
-			}
+					// }
+				// }
+			// }
 		});
 
 		var word_data = []
