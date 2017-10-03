@@ -8,8 +8,8 @@ date: 2017-06-28
 <script src="../../../../js/markov.js"></script>
 
 <div id="markov" style="display: flex;justify-content: center;"></div>
-
-<div style="display: flex;justify-content: center;text-align:center">Type to generate markov chain stats<br>click to reset<br>Ignores capitalization and punctuation</div>
+<div id="reset_button" style="display: flex;justify-content: center;text-align:center;"></div>
+<div style="display: flex;justify-content: center;text-align:center">Type to generate markov chain stats<br>Ignores capitalization and punctuation</div>
 <button class="accordion">What's this?</button>
 <div class="panel">
 <p>
