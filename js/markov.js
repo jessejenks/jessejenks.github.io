@@ -1,16 +1,19 @@
+var reset_button;
 function setup() {
 	var cv = createCanvas(3*windowWidth/4, min(500, windowHeight))
 	cv.parent('markov')
 
+	reset_button = createButton('reset markov chain');
+	reset_button.parent('reset_button');
+	reset_button.mousePressed(resetEverything);
+
 	sentence = ''
-	display_sentence = sentence
+	display_sentence = ''
 	graph = {}
 
 	r = 100
 
 	order = 1
-
-	ignore = [' ', '.', ',', '?', '!', '\'', '"', ':', ';', '-']
 
 	pad = 10
 
@@ -39,7 +42,7 @@ function draw() {
 		l = keys.length
 		for (var i = 0; i<l; i++) {
 			theta = PI*2*i/l
-			text(keys[i], cx+cos(theta)*r, cy+sin(theta)*r)
+			text(keys[i], cx+Math.cos(theta)*r, cy+Math.sin(theta)*r)
 		}
 
 		r *= 0.9
@@ -90,52 +93,75 @@ function draw() {
 }
 
 function keyTyped() {
-	display_sentence += ''+key
-	if (!ignore.includes(key)) {
-		sentence += ''+key.toLowerCase()
-		if (sentence.length === order+1) {
-			k = ''
-			v = ''
-			for (var i = 0; i<order; i++) {
-				k += sentence[i]
-				v += sentence[i+1]
+	if (key === '') {	
+		if (!display_sentence[display_sentence.length-1].toLowerCase().match(/[a-z0-9]/)) {
+			display_sentence = display_sentence.substring(0,display_sentence.length-1);
+		} else {	
+			var to_be_removed = display_sentence[display_sentence.length-1].toLowerCase();
+			// var last_ind = display_sentence.lastIndexOf(to_be_removed)
+			sentence = sentence.substring(0,sentence.length-1)
+			display_sentence = display_sentence.substring(0,display_sentence.length-1);//last_ind)
+
+			var parent = sentence[sentence.length-1]
+
+			if (graph[parent]) {
+				var count = graph[parent][to_be_removed];
+
+				if (count > 1) {
+					graph[parent][to_be_removed]--;
+				} else {
+					delete graph[parent][to_be_removed];
+				}
+
+				if (graph[to_be_removed] && Object.keys(graph[to_be_removed]).length === 0) {
+					delete graph[to_be_removed];
+				}
 			}
-			graph[k] = {}
-			graph[k][v] = 1
-			graph[v] = {}
-		} else if (sentence.length > order+1) {
-			l = sentence.length
-			k = ''
-			// +sentence[l-3]+sentence[l-2]
-			v = ''
-			// +sentence[l-2]+sentence[l-1]
-			for (var i = l-order-1; i<l-1; i++) {
-				k += sentence[i]
-				v += sentence[i+1]
-			}
-			if (Object.keys(graph).includes(v)) {
-				if (Object.keys(graph[k]).includes(v)) {
-					graph[k][v]++
+		}
+	} else {
+		display_sentence += ''+key
+		key = key.toLowerCase()
+		if (key.match(/[a-z0-9]/i)) {
+			sentence += ''+key
+			if (sentence.length === order+1) {
+				k = ''
+				v = ''
+				for (var i = 0; i<order; i++) {
+					k += sentence[i]
+					v += sentence[i+1]
+				}
+				graph[k] = {}
+				graph[k][v] = 1
+				graph[v] = {}
+			} else if (sentence.length > order+1) {
+				l = sentence.length
+				k = ''
+				v = ''
+				for (var i = l-order-1; i<l-1; i++) {
+					k += sentence[i]
+					v += sentence[i+1]
+				}
+				if (Object.keys(graph).includes(v)) {
+					if (Object.keys(graph[k]).includes(v)) {
+						graph[k][v]++
+					} else {
+						graph[k][v] = 1
+					}
 				} else {
 					graph[k][v] = 1
+					graph[v] = {}
 				}
-			} else {
-				graph[k][v] = 1
-				// console.log('added new edge from '+k+' to '+v)
-				graph[v] = {}
-				// console.log('added new node '+v)
 			}
 		}
 	}
 	redraw()
-
-	// this does the equicqlent of event.preventDefault
+	// this does the equivalent of event.preventDefault
 	// essentially cause hitting space to go down the page 
 	// is default behavior and this prevents that
 	return false
 }
 
-function mousePressed() {
+function resetEverything() {
 	sentence = ''
 	display_sentence = ''
 	graph = {}
