@@ -10,6 +10,7 @@ date: 2017-06-28
 <div id="markov" style="display: flex;justify-content: center;"></div>
 <div id="reset_button" style="display: flex;justify-content: center;text-align:center;"></div>
 <div style="display: flex;justify-content: center;text-align:center">Type to generate markov chain stats<br>Ignores capitalization and punctuation</div>
+<div id="message"></div>
 <button class="accordion">What's this?</button>
 <div class="panel">
 <p>

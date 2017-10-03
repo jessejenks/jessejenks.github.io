@@ -1,4 +1,5 @@
-var reset_button;
+var reset_button, generate_button;
+var color_scale;
 function setup() {
 	var cv = createCanvas(3*windowWidth/4, min(500, windowHeight))
 	cv.parent('markov')
@@ -6,6 +7,10 @@ function setup() {
 	reset_button = createButton('reset markov chain');
 	reset_button.parent('reset_button');
 	reset_button.mousePressed(resetEverything);
+
+	generate_button = createButton('generate nonsense');
+	generate_button.parent('reset_button');
+	generate_button.mousePressed(generateSentence);
 
 	sentence = ''
 	display_sentence = ''
@@ -18,6 +23,9 @@ function setup() {
 	pad = 10
 
 	max_line_width = 8
+
+	// color_scale = colorbrewer['RdYlBu'][11];
+
 	noFill()
 	noLoop()
 }
@@ -42,7 +50,7 @@ function draw() {
 		l = keys.length
 		for (var i = 0; i<l; i++) {
 			theta = PI*2*i/l
-			text(keys[i], cx+Math.cos(theta)*r, cy+Math.sin(theta)*r)
+			text(keys[i] === ' '? '_': keys[i], cx+Math.cos(theta)*r, cy+Math.sin(theta)*r)
 		}
 
 		r *= 0.9
@@ -83,6 +91,7 @@ function draw() {
 
 				noStroke()
 				fill(0, 63 + (192)*size/sum)
+				// fill(color_scale[int(11*(size-1)/sum)]);
 
 				// matrix
 				rect(pad + width/2 + parent_index*rect_width,
@@ -94,7 +103,7 @@ function draw() {
 
 function keyTyped() {
 	if (key === '') {	
-		if (!display_sentence[display_sentence.length-1].toLowerCase().match(/[a-z0-9]/)) {
+		if (!display_sentence[display_sentence.length-1].toLowerCase().match(/[a-z0-9 ]/)) {
 			display_sentence = display_sentence.substring(0,display_sentence.length-1);
 		} else {	
 			var to_be_removed = display_sentence[display_sentence.length-1].toLowerCase();
@@ -121,7 +130,7 @@ function keyTyped() {
 	} else {
 		display_sentence += ''+key
 		key = key.toLowerCase()
-		if (key.match(/[a-z0-9]/i)) {
+		if (key.match(/[a-z0-9 ]/)) {
 			sentence += ''+key
 			if (sentence.length === order+1) {
 				k = ''
@@ -165,7 +174,27 @@ function resetEverything() {
 	sentence = ''
 	display_sentence = ''
 	graph = {}
+	document.getElementById("message").innerText = '';
 	redraw()
+}
+
+function generateSentence() {
+	document.getElementById("message").innerText = '';
+	var letters = Object.keys(graph);
+	var sent = '';
+	for (var i = 0; i<10; i++) {
+		if (letters[0]) {
+			var current_letter = letters[int(Math.random()*letters.length)];
+			sent += current_letter;
+			letters = []
+			for (var k in graph[current_letter]) {
+				for (var j = 0; j<graph[current_letter][k]; j++) {
+					letters.push(k);
+				}
+			}
+		}
+	}
+	document.getElementById("message").innerText = sent;
 }
 
 function windowResized() {
