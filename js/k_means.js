@@ -8,7 +8,7 @@ function setup() {
 	k = 5
 
 	points = []
-	for (var i = 0; i<num; i++) {
+	for (var i = 0; i<num/k; i++) {
 		var u = Math.random()
 		var v = Math.random()
 		points[i] = {
