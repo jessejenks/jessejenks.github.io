@@ -3,7 +3,8 @@ layout: post
 title: "Continued Fractions"
 date: 2016-12-23
 ---
-<script src="/js/cfraction.js"></script>
+<!-- <script src="/js/cfraction.js"></script> -->
+<script src="https://raw.githubusercontent.com/jessejenks/continued-fractions/master/cfraction.js"></script>
 ### A quick guide to my continued fraction library so far.
 This will be updated and reformatted as I work out bugs and add features.
 <div id = "euler"></div>
