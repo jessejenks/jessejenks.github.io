@@ -5,7 +5,7 @@ date: 2017-02-13
 ---
 Starter code for advanced version of [python](repl.it)
 
-~~~ python
+{% highlight python %}
 def mandelbrot(rCenter, iCenter, scale, size):
 	rmin = rCenter - float(scale)/2
 	rmax = rCenter + float(scale)/2
@@ -24,12 +24,12 @@ def mandelbrot(rCenter, iCenter, scale, size):
 				t += 1
 			out += '  ' if (int(t/4)==32) else chr(int(t/4)+33)+' '
 		print out
-~~~
+{% endhighlight %}
 
 
 Starter code for [processing](https://alpha.editor.p5js.org)
 
-~~~ javascript
+{% highlight javascript %}
 //noprotect
 var cx = -0.75
 var cy = 0
@@ -68,4 +68,4 @@ function mandelbrot(x,y) {
 	}
 	return t
 }
-~~~
+{% endhighlight %}
