@@ -5,12 +5,16 @@ date: 2017-03-17
 ---
 <script src="../../../../js/libraries/p5.js" type="text/javascript"></script>
 <script src="../../../../js/libraries/p5.dom.js" type="text/javascript"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 <script src="../../../../js/sonnets.js" type="text/javascript"></script>
 
 <div id="similarity" style="display: flex;justify-content: center;"></div>
 <div id="selectors" style="display: flex;justify-content: center;text-align:center;margin-top:10px;"></div>
 <div id="tfidf" style="display: flex;justify-content: center;text-align:center;margin-top:10px;"></div>
-Suppose we are given the task of deciding how "similar" or "dissimilar" two poems are. For us humans, it is relatively easy to just read two poems and decide that yes, these two poems are similar, perhaps based on style or subject. But if we are given dozens of poems this becomes more difficult. On top of that, how are we deciding that two poems are similar or dissimilar? In the field of Natural Language Processing there are a few simple tools that can give us a more precise definition of how'similar' twp pieces of text are. I just took a course called "Intro to A.I." where my final project touched on this, and one day I had a 23 hour train ride ahead of me, so I decided to analyze all of Shakespeare's sonnets.
+<span style="display: flex;justify-content: center;text-align:center;font-size:14px;">The similarity of every Shakespearean sonnet with every other one.</span>
+
+Suppose we are given the task of deciding how "similar" or "dissimilar" two poems are. For us humans, it is relatively easy to just read two poems and decide that yes, these two poems are similar, perhaps based on style or subject. But if we are given dozens of poems this becomes more difficult. On top of that, two people may disagree wildly even when you choose the same judging criteria. In the field of Natural Language Processing there are a few simple tools that can give us a more precise definition of how 'similar' two pieces of text are. I just took a course called "Intro to A.I." where my final project touched on this, and one day I had a 23 hour train ride ahead of me, so I decided to analyze all of Shakespeare's sonnets.
 
 How do we decide which words are the most _important_ words in a piece of text? Well, it's not really possible to give an objective measure of importance to words. But what we _can_ do is to measure the importance of a word in a piece of text (called a document) _relative_ to a set of documents.
 
@@ -39,7 +43,6 @@ Or if it were, it bore not beauty's name;
 But now is black beauty's successive heir,
 And beauty slander'd with a bastard shame:
 ```
-
 
 
 ### Computing TFIDF scores

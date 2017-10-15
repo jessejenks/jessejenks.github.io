@@ -9,13 +9,15 @@ var current_threshold;
 
 var max_rows;
 
+var brewer;
 
 function preload() {
 	similarities = []
 	// load sonnets, tfidf, and cosine similarities
 	similarities[0] = loadJSON("../../../../data/sonnet_data/sonnet_similarities_10.json");
 	similarities[1] = loadJSON("../../../../data/sonnet_data/sonnet_similarities_20.json");
-	similarities[2] = loadJSON("../../../../data/sonnet_data/sonnet_similarities_40.json");
+	similarities[2] = loadJSON("../../../../data/sonnet_data/sonnet_similarities_30.json");
+	similarities[3] = loadJSON("../../../../data/sonnet_data/sonnet_similarities_40.json");
 
 	
 
@@ -32,13 +34,15 @@ function setup() {
 	current_threshold = 0;
 	current_scores = tfidf_scores[0];
 
-	sonnet_selector = createSelect()
-	sonnet_selector.option('Sonnet 1');
-	sonnet_selector.changed(sonnet_changed);
+		// sonnet_selector = createSelect()
+		// sonnet_selector.option('Sonnet 1');
+		// sonnet_selector.changed(sonnet_changed);
 
 	threshold_selector = createSelect();
 	threshold_selector.option('10');
 	threshold_selector.option('20');
+	threshold_selector.option('30');
+	threshold_selector.option('40');
 	threshold_selector.changed(threshold_changed);
 
 	tfidf_selector = createSelect();
@@ -48,43 +52,47 @@ function setup() {
 	tfidf_selector.option('Sonnet 127');
 	tfidf_selector.changed(tfidf_changed);
 
-	sonnet_selector.parent('selectors')
+	// sonnet_selector.parent('selectors')
 	threshold_selector.parent('selectors')
 	tfidf_selector.parent('selectors')
 
-	colorMode(HSB,255);
+	// brewer = ;
 	// noStroke();
 }
 
 function draw() {
-	background(255);
+	let c;
 	for (var i = 1; i<similarities[current_threshold].length; i++) {
+		set(i,i,color(0));
 		for (var j in similarities[current_threshold][i]) {
-			stroke(255.0 - 255.0*similarities[current_threshold][i][j]);
-			point(i,j);
-			point(j,i);
+			c = color(d3.interpolateRdPu(1-similarities[current_threshold][i][j]));
+			// c = color(255-255*similarities[current_threshold][i][j])
+			set(i,j,c);
+			set(j,i,c);
 		}
 	}
+	updatePixels();
 	noLoop();
 }
 
 function sonnet_changed() {
 	let current_sonnet = sonnet_selector.value().split(' ')[1];
-	console.log(current_sonnet)
+	// console.log(current_sonnet)
 	current_scores = tfidf_scores[parseInt(current_sonnet[current_sonnet.length-1]-1)];
 	redraw();
 }
 
 function threshold_changed() {
 	let threshold = threshold_selector.value();
-	console.log(threshold)
+	// console.log(threshold)
 	if (threshold === '10') {
 		current_threshold = 0;
 	} else if (threshold === '20') {
-		console.log('yep')
 		current_threshold = 1;
-	} else if (threshold === '40') {
+	} else if (threshold === '30') {
 		current_threshold = 2;
+	} else if (threshold === '40') {
+		current_threshold = 3;
 	}
 	redraw();
 }
@@ -107,6 +115,7 @@ function tfidf_changed() {
 		let split, span;//, value;
 		// let max = parseFloat(current[0].split(', ')[1]);
 		// let min = parseFloat(current[9].split(', ')[1]);
+		colorMode(HSB,255);
 		for (var i = 0; i<10; i++) {
 			split = current[i].split(', ');
 			span = createSpan(split[0]);
@@ -117,6 +126,7 @@ function tfidf_changed() {
 			span.style('color',color(40.0*((i+1)/10)+100.0,100,255));
 			span.parent(tfidf);
 		}
+		colorMode(RGB);
 	}
 }
 
@@ -128,7 +138,7 @@ function tfidf_changed() {
 // var table;
 
 // function preload() {
-// 	table = loadTable("../../../../data/sonnet_data/sonnet_similarities_40.csv", "csv", "header");
+// 	table = loadTable("../../../../data/sonnet_data/sonnet_similarities_50.csv", "csv", "header");
 // }
 
 // function setup() {
@@ -148,5 +158,5 @@ function tfidf_changed() {
 // 		json[from][to] = val;
 // 	}
 
-// 	saveJSON(json, 'sonnet_similarities_40.json');
+// 	saveJSON(json, 'sonnet_similarities_50.json');
 // }
