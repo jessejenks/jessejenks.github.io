@@ -98,6 +98,19 @@ input[type=text]:focus {
   border: 2px solid #5e9bff;
 }
 
+/*select {
+  border:none;
+  background-color: #eee;
+  border-radius: 4px;
+}*/
+
+button {
+  width: 10em;
+  font-size: 0.8em;
+  font-family:'Josefin Sans';
+  margin: 8px;
+}
+
 button.accordion {
     background-color: #eee;
     color: #444;

@@ -6,6 +6,9 @@ var color_map;
 var rule_selector;
 var rule_map;
 var brewer;
+
+var rule_input;
+var rule_input_submit;
 function setup() {
 	var cv = createCanvas(512,512);
 	cv.parent('langston')
@@ -20,6 +23,7 @@ function setup() {
 		'LLRR':[true,true,false,false],
 		'LRRL':[true,true,false,false],
 		'RRLRR':[false,false,true,false,false],
+		'LLRRLLRR':[true,true,false,false,true,true,false,false],
 		'LLRRRLR':[true,true,false,false,false,true,false],
 		'LRRRRRLLR':[true,false,false,false,false,false,true,true,false]
 	}
@@ -28,11 +32,15 @@ function setup() {
 	for (let r in rule_map) {
 		rule_selector.option(r);
 	}
-	rule_selector.changed(newRule);
+	rule_selector.changed(selectorChanged);
 
 	brewer = colorbrewer.Set3['12'];
-	newRule();
+	selectorChanged();
 	noStroke();
+
+	rule_input = select('#enter-rule');
+	rule_input_submit = select('#enter-rule-submit');
+	rule_input_submit.mousePressed(parseRule);
 }
 
 function draw() {
@@ -116,8 +124,12 @@ function goDown() {
 	}
 }
 
-function newRule() {
-	rule = rule_map[rule_selector.value()];
+function selectorChanged() {
+	newRule(rule_map[rule_selector.value()]);
+}
+
+function newRule(rule_array) {
+	rule = rule_array;
 	let indices = [];
 	let rand;
 	for (let i = 1; i<rule.length; i++) {
@@ -157,4 +169,20 @@ function newRule() {
 	ant_pos = (grid.length + grid_size)/2;
 
 	direction = 'u';
+}
+
+function parseRule() {
+	let rl = rule_input.value().toUpperCase();
+	rl = rl.replace(/[^LR]/g,'');
+	if (rl.length > 0 && rl.length<12) {
+		let bool_rule = [];
+		for (let i in rl) {
+			bool_rule.push(rl[i]=='L');
+		}
+		if (!Object.keys(rule_map).includes(rl)) {
+			rule_map[rl]=bool_rule
+			rule_selector.option(rl);
+		}
+		newRule(bool_rule);
+	}
 }
