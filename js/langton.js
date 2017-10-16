@@ -12,7 +12,7 @@ var rule_input_submit;
 function setup() {
 	var cv = createCanvas(512,512);
 	cv.parent('langton')
-	grid_size = 32;
+	grid_size = 64;
 
 	w = width/grid_size;
 	grid = new Uint8Array(grid_size*grid_size);
@@ -21,12 +21,15 @@ function setup() {
 		'RL':[false,true],
 		'LRL':[true,false,true],
 		'LLRR':[true,true,false,false],
-		'LRRL':[true,true,false,false],
+		'LRRL':[true,false,false,true],
 		'RRLRR':[false,false,true,false,false],
 		'LLRRRLR':[true,true,false,false,false,true,false],
 		'LRRRRRLLR':[true,false,false,false,false,false,true,true,false],
+		'RRLLLRLLLRRR':[false,false,true,true,true,false,true,true,true,false,false,false],
 		'LLLLRRLLLLRRL':[true,true,true,true,false,false,true,true,true,true,false,false,true],
-		'RLRLRLRLRLRLRLRLRL':[false,true,false,true,false,true,false,true,false,true,false,true,false,true,false,true,false,true]
+		'RLLRLRRLLRRLRLLR':[false,true,true,false,true,false,false,true,true,false,false,true,false,true,true,false],
+		'RLRLRLRLRLRLRLRLRL':[false,true,false,true,false,true,false,true,false,true,false,true,false,true,false,true,false,true],
+		'RLLRLRRLLRRLRLLRLRRLRLLRRLLRLRRL':[false,true,true,false,true,false,false,true,true,false,false,true,false,true,true,false,true,false,false,true,false,true,true,false,false,true,true,false,true,false,false,true]
 	}
 	rule_selector = createSelect()
 	rule_selector.parent('choose-rule')
@@ -46,7 +49,7 @@ function setup() {
 
 function draw() {
 	background('#666');
-	for (var i = 0; i<grid.length; i++) {
+	for (let i = 0; i<grid.length; i++) {
 		if (grid[i] !== 0) {
 			if (i === ant_pos) {
 				fill(color_map['ant'])
@@ -61,7 +64,7 @@ function draw() {
 
 function update() {
 	let curr = grid[ant_pos];
-	for (var i = 0; i<rule.length; i++) {
+	for (let i = 0; i<rule.length; i++) {
 		if (curr === i) {
 			grid[ant_pos] = (i+1)%rule.length;
 			if (rule[grid[ant_pos]]) {
@@ -175,7 +178,7 @@ function newRule(rule_array) {
 
 	color_map['ant'] = '#fff';
 
-	for (var i = 0; i<grid.length; i++) {
+	for (let i = 0; i<grid.length; i++) {
 		grid[i] = 0;
 	}
 
@@ -196,6 +199,8 @@ function parseRule() {
 			rule_map[rl]=bool_rule
 			rule_selector.option(rl);
 		}
+		console.log(bool_rule);
 		newRule(bool_rule);
 	}
 }
+
