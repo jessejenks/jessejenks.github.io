@@ -23,9 +23,10 @@ function setup() {
 		'LLRR':[true,true,false,false],
 		'LRRL':[true,true,false,false],
 		'RRLRR':[false,false,true,false,false],
-		'LLRRLLRR':[true,true,false,false,true,true,false,false],
 		'LLRRRLR':[true,true,false,false,false,true,false],
-		'LRRRRRLLR':[true,false,false,false,false,false,true,true,false]
+		'LRRRRRLLR':[true,false,false,false,false,false,true,true,false],
+		'LLLLRRLLLLRRL':[true,true,true,true,false,false,true,true,true,true,false,false,true],
+		'RLRLRLRLRLRLRLRLRL':[false,true,false,true,false,true,false,true,false,true,false,true,false,true,false,true,false,true]
 	}
 	rule_selector = createSelect()
 	rule_selector.parent('choose-rule')
@@ -130,23 +131,35 @@ function selectorChanged() {
 
 function newRule(rule_array) {
 	rule = rule_array;
+
 	let indices = [];
-	let rand;
-	for (let i = 1; i<rule.length; i++) {
-		rand = floor(Math.random()*brewer.length)
-		while (indices.includes(rand)) {
-			rand = floor(Math.random()*brewer.length)	
-		}
-		indices.push(rand);
-	}
 
 	color_map = {
 		0:'#666'
 	}
 
-	for (let i = 0; i<rule.length; i++) {
-		color_map[i+1] = brewer[indices[i]];
+	if (rule.length < 12) {
+		brewer = colorbrewer.Set3['12'];
+		let rand;
+		for (let i = 1; i<rule.length; i++) {
+			rand = floor(Math.random()*brewer.length)
+			while (indices.includes(rand)) {
+				rand = floor(Math.random()*brewer.length)	
+			}
+			indices.push(rand);
+		}
+
+
+		for (let i = 0; i<rule.length; i++) {
+			color_map[i+1] = brewer[indices[i]];
+		}
+	} else {
+		brewer = d3.scaleSequential(d3.interpolateSpectral);
+		for (let i = 1; i<rule.length; i++) {
+			color_map[i] = brewer(i/rule.length);
+		}
 	}
+
 
 	const par = document.getElementById('display-rule');
 	while (par.firstChild) {
@@ -174,7 +187,7 @@ function newRule(rule_array) {
 function parseRule() {
 	let rl = rule_input.value().toUpperCase();
 	rl = rl.replace(/[^LR]/g,'');
-	if (rl.length > 0 && rl.length<12) {
+	if (rl.length > 1) {
 		let bool_rule = [];
 		for (let i in rl) {
 			bool_rule.push(rl[i]=='L');
