@@ -11,7 +11,7 @@ var rule_input;
 var rule_input_submit;
 function setup() {
 	var cv = createCanvas(512,512);
-	cv.parent('langston')
+	cv.parent('langton')
 	grid_size = 32;
 
 	w = width/grid_size;
