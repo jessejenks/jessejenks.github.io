@@ -9,17 +9,25 @@ var brewer;
 
 var rule_input;
 var rule_input_submit;
+
+var pause_button,reset_button,color_button;
+
+var color_schemes;
+var prev_color_index;
 function setup() {
 	var cv = createCanvas(512,512);
-	cv.parent('langton')
-	grid_size = 64;
+	cv.parent('langton');
 
+	is_paused = false;
+
+	grid_size = 64;
 	w = width/grid_size;
 	grid = new Uint8Array(grid_size*grid_size);
 	// left = true
 	rule_map = {
 		'RL':[false,true],
 		'LRL':[true,false,true],
+		'RLL':[false,true,true],
 		'LLRR':[true,true,false,false],
 		'LRRL':[true,false,false,true],
 		'RRLRR':[false,false,true,false,false],
@@ -29,7 +37,8 @@ function setup() {
 		'LLLLRRLLLLRRL':[true,true,true,true,false,false,true,true,true,true,false,false,true],
 		'RLLRLRRLLRRLRLLR':[false,true,true,false,true,false,false,true,true,false,false,true,false,true,true,false],
 		'RLRLRLRLRLRLRLRLRL':[false,true,false,true,false,true,false,true,false,true,false,true,false,true,false,true,false,true],
-		'RLLRLRRLLRRLRLLRLRRLRLLRRLLRLRRL':[false,true,true,false,true,false,false,true,true,false,false,true,false,true,true,false,true,false,false,true,false,true,true,false,false,true,true,false,true,false,false,true]
+		'RLLRLRRLLRRLRLLRLRRLRLLRRLLRLRRL':[false,true,true,false,true,false,false,true,true,false,false,true,false,true,true,false,
+											true,false,false,true,false,true,true,false,false,true,true,false,true,false,false,true]
 	}
 	rule_selector = createSelect()
 	rule_selector.parent('choose-rule')
@@ -38,13 +47,32 @@ function setup() {
 	}
 	rule_selector.changed(selectorChanged);
 
-	brewer = colorbrewer.Set3['12'];
+	color_schemes = [
+		d3.schemeSet3,
+		d3.scaleSequential(d3.interpolateSpectral),
+		d3.interpolateRdYlBu,
+		d3.interpolateGnBu,
+		d3.interpolateRdBu,
+		d3.interpolatePiYG,
+		d3.interpolatePuOr,
+		d3.interpolatePRGn
+	];
+	prev_color_index = -1;
+	brewer = color_schemes[0];//d3.schemeSet3;//colorbrewer.Set3['12'];
 	selectorChanged();
 	noStroke();
 
 	rule_input = select('#enter-rule');
 	rule_input_submit = select('#enter-rule-submit');
+	rule_input_submit.style('width','10em');
 	rule_input_submit.mousePressed(parseRule);
+
+	pause_button = select('#pause-button');
+	pause_button.mousePressed(pause);
+	reset_button = select('#reset-button');
+	reset_button.mousePressed(setupGrid);
+	color_button = select('#color-button');
+	color_button.mousePressed(changeColors);
 }
 
 function draw() {
@@ -59,7 +87,9 @@ function draw() {
 			ellipse(w*(i%grid_size)+w/2,w*floor(i/grid_size)+w/2,w,w);
 		}
 	}
-	update();
+	if (!is_paused) {
+		update();
+	}
 }
 
 function update() {
@@ -97,17 +127,17 @@ function update() {
 
 function goRight() {
 	direction = 'r';
-	ant_pos--;
-	if (ant_pos < 0 || ant_pos%grid_size === grid_size-1) {
-		ant_pos += grid_size;
+	ant_pos++;
+	if (ant_pos%grid_size === 0) {
+		ant_pos-=grid_size;
 	}
 }
 
 function goLeft() {
 	direction = 'l'
-	ant_pos++;
-	if (ant_pos%grid_size === 0) {
-		ant_pos-=grid_size;
+	ant_pos--;
+	if (ant_pos < 0 || ant_pos%grid_size === grid_size-1) {
+		ant_pos += grid_size;
 	}
 }
 
@@ -132,18 +162,15 @@ function selectorChanged() {
 	newRule(rule_map[rule_selector.value()]);
 }
 
-function newRule(rule_array) {
-	rule = rule_array;
-
-	let indices = [];
-
+function changeColors() {
 	color_map = {
 		0:'#666'
 	}
 
+	let rand;
 	if (rule.length < 12) {
-		brewer = colorbrewer.Set3['12'];
-		let rand;
+		brewer = color_schemes[0]; //d3.schemeSet3;//colorbrewer.Set3['12'];
+		let indices = [];
 		for (let i = 1; i<rule.length; i++) {
 			rand = floor(Math.random()*brewer.length)
 			while (indices.includes(rand)) {
@@ -151,18 +178,22 @@ function newRule(rule_array) {
 			}
 			indices.push(rand);
 		}
-
-
 		for (let i = 0; i<rule.length; i++) {
 			color_map[i+1] = brewer[indices[i]];
 		}
 	} else {
-		brewer = d3.scaleSequential(d3.interpolateSpectral);
+		rand = 1+floor(Math.random()*(color_schemes.length-1));
+		while (rand === prev_color_index) {
+			rand = +floor(Math.random()*(color_schemes.length-1));
+		}
+		prev_color_index = rand;
+		brewer = color_schemes[rand];//d3.scaleSequential(d3.interpolateSpectral);
 		for (let i = 1; i<rule.length; i++) {
 			color_map[i] = brewer(i/rule.length);
 		}
 	}
 
+	color_map['ant'] = '#fff';
 
 	const par = document.getElementById('display-rule');
 	while (par.firstChild) {
@@ -175,15 +206,20 @@ function newRule(rule_array) {
 		span.style('color',color_map[r])
 		span.parent('display-rule')
 	}
+}
 
-	color_map['ant'] = '#fff';
+function newRule(rule_array) {
+	rule = rule_array
+	changeColors();
+	setupGrid();
+}
 
+function setupGrid() {
 	for (let i = 0; i<grid.length; i++) {
 		grid[i] = 0;
 	}
 
 	ant_pos = (grid.length + grid_size)/2;
-
 	direction = 'u';
 }
 
@@ -204,3 +240,6 @@ function parseRule() {
 	}
 }
 
+function pause() {
+	is_paused = !is_paused;
+}
