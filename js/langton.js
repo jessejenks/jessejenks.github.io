@@ -184,7 +184,7 @@ function changeColors() {
 	} else {
 		rand = 1+floor(Math.random()*(color_schemes.length-1));
 		while (rand === prev_color_index) {
-			rand = +floor(Math.random()*(color_schemes.length-1));
+			rand = 1+floor(Math.random()*(color_schemes.length-1));
 		}
 		prev_color_index = rand;
 		brewer = color_schemes[rand];//d3.scaleSequential(d3.interpolateSpectral);
