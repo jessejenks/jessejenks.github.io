@@ -27,24 +27,27 @@
 
 			{{ content }}
 
-			</div><!-- /.container -->
+			</div>
 			<!-- for the "What's this?" tabs -->
 			<script>
 			var acc = document.getElementsByClassName("accordion");
-			var i;
+			let i;
 			for (i = 0; i<acc.length; i++) {
-			  acc[i].onclick = function(){
-			    this.classList.toggle("active");
-			    this.parentNode.nextElementSibling.classList.toggle("show");
+				acc[i].onclick = function(){
+				this.classList.toggle("active");
+				this.parentNode.nextElementSibling.classList.toggle("show");
 			  };
 			};
 			</script>
-			<footer>
-    		<ul>
-      		<li><a href="mailto:jjenks@pugetsound.edu">email</a></li>
-      		<li><a target="_blank" href="https://www.github.com/jessejenks">github.com/jessejenks</a></li>
-					<li>Math, Computer Science student at <a href="http://www.pugetsound.edu/">UPS</a></li>
+			<footer style="justify-content: center;">
+				<ul>
+					<li><a href="mailto:jjenks@pugetsound.edu">email</a></li>
+					<li><a target="_blank" href="https://www.github.com/jessejenks">github</a></li>
+					<li>Math, C.S. student at <a href="http://www.pugetsound.edu/">UPS</a></li>
+				</ul>
+				<ul style="margin-top:-0.8em;">
 					<li><a target="_blank" href="http://p5js.org/"><img title="p5js" src="/data/p5js.png" height="22px" border="0"></a></li>
+					<a href="https://d3js.org"><img title="D3js" src="https://d3js.org/logo.svg" height="22px"></a>
 					<li><a target="_blank" href="https://www.mathjax.org"><img title="Powered by MathJax" src="https://cdn.mathjax.org/mathjax/badge/badge.gif" height="22px" border="0" alt="Powered by MathJax"></a></li>
 					<li><a target="_blank" id="transcendental"></a></li>
 				</ul>
