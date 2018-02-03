@@ -126,9 +126,9 @@ date: 2018-01-18
 		// for (let i = 0; i<target.length; i++) {
 		// 	context.lineTo(target[i][0], target[i][1]);
 		// }
-		context.strokeStyle = 'rgba(255,180,180)';
-		context.stroke();
-		context.closePath();
+		// context.strokeStyle = 'rgba(255)';//rgba(255,180,180)';
+		// context.stroke();
+		// context.closePath();
 	
 		let cntrd;
 		centroids = [];
@@ -166,8 +166,8 @@ date: 2018-01-18
 			context.fill();
 			// d3.polygonArea(polygons[i])
 			// context.arc(sites[i][0],sites[i][1],radius,0,2*Math.PI);// d3.polygonArea(polygons[i])
-			context.strokeStyle = "rgba(150,220,220)";
-			context.stroke();
+			// context.strokeStyle = "rgba(150,220,220)";
+			// context.stroke();
 			context.closePath();
 
 
