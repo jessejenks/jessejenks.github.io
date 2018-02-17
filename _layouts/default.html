@@ -2,6 +2,8 @@
 	<html>
 		<head>
 			<title>{{ page.title }}</title>
+			<!-- favicon -->
+			<link rel="shortcut icon" type="image/x-icon" href="data/favicon.ico">
 			<!-- Load Mathjax stuff -->
 			<!-- deprecated -->
 			<!-- src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"> -->
@@ -31,8 +33,7 @@
 			<!-- for the "What's this?" tabs -->
 			<script>
 			var acc = document.getElementsByClassName("accordion");
-			let i;
-			for (i = 0; i<acc.length; i++) {
+			for (let i = 0; i<acc.length; i++) {
 				acc[i].onclick = function(){
 				this.classList.toggle("active");
 				this.parentNode.nextElementSibling.classList.toggle("show");
