@@ -49,8 +49,6 @@ Over winter break I plan to make a more interactive version.
 ---
 I first got interested in binary sequences in the summer of 2014 when I came across the Thue-Morse sequence ([A010060](https://oeis.org/A010060)). This sequence is defined recursively:
 
-<!-- <a target="_blank"><img src="http://latex.codecogs.com/png.latex?\dpi{150}&space;\begin{align*}&space;T_0&space;&=&space;0\\&space;T_{2n}&space;&=&space;T_n\\&space;T_{2n&plus;1}&space;&=&space;1&space;-&space;T_n&space;\end{align*}" /></a> -->
-
 {::nomarkdown}
 \[
   \begin{align*}
@@ -76,9 +74,9 @@ while (n < infinity) {
 
 Here's what that sequence looks like.
 
-<code>
+~~~ javascript
 01101001100101101001011001101001100101100110100101101001100101101001011001101001011010011001011001101...
-</code>
+~~~
 
 That summer I spent an inordinate amount of time working out this closed form solution
 

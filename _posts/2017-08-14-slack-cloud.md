@@ -3,7 +3,6 @@ layout: post
 title: "Slack"
 date: 2017-08-14
 ---
-
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script src="../../../../js/d3.layout.cloud.js"></script>
 

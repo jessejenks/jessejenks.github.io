@@ -5,7 +5,7 @@ date: 2018-01-18
 ---
 <script src="../../../../js/d3.v4.min.js"></script>
 <div style = "display: flex;justify-content: center;text-align: center;margin-below:50px;">
-	<canvas width="400" height="400"></canvas>
+	<canvas width="800" height="400"></canvas>
 </div>
 <script>
 	var canvas = d3.select("canvas").node()
@@ -17,9 +17,9 @@ date: 2018-01-18
 
 	var target = [];
 
-	var buffer_zone = 20;
+	var buffer_zone = 10;
 
-	var num_points = 200;
+	var num_points = 300;
 
 	let num_sample_points = 50;
 	let theta = 0;
@@ -27,28 +27,18 @@ date: 2018-01-18
 
 	var dt = 0.125;
 
-
-	target.push([
-			width/2 - 80,
-			height/3
-		]);
-	target.push([
-			width/2 + 80,
-			height/3
-		]);
-
 	// create target shape
 	for (let i = 0; i<num_sample_points; i++) {
-		theta = Math.PI*(i+10)/(num_sample_points-1 + 20);
+		theta = 2*Math.PI*(i+10)/(num_sample_points-1);
 		// 2*Math.PI*i/(num_sample_points-1);
 		target.push([
 				// infinity
-				// width/2 + 350*Math.cos(theta),
-				// height/2 - 150*Math.sin(2*theta)
+				width/2 + 300*Math.cos(theta),
+				height/2 - 120*Math.sin(2*theta)
 				
 				// smiley face
-				width/2 + 120*Math.cos(theta),
-				height/2 + 100*Math.sin(theta)
+				// width/2 + 120*Math.cos(theta),
+				// height/2 + 100*Math.sin(theta)
 			])
 	}
 
@@ -136,42 +126,42 @@ date: 2018-01-18
 
 
 		// draw target shape
-		// context.beginPath();
-		// context.lineTo(target[0][0], target[0][1]);
-		// for (let i = 0; i<target.length; i++) {
-		// 	context.lineTo(target[i][0], target[i][1]);
-		// }
-		// context.strokeStyle = 'rgba(255,180,180)';
-		// context.stroke();
-		// context.closePath();
+		context.beginPath();
+		context.lineTo(target[0][0], target[0][1]);
+		for (let i = 0; i<target.length; i++) {
+			context.lineTo(target[i][0], target[i][1]);
+		}
+		context.strokeStyle = 'rgba(255,180,180,0.8)';
+		context.stroke();
+		context.closePath();
 	
-		
+
 		let cntrd;
 		centroids = [];
-		// let cell_area;
-
-		// let scale_factor = Math.sqrt(2*Math.sqrt(3)/Math.PI);
-		// let radius;
+		let radius
 		for (var i = 0; i<polygons.length; i++) {
 			// draw voronoi cell
-			
-			// context.beginPath();
 			drawCell(polygons[i]);
 			context.strokeStyle = "rgba(150,220,220)";
-			context.lineWidth = 5;
+			context.lineWidth = 3;
 			context.stroke();
-			// context.closePath();
+			context.closePath();
 
 			cntrd = d3.polygonCentroid(polygons[i]);
 			centroids.push(cntrd);
 
 			// cell_area = d3.polygonArea(polygons[i]);
 
-			// radius = 0.35*scale_factor*Math.sqrt(cell_area);
+			// radius = 0.35*Math.sqrt(cell_area);
 
 			// context.beginPath();
 			// context.arc(cntrd[0],cntrd[1],radius,0,2*Math.PI);
-			// context.fillStyle = "rgba(150,255,150,0.6)";//color_scale[2];
+
+			// context.strokeStyle = "rgba(0,0,0,0)";
+			// context.stroke();
+
+			// context.fillStyle = 
+			// "rgba(150,255,150,0.6)";//color_scale[2];
 			// // seizure
 			// // color_scale[Math.floor(Math.random()*10)];//"red";
 			// // "rgba("+
@@ -181,11 +171,16 @@ date: 2018-01-18
 			// // 	+', '+
 			// // 	(85+Math.random()*170)+')';
 			// context.fill();
-			// // d3.polygonArea(polygons[i])
-			// // context.arc(sites[i][0],sites[i][1],radius,0,2*Math.PI);// d3.polygonArea(polygons[i])
-			// // context.strokeStyle = "rgba(150,220,220)";
-			// // context.stroke();
+
+
+
+			// d3.polygonArea(polygons[i])
+			// context.arc(sites[i][0],sites[i][1],radius,0,2*Math.PI);// d3.polygonArea(polygons[i])
+			// context.strokeStyle = "rgba(150,220,220)";
+			// context.stroke();
 			// context.closePath();
+
+
 
 
 			// context.beginPath();
@@ -199,6 +194,7 @@ date: 2018-01-18
 			// context.fillStyle = "blue";
 			// context.fill();
 			// context.closePath();
+			
 		}
 
 		function drawCell(cell) {
