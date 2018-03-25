@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Continued Fractions"
-date: 2016-11-16
+date: 2016-12-30
 ---
 <script src="https://cdn.rawgit.com/jessejenks/continued-fractions/master/cfraction.js"></script>
 ### A quick guide to my continued fraction library so far.

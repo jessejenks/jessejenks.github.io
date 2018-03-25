@@ -14,6 +14,9 @@ var pause_button,reset_button,color_button;
 
 var color_schemes;
 var prev_color_index;
+
+var min_x, max_x, min_y, max_y;
+var display_box;
 function setup() {
 	var cv = createCanvas(512,512);
 	cv.parent('langton');
@@ -25,16 +28,19 @@ function setup() {
 	grid = new Uint8Array(grid_size*grid_size);
 	// left = true
 	rule_map = {
+		'RLL':[false,true,true],
 		'RL':[false,true],
 		'LRL':[true,false,true],
-		'RLL':[false,true,true],
+		
 		'LLRR':[true,true,false,false],
 		'LRRL':[true,false,false,true],
 		'RRLRR':[false,false,true,false,false],
 		'LLRRRLR':[true,true,false,false,false,true,false],
 		'LRRRRRLLR':[true,false,false,false,false,false,true,true,false],
+		'LLRLLLRLLLLR':[true,true,false,true,true,true,false,true,true,true,true,false],
 		'RRLLLRLLLRRR':[false,false,true,true,true,false,true,true,true,false,false,false],
 		'LLLLRRLLLLRRL':[true,true,true,true,false,false,true,true,true,true,false,false,true],
+		'LRRLLLRRRRLLLLL':[true,false,false,true,true,true,false,false,false,false,true,true,true,true,true],
 		'RLLRLRRLLRRLRLLR':[false,true,true,false,true,false,false,true,true,false,false,true,false,true,true,false],
 		'RLRLRLRLRLRLRLRLRL':[false,true,false,true,false,true,false,true,false,true,false,true,false,true,false,true,false,true],
 		'RLLRLRRLLRRLRLLRLRRLRLLRRLLRLRRL':[false,true,true,false,true,false,false,true,true,false,false,true,false,true,true,false,
@@ -59,7 +65,6 @@ function setup() {
 	];
 	prev_color_index = -1;
 	brewer = color_schemes[0];//d3.schemeSet3;//colorbrewer.Set3['12'];
-	selectorChanged();
 	noStroke();
 
 	rule_input = select('#enter-rule');
@@ -73,6 +78,8 @@ function setup() {
 	reset_button.mousePressed(setupGrid);
 	color_button = select('#color-button');
 	color_button.mousePressed(changeColors);
+
+	newRule(rule_map['RL']);
 }
 
 function draw() {
@@ -90,6 +97,18 @@ function draw() {
 	if (!is_paused) {
 		update();
 	}
+
+	if (frameCount > 2) {
+		stroke(255,0,0);
+		if (display_box) {
+			line(min_x*w, min_y*w, min_x*w, max_y*w+w);
+			line(max_x*w+w, min_y*w, max_x*w+w, max_y*w+w);
+			line(min_x*w, min_y*w, max_x*w+w, min_y*w);
+			line(min_x*w, max_y*w+w, max_x*w+w, max_y*w+w);
+		}
+		noStroke();
+	}
+
 }
 
 function update() {
@@ -130,6 +149,14 @@ function goRight() {
 	ant_pos++;
 	if (ant_pos%grid_size === 0) {
 		ant_pos-=grid_size;
+
+		display_box = false;
+	}
+
+	if (display_box) {
+		if (ant_pos%grid_size > max_x) {
+			max_x = (ant_pos%grid_size);
+		}
 	}
 }
 
@@ -138,6 +165,13 @@ function goLeft() {
 	ant_pos--;
 	if (ant_pos < 0 || ant_pos%grid_size === grid_size-1) {
 		ant_pos += grid_size;
+
+		display_box = false;
+	}
+	if (display_box) {
+		if (ant_pos%grid_size < min_x) {
+			min_x = ant_pos%grid_size;
+		}
 	}
 }
 
@@ -147,6 +181,13 @@ function goUp() {
 		ant_pos -= grid_size;
 	} else {
 		ant_pos += grid.length - grid_size - 1;
+
+		display_box = false;
+	}
+	if (display_box) {
+		if (floor(ant_pos/grid_size) < min_y) {
+			min_y = floor(ant_pos/grid_size);
+		}
 	}
 }
 
@@ -155,6 +196,13 @@ function goDown() {
 	ant_pos += grid_size;
 	if (floor(ant_pos/grid_size) >= grid_size) {
 		ant_pos = ant_pos%grid_size;
+
+		display_box = false;
+	}
+	if (display_box) {
+		if (floor(ant_pos/grid_size) > max_y) {
+			max_y = floor(ant_pos/grid_size);
+		}
 	}
 }
 
@@ -220,7 +268,19 @@ function setupGrid() {
 	}
 
 	ant_pos = (grid.length + grid_size)/2;
+
+	grid[ant_pos - 1] = 1;
+	grid[ant_pos - grid_size] = 1;
+	grid[ant_pos - grid_size - 1] = 1;
 	direction = 'u';
+
+
+	min_x = 100000;
+	min_y = 100000;
+	max_x = -1;
+	max_y = -1;
+
+	// display_box = true;
 }
 
 function parseRule() {
