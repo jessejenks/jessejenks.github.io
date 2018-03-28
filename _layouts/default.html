@@ -3,7 +3,7 @@
 		<head>
 			<title>{{ page.title }}</title>
 			<!-- favicon -->
-			<link rel="shortcut icon" type="image/x-icon" href="data/favicon.ico">
+			<link rel="shortcut icon" type="image/png" href="{{ "../data/favicon.png?" | prepend: site.baseurl }}" >
 			<!-- Load Mathjax stuff -->
 			<!-- deprecated -->
 			<!-- src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"> -->
@@ -23,6 +23,12 @@
 		        	<li><a href="/about">About</a></li>
 					<li><a href="/links">Links</a></li>
 	        		<li><a href="/blog">Blog</a></li>
+	        		<li class="dropdown-item"><a>Resume</a>
+	        			<ul>
+	        				<li><a href="/resume">Online</a></li>
+	        				<li><a href="{{ "/data/Jesse_Jenks_Resume.pdf" | prepend: site.baseurl }}">PDF</a></li>
+	        			</ul>
+	        		</li>
 	    		</ul>
 			</nav>
 			<div class="container">
@@ -41,7 +47,7 @@
 			};
 			</script>
 			<footer style="justify-content: center;">
-				<ul>
+				<ul style="margin-top:5px;">
 					<li><a href="mailto:jjenks@pugetsound.edu">email</a></li>
 					<li><a target="_blank" href="https://www.github.com/jessejenks">github</a></li>
 					<li>Math, Computer Science student at <a href="http://www.pugetsound.edu/">UPS</a></li>
