@@ -58,7 +58,7 @@ so pdf version and online version both available?` -->
 	<span style="margin-right: 5%;">(510) 508-9512</span>
 	<span style="margin-left: 5%; margin-right: 5%;">
 		<a href="mailto:jesseendojenks@gmail.com?Subject=Hello%20there" target="_top">
-			jesseendojenks@gmail.com</a>
+			JesseEndoJenks@gmail.com</a>
 		</span>
 	<span style="margin-left: 5%;">4386 Wheelock Student Center<br/>Tacoma, WA 98416</span>
 </div>

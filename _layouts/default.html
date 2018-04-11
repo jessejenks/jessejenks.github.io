@@ -15,9 +15,15 @@
 			<link href='//fonts.googleapis.com/css?family=Josefin Sans' rel='stylesheet'>
 			<link rel="stylesheet" type="text/css" href="/css/main.css">
 			<link rel="stylesheet" type="text/css" href="/css/syntax.css">
+			<script>
+				function mobileNavbar () {
+					let x = document.getElementById("navbar-id");
+					x.className = (x.className==="navbar")? "navbar responsive" : "navbar";
+				}
+			</script>
 		</head>
 		<body>
-			<nav>
+			<nav class="navbar" id="navbar-id">
 	    		<ul>
 	        		<li><a href="/">Home</a></li>
 		        	<li><a href="/about">About</a></li>
@@ -29,6 +35,7 @@
 	        				<li><a href="{{ "/data/Jesse_Jenks_Resume.pdf" | prepend: site.baseurl }}">PDF</a></li>
 	        			</ul>
 	        		</li>
+	        		<li class="icon"><a href="javascript:void(0);" style="font-size:30px;" onclick="mobileNavbar()">&#9776;</a></li>
 	    		</ul>
 			</nav>
 			<div class="container">
@@ -48,7 +55,7 @@
 			</script>
 			<footer style="justify-content: center;">
 				<ul style="margin-top:5px;">
-					<li><a href="mailto:jjenks@pugetsound.edu">email</a></li>
+					<li><a href="mailto:jesseendojenks@gmail.com">email</a></li>
 					<li><a target="_blank" href="https://www.github.com/jessejenks">github</a></li>
 					<li>Math, Computer Science student at <a href="http://www.pugetsound.edu/">UPS</a></li>
 				</ul>
