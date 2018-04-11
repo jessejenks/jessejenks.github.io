@@ -115,17 +115,47 @@ border-radius: 4px;
 input[type=text]:focus {
 	border: 2px solid #5e9bff;
 }
-nav {
-	margin-top: 2%;
+.navbar {
+	margin-top: 4%;
 	margin-bottom: 4%;
 }
-nav ul li {
+.navbar ul li {
 	font-size: 1.2em;
 	display: inline-block;
 	margin-right: 4%;
 	vertical-align: bottom;
 	/*text-align: center;*/
 }
+.navbar .icon {
+  display: none;
+}
+/*@media screen and (max-width: 980px) {
+  .navbar ul li:not(:first-child) {display: none;}
+  .navbar ul li.icon {
+  	position: absolute;
+  	right: 0;
+  	top: 0;
+    display: block;
+  }
+}
+@media screen and (max-width: 980px) {
+  .navbar.responsive {position: relative;}
+  .navbar.responsive ul {
+  	position: absolute;
+  	background: #ccc;
+  }
+  .navbar.responsive ul li {
+    float: none;
+    display: block;
+    font-size: 4em;
+    text-align: left;
+  }
+  .navbar.responsive ul li.icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}*/
 .dropdown-item ul {
 	position: absolute;
 	display: none;
