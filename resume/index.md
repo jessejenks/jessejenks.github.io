@@ -97,6 +97,14 @@ so pdf version and online version both available?` -->
 </div>
 
 <div class="normal-text">
+<span class="bold-text">Neural Net javascript library</span><span class="normal-text small">Fall 2017</span>
+<ul class="ul-styling">
+	<li>Wrote a neural net library from scratch in javascript to visualize on <a href="../blog/2018/04/10/NeuralNetjs">blog site</a></li>
+	<li>Includes different activation and cost functions, as well as backpropagation</li>
+</ul>
+</div>
+
+<div class="normal-text">
 <span class="bold-text">COMAP Mathematical Contest in Modeling Finalist</span><span class="normal-text small">Spring 2017</span>
 <ul class="ul-styling">
 	<li>Finished in top 11 out of 1,527 teams from around the world with 2 other teammates</li>
