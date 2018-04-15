@@ -169,6 +169,10 @@ function NeuralNet(_layers, _cost) {
 		}
 	}
 
+
+	// ***********************************************
+	// ** using the p5.js library for visualization **
+	// ***********************************************
 	this.show = function(center_x, center_y, w, h, r, colors) {
 		let layer_sep = w/(this.layers.length-1);
 
@@ -209,7 +213,7 @@ function NeuralNet(_layers, _cost) {
 	function quadraticCost(output, expected) {
 		let c = 0;
 		for (let i = 0; i<output.length; i++) {
-			c += 0.5*((output[i]-expected[i])**2);
+			c += 0.5*Math.pow((output[i]-expected[i]),2);
 		}
 		return c;
 	}
@@ -404,13 +408,15 @@ function NeuralNet(_layers, _cost) {
 		return 1;
 	}
 
+	// by default just squash sigmoid (by 4)
 	function sigmoid(x) {
-		return 1.0/(1.0+Math.exp(-8*x));
+		return 1.0/(1.0+Math.exp(-4*x));
 	}
 
+	// and so the 4 comes out in the derivative as well.
 	function sigmoid_prime(x) {
 		let s = sigmoid(x);
-		return s*(1-s);
+		return 4*s*(1-s);
 	}
 
 	function tanh(x) {
