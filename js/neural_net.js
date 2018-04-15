@@ -1,5 +1,6 @@
 function NeuralNet(_layers, _cost) {
 	this.cost = undefined;
+	this.cost_name = _cost;
 	if (_cost === 'quadratic') {
 		this.cost = quadraticCost;
 	} else if (_cost === 'crossEntropy') {
@@ -8,6 +9,7 @@ function NeuralNet(_layers, _cost) {
 		this.cost = logLikelihoodCost;
 	} else {
 		this.cost = quadraticCost;
+		this.cost_name = 'quadratic';
 	}
 
 	this.layers = _layers;
@@ -204,9 +206,11 @@ function NeuralNet(_layers, _cost) {
 				else fill(255*bs);
 				ellipse(x2, y2, 2*r, 2*r);
 			}
-			fill(255)
-			text(this.layers[l+1].activation, x2, center_y+h/2 + 20)
+			fill(255);
+			text(this.layers[l+1].activation, x2, center_y+h/2 + 20);
 		}
+		fill(255)
+		text('cost function : '+this.cost_name, width/2, 50);
 		strokeWeight(1);
 	}
 

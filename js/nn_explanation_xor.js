@@ -136,7 +136,7 @@ function draw() {
 	fill(255)
 	text('the examples the network is given', width/2, height - 280)
 	text('the continuous function it learned', width/2, height - 160)
-	text('the network', width/2, 50)
+	text('the network', width/2, 25)
 	text('loss per epoch\naka how wrong the network is', width/2, height-30);
 
 	text(network.min_weight.toFixed(2),width-25,175);
