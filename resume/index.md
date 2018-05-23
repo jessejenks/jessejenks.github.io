@@ -69,12 +69,12 @@ so pdf version and online version both available?` -->
 	<span class="bold-text">University of Puget Sound</span>
 		<span class="normal-text small">Tacoma, WA</span><br>
 	<span class="bold-text">B.S. in Mathematics and Computer Science</span> - double major
-		<span class="normal-text small">expected May 2018</span><br>
-	<span class="bold-text indent">Current GPA</span>3.76/4.0<br>
+		<span class="normal-text small">2014 - 2018</span><br>
+	<span class="bold-text indent">Honors</span><i>cum laude</i>&nbsp;&nbsp;&nbsp;&nbsp;(GPA: 3.76/4.0)<br>
 	<span class="bold-text indent">Relevant Courses</span><span class="bold-text">University of Puget Sound / Study Abroad in Budapest, Hungary</span><br>
 	<ul class="ul-styling" style="list-style-type:none;">
-		<li>Artificial Intelligence, Algorithms, Software Engineering, Optimization, Theory of Computing</li>
-		<li>Analysis, Linear Algebra, Abstract Algebra, Mathematical Logic, Set Theory</li>
+		<li>Algorithms, Artificial Intelligence, Optimization, Software Engineering, Theory of Computing</li>
+		<li>Abstract Algebra, Linear Algebra, Real Analysis, Set Theory, Topology, Mathematical Logic</li>
 	</ul>
 </div>
 
