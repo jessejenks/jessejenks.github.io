@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 	<html>
 		<head>
+			<meta name="viewport" content="width=device-width">
 			<title>{{ page.title }}</title>
 			<!-- favicon -->
 			<link rel="shortcut icon" type="image/png" href="{{ "../data/favicon.png?" | prepend: site.baseurl }}" >
@@ -15,27 +16,33 @@
 			<link href='//fonts.googleapis.com/css?family=Josefin Sans' rel='stylesheet'>
 			<link rel="stylesheet" type="text/css" href="/css/main.css">
 			<link rel="stylesheet" type="text/css" href="/css/syntax.css">
-			<script>
-				function mobileNavbar () {
-					let x = document.getElementById("navbar-id");
-					x.className = (x.className==="navbar")? "navbar responsive" : "navbar";
-				}
-			</script>
 		</head>
 		<body>
-			<nav class="navbar" id="navbar-id">
-	    		<ul>
-	        		<li><a href="/">Home</a></li>
-		        	<li><a href="/about">About</a></li>
-					<li><a href="/links">Links</a></li>
-	        		<li><a href="/blog">Blog</a></li>
-	        		<li class="dropdown-item"><a>Resume</a>
-	        			<ul>
-	        				<li><a href="/resume">Online</a></li>
-	        				<li><a href="{{ "/data/Jesse_Jenks_Resume.pdf" | prepend: site.baseurl }}">PDF</a></li>
-	        			</ul>
-	        		</li>
-	    		</ul>
+			<nav>
+				<input type="checkbox" id="menu-toggle"/>
+				<span id="icon-container"><label for="menu-toggle" id="mobile-menu-icon">&#9776;</label></span>
+				<ul id="nav-container">
+					<li class="dropdown" id="leftmost">
+						<a href="/"><span class="dropbtn">Home</span></a>
+					</li>
+					<li class="dropdown">
+						<a href="/about"><span class="dropbtn">About</span></a>
+					</li>
+					<li class="dropdown">
+						<a href="/links"><span class="dropbtn">Links</span></a>
+					</li>
+					<li class="dropdown">
+						<a href="/blog"><span class="dropbtn">Blog</span></a>
+					</li>
+					<li class="dropdown">
+						<label for="resume-toggle" class="dropbtn">Resume</label>
+						<input type="checkbox" id="resume-toggle"/>
+						<ul class="dropdown-content">
+							<li><a href="/resume">Online</a></li>
+							<li><a href="{{ "/data/Jesse_Jenks_Resume.pdf" | prepend: site.baseurl }}">PDF</a></li>
+						</ul>
+					</li>
+				</ul>
 			</nav>
 			<div class="container">
 

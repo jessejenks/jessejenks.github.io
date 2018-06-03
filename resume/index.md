@@ -46,11 +46,6 @@ title: Resume
 	margin-top: 0px;
 }
 </style>
-<!-- # {{ page.title }} -->
-<!-- add a dropdown on hover?
-https://www.w3schools.com/howto/howto_css_dropdown_navbar.asp
-so pdf version and online version both available?` -->
-<!-- [pdf version](../data/Jesse_Jenks_Resume.pdf) -->
 
 <div id="name">Jesse Endo Jenks</div>
 ---
@@ -60,7 +55,8 @@ so pdf version and online version both available?` -->
 		<a href="mailto:jesseendojenks@gmail.com?Subject=Hello%20there" target="_top">
 			JesseEndoJenks@gmail.com</a>
 		</span>
-	<span style="margin-left: 5%;">4386 Wheelock Student Center<br/>Tacoma, WA 98416</span>
+	<!-- <span style="margin-left: 5%;">4386 Wheelock Student Center<br/>Tacoma, WA 98416</span> -->
+	<span style="margin-left: 5%;">726 Alcatraz Ave.<br/>Oakland, CA 94609</span>
 </div>
 
 <br>
@@ -69,8 +65,8 @@ so pdf version and online version both available?` -->
 	<span class="bold-text">University of Puget Sound</span>
 		<span class="normal-text small">Tacoma, WA</span><br>
 	<span class="bold-text">B.S. in Mathematics and Computer Science</span> - double major
-		<span class="normal-text small">2014 - 2018</span><br>
-	<span class="bold-text indent">Honors</span><i>cum laude</i>&nbsp;&nbsp;&nbsp;&nbsp;(GPA: 3.76/4.0)<br>
+		<span class="normal-text small">May 2018</span><br>
+	<span class="bold-text indent">Honors</span><i>magna cum laude</i><br>
 	<span class="bold-text indent">Relevant Courses</span><span class="bold-text">University of Puget Sound / Study Abroad in Budapest, Hungary</span><br>
 	<ul class="ul-styling" style="list-style-type:none;">
 		<li>Algorithms, Artificial Intelligence, Optimization, Software Engineering, Theory of Computing</li>
