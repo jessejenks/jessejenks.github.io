@@ -71,6 +71,9 @@ button.accordion.active:after {
 nav {
 	margin: 0;
 	margin-bottom: 20px;
+	width: 100%;
+	display: block;
+	font-size: 24px;
 	/*position: fixed;*/
 }
 /*nav input {
@@ -80,19 +83,24 @@ nav > input {display: none;}
 #icon-container {
 	position: fixed;
 	top:0;
-	padding: 10px 0 10px 12px;
+	/*padding: 10px 0 10px 12px;*/
+	padding: 0;
+	padding-top: 0.25cm;
 	/*padding: 20px 0;*/
 	/*padding-left:10px;*/
 	/*width:104px;*/
 	/*width: 80px;*/
-	width:30px;
+	width:1.5cm;
+	height: 1cm;
 	margin: 0;
 	margin-left: -10%;
-	margin-bottom: 50px;
+	/*margin-bottom: 50px;*/
 	background-color: #eee;
 	font-size: 20px;
 	color:#5ba1b2;
 	z-index: 50;
+	text-align: center;
+	vertical-align: middle;
 	/*z-index: 50;*/
 }
 
@@ -105,15 +113,18 @@ nav > input {display: none;}
 	/*background-color: black;*/
 }
 #menu-toggle:checked ~ #icon-container {
-	width: 80px;
+	width: 4cm;
 }
 #nav-container {
 	display: none;
 	position: fixed;
 	/*top: 63px;*/
-	top: 43px;
-	width: 90px;
+	/*top: 43px;*/
+	top:1.25cm;
+	/*width: 90px;*/
+	width: 4cm;
 	background-color: white;
+	/*background: transparent;*/
 	margin: 0;
 	margin-left: -10%;
 	padding: 0;
@@ -123,26 +134,26 @@ nav > input {display: none;}
 }
 
 .dropdown {
-	font-size: 20px;
+	/*font-size: 20px;*/
 	position: relative;
 	display: block;
 	/*margin: 12px 0;*/
 	margin: 0;
-	padding: 1ex 0;
+	/*padding: 1ex 0;*/
+	width: 4cm;
+	padding: 0.25cm 0;
 	border-bottom: 1px solid #aaa;
 }
 
 .dropdown ul {
 	padding: 0;
 	margin:0;
+	/*margin-top: 8px;*/
 	list-style-type: none;
+	margin-top: 0.25cm;
 }
 .dropdown input {
 	display: none;
-}
-
-.dropdown ul {
-	margin-top: 8px;
 }
 #nav-container a:hover {
 	text-shadow:none;
@@ -150,8 +161,12 @@ nav > input {display: none;}
 .dropbtn {
 	background-color: white;
 	/*background: none;*/
-	width: 100%;
-	padding: 10px 10px;
+	/*background: transparent;*/
+	padding-left: 0.5cm;
+	padding-top: 0.25cm;
+	padding-bottom: 0.25cm;
+	padding-right: 1cm;
+	/*width: 4cm;*/
 	border: none;
 	margin: 0;
 	color:#666;
@@ -169,7 +184,10 @@ nav > input {display: none;}
 	z-index: 2;
 }
 .dropdown-content a {
-	padding: 10px 10px;
+	/*padding: 10px 10px;*/
+	padding-left: 1cm;
+	padding-top: 0.25cm;
+	padding-bottom: 0.25cm;
 	display: block;
 	font-size: 18px;
 	/*display: flex;*/
@@ -180,12 +198,8 @@ nav > input {display: none;}
 .dropdown-content a:hover {
 	text-shadow:none;
 }
-.dtopbtn {
-	padding: 0;
-}
-
 #leftmost {
-	margin: 0;
+	margin-left: 0;
 }
 /*.dropdown input {
 	display: none;
@@ -203,15 +217,20 @@ nav > input {display: none;}
 	#mobile-menu-icon {
 		display: none;
 	}
+	#icon-container {
+		display: none;
+	}
 	nav {
-		margin-bottom: 50px;
+		margin-bottom: 60px;
 	}
 	#nav-container {
 		display: block;
 		width: 100%;
 		top: 0;
-		padding-top: 10px;
-		padding-bottom: 8px;
+		padding: 0;
+		/*padding-top: 10px;*/
+		/*padding-bottom: 8px;*/
+		background-color: white;
 	}
 	#leftmost {
 		margin-left:10%;
@@ -219,11 +238,22 @@ nav > input {display: none;}
 	.dropdown {
 		display: inline-block;
 		margin: 0;
-		padding: 0;
+		padding: 0.25cm 0;
+		width:2.5cm;
+		text-align: center;
+		border: none;
 	}
-
 	.dropdown:hover {
 		background-color: #eee;
+	}
+	.dropbtn {
+		background: transparent;
+		padding: 0;
+		margin: 0;
+	}
+	.dropdown-content a {
+		text-align: left;
+		padding-left: 0.25cm;
 	}
 	.dropdown-content a:hover{
 		color: white;
@@ -241,8 +271,7 @@ nav > input {display: none;}
 		display: block;
 	}
 	.dropdown:hover .dropbtn {
-		background-color: #eee;
-		/*background: none;*/
+		/*background-color: #eee;*/
 		color: #5ba1b2;
 	}
 }
