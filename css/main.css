@@ -70,7 +70,7 @@ button.accordion.active:after {
 
 nav {
 	margin: 0;
-	margin-bottom: 20px;
+	/*margin-bottom: 1.5cm;*/
 	width: 100%;
 	display: block;
 	font-size: 24px;
@@ -90,7 +90,8 @@ nav > input {display: none;}
 	/*padding-left:10px;*/
 	/*width:104px;*/
 	/*width: 80px;*/
-	width:1.5cm;
+	/*width:1.5cm;*/
+	width:8%;
 	height: 1cm;
 	margin: 0;
 	margin-left: -10%;
