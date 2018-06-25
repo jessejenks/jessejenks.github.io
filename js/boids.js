@@ -2,6 +2,8 @@ var boids,boidVel;
 var n, xMin, yMin, xMax, yMax;
 var minDist, seeDist, avoid_distance;
 var dt,vLim;
+// var colors;
+// var colormap;
 //based on pseudocode from http://www.kfish.org/boids/pseudocode.html
 function setup() {
   var cv = createCanvas(windowWidth, windowHeight);
@@ -13,21 +15,37 @@ function setup() {
 
   boids = [];
   boidVel = [];
-  n = 100;
-  xMin = 20;
-  yMin = 20;
+  n = 140;
+  xMin = 10;
+  yMin = 10;
   xMax = width-xMin;
   yMax = height-yMin;
   minDist = 10;
-  seeDist = 30;
+  seeDist = 50;
   avoid_distance = 70;
   dt = 0.1;
   vLim = 20;
 
-  for (var i = 0; i<n; i++) {
+  // colors = [
+  //   // color(102,204,204),
+  //   // color(153,204,102),
+  //   // color(153,102,204),
+  //   // color(204,102,102)
+  //   color(225,247,213),
+  //   color(255,189,189),
+  //   color(201,201,255),
+  //   color(241,203,255)
+  // ];
+
+  // colormap = [];
+
+
+  for (let i = 0; i<n; i++) {
     boids[i] = {x:random(width), y:random(height)};
     // createVector(random(width/4, 3*width/4), random(height/4, 3*height/4))
     boidVel[i] = {x:-10, y:10};
+
+    // colormap[i] = colors[Math.floor(Math.random()*colors.length)];
     // createVector(0,0);
   }
   background(255);
@@ -36,41 +54,40 @@ function setup() {
 }
 function draw() {
   background(255);
+  stroke(255,189,189);
   drawBoids();
   if (focused) update();
 }
 
 function drawBoids() {
-  for (var i = 0; i<n; i++) {
-    // stroke(170*(PI+atan2(boids[i].y,boids[i].x))/TWO_PI,255,255);
-    // stroke(255,255*boidVel[i].x/vLim,255*boidVel[i].y/vLim);
-    stroke(102,204,204);
+  for (let i = 0; i<n; i++) {
+    // stroke(colormap[i]);
     point(boids[i].x, boids[i].y);
   }
 }
 function update() {
   // var vs = [];
-  for (var i = 0; i<n; i++) {
+  for (let i = 0; i<n; i++) {
     // boidVel[i] = createVector(0,0);
     // var v = createVector(0,0);
-    // var r1 = rule1(i);
+    var r1 = rule1(i);
     var r2 = rule2(i);
     var r3 = rule3(i);
     var m = attractMouse({x:mouseX,y:mouseY}, i);
-    var rand = noise(boids[i].x/50,boids[i].y/50, frameCount/500  )*TWO_PI;
+    var rand = noise(boids[i].x/50, boids[i].y/50, frameCount*0.001  )*TWO_PI;
     boidVel[i].x +=
-    // r1.x*0.01 +
-    r2.x +
-    r3.x*0.125 +
-    m.x +
-    cos(rand);
+      r1.x*0.01 +
+      r2.x +
+      r3.x*0.125 +
+      m.x +
+      cos(rand);
 
     boidVel[i].y +=
-    // r1.y*0.01 +
-    r2.y +
-    r3.y*0.125 +
-    m.y +
-    sin(rand);
+      r1.y*0.01 +
+      r2.y +
+      r3.y*0.125 +
+      m.y +
+      sin(rand);
 
     limitVelocity(i);
     // boids[i].add(boidVel[i].mult(dt));
@@ -78,7 +95,7 @@ function update() {
     boids[i].y+=(boidVel[i].y*dt);
     bound(i);
   }
-  // for (var i = 0; i<n; i++) {
+  // for (let i = 0; i<n; i++) {
   //   boidVel[i] = vs[i];
   //   limitVelocity(i);
   //   bound(i);
@@ -89,25 +106,25 @@ function update() {
 function rule1(i) {
   var pcj = {x:0,y:0};
   // createVector(0, 0);
-  // var counter = 0;
-  for (var j = 0; j<n; j++) {
+  var counter = 0;
+  for (let j = 0; j<n; j++) {
     // if (j!=i && boids[i].dist(boids[j])<seeDist) {
-    if (j!=i) {// && (boids[i].x-boids[j].x)*(boids[i].x-boids[j].x) + (boids[i].y-boids[j].y)*(boids[i].y-boids[j].y)<seeDist*seeDist) {
+    if (j!=i && (boids[i].x-boids[j].x)*(boids[i].x-boids[j].x) + (boids[i].y-boids[j].y)*(boids[i].y-boids[j].y)<seeDist*seeDist) {
       // pcj.add(boids[j]);
       pcj.x+=boids[j].x;
       pcj.y+=boids[j].y;
-      // counter++;
+      counter++;
     }
   }
   // pcj.div(n-1);
 
-  // if (counter!=0) {
+  if (counter!=0) {
   //   // pcj.div(counter);
-  //   pcj.x/=counter;
-  //   pcj.y/=counter;
-  // }
-  pcj.x/=(n-1);
-  pcj.y/=(n-1);
+    pcj.x/=counter;
+    pcj.y/=counter;
+  }
+  // pcj.x/=(n-1);
+  // pcj.y/=(n-1);
   pcj.x-=boids[i].x;
   pcj.y-=boids[i].y;
   // pcj.sub(boids[i]);
@@ -116,10 +133,10 @@ function rule1(i) {
 }
 // don't get too close other boids
 function rule2(i) {
-  var c = {x:0,y:0};
+  let c = {x:0,y:0};
   // createVector(0, 0);
-  var counter = 0;
-  for (var j = 0; j<n; j++) {
+  let counter = 0;
+  for (let j = 0; j<n; j++) {
     // if (j!=i && boids[j].dist(boids[i])<2*minDist) {
     //     var c2 = createVector(0,0);
     //     c2.sub(boids[j]);
@@ -153,7 +170,7 @@ function rule3(i) {
   // if b!=bj then
   // pvj+=b.velocity
   var counter = 0;
-  for (var j = 0; j<n; j++) {
+  for (let j = 0; j<n; j++) {
     if (j!=i && (boids[i].x-boids[j].x)*(boids[i].x-boids[j].x) + (boids[i].y-boids[j].y)*(boids[i].y-boids[j].y)<seeDist*seeDist) {
       // pvj.add(boidVel[j]);
       pvj.x+=boidVel[j].x;
