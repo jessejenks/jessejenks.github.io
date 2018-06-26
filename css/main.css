@@ -222,20 +222,38 @@ div.panel.show {
 	opacity: 1;
 	max-height: 5000px;
 }
-footer {
+/*footer {
 	text-align: center;
 	border-top: 1px solid #d5d5d5;
 }
 footer ul {
 	padding: 0px;
-}
-footer ul li {
+}*/
+/*footer ul li {
 	margin-left: 0.5em;
 	margin-right: 0.5em;
 	font-size: 1em;
 	display: inline;
 	float: none;
 	vertical-align: bottom;
+}*/
+footer {
+	text-align: center;
+	margin: 1% 0;
+	padding: 2% 0;
+	border-top: 1px solid #aaa;
+}
+footer ul {
+	list-style-type: none;
+	display: block;
+	margin:0;
+	padding:0;
+	width: 100%;
+}
+footer ul li {
+	display: inline-block;
+	margin: 0 10px;
+	vertical-align: middle;
 }
 h1 {
 	font-size: 1.5em;
