@@ -16,61 +16,54 @@
 - name: Processing
   type: image
   link: https://processing.org
-  title: processing
-  alt: Processing
   iconlink: /data/logos/processing-logo.png
 
 - name: P5js
   type: image
   link: https://p5js.org
-  title: p5js
-  alt: P5js
   iconlink: /data/logos/p5js.png
 
 - name: D3js
   type: image
   link: https://d3js.org
-  title: D3js
-  alt: D3js
   iconlink: https://d3js.org/logo.svg
 
 - name: \(\LaTeX\)
+  type: image
   link: https://www.latex-project.org/
+  iconlink: /data/logos/latex-logo.png
 
 - name: Flask
   type: image
   link: http://flask.pocoo.org
-  title: flask
-  alt: Flask
   iconlink: /data/logos/flask-logo.png
+
+- name: Jekyll
+  type: image
+  link: https://jekyllrb.com
+  iconlink: /data/logos/jekyll-logo.png
 
 - name: NumPy
   type: image
   link: http://www.numpy.org
-  title: numpy
-  alt: NumPy
   iconlink: /data/logos/numpy-logo.png
 
 - name: Seaborn
+  type: image
   link: https://seaborn.pydata.org
+  iconlink: /data/logos/seaborn-logo.png
 
-- name: SWI-Prolog
+- name: Prolog
   type: image
   link: http://www.swi-prolog.org
-  title: swipl
-  alt: SWI Prolog
   iconlink: /data/logos/swipl-logo.png
 
 - name: Haskell
   type: image
   link: https://www.haskell.org
-  title: haskell
-  alt: Haskell
   iconlink: /data/logos/haskell-logo.png
 
 - name: love2d
   type: image
   link: https://love2d.org
-  title: love2d
-  alt: Love2d
   iconlink: /data/logos/love-logo.png

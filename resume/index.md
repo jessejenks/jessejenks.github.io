@@ -36,7 +36,7 @@ title: Resume
 
 .bold-text.small-indent {
 	display: inline-block;
-	width: 15%;
+	width: 10%;
 }
 .section-header {
 	font-size: 22px;
@@ -287,6 +287,7 @@ table img {
 <div class="normal-text">
 	<span class="bold-text indent">Languages &amp; Libraries</span>
 		<br class="mobile-break">
+		<!-- https://stackoverflow.com/questions/20924471/for-loop-wrap-every-two-posts-in-a-div -->
 		<!-- Two columns for mobile -->
 		<table id="mobile-table">
 			{% assign rows = site.data.languages.size | divided_by: 2.0 | ceil %}
@@ -298,7 +299,7 @@ table img {
 						{% if language.type == "icon" %}
 							<i class="{{ language.iconlink }}"></i>
 						{% elsif language.type == "image" %}
-							<img align="bottom" title="{{ language.title }}" alt="{{ language.alt }}" src="{{ language.iconlink }}">
+							<img align="bottom" title="{{ language.name }}" alt="{{ language.name }}" src="{{ language.iconlink }}">
 						{% endif %}
 					</td>
 					<td>
@@ -319,7 +320,7 @@ table img {
 						{% if language.type == "icon" %}
 							<i class="{{ language.iconlink }}"></i>
 						{% elsif language.type == "image" %}
-							<img align="bottom" title="{{ language.title }}" alt="{{ language.alt }}" src="{{ language.iconlink }}">
+							<img align="bottom" title="{{ language.name }}" alt="{{ language.name }}" src="{{ language.iconlink }}">
 						{% endif %}
 					</td>
 					<td>
@@ -476,7 +477,7 @@ table img {
 <div class="normal-text">
 	<span class="bold-text small-indent">ACM</span>
 	<br class="mobile-break">
-		<span class="bold-text">President</span>,&nbsp;
+		<span class="bold-text" style="color:#666;">President</span>,&nbsp;
 		<br class="mobile-break">
 			Computer Science club
 			<br class="mobile-break">
