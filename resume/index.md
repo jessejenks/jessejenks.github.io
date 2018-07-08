@@ -224,6 +224,9 @@ table img {
 	table {
 		width: 100%;
 	}
+	table > img {
+		height: 30px;
+	}
 	#desktop-table {
 		display: none;
 	}
