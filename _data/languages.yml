@@ -1,0 +1,76 @@
+- name: Java
+  type: icon
+  link: https://java.com
+  iconlink: "fab fa-java"
+
+- name: Python
+  type: icon
+  link: python.org
+  iconlink: "fab fa-python"
+
+- name: Javascript
+  type: icon
+  link: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  iconlink: "fab fa-js-square"
+
+- name: Processing
+  type: image
+  link: https://processing.org
+  title: processing
+  alt: Processing
+  iconlink: /data/logos/processing-logo.png
+
+- name: P5js
+  type: image
+  link: https://p5js.org
+  title: p5js
+  alt: P5js
+  iconlink: /data/logos/p5js.png
+
+- name: D3js
+  type: image
+  link: https://d3js.org
+  title: D3js
+  alt: D3js
+  iconlink: https://d3js.org/logo.svg
+
+- name: \(\LaTeX\)
+  link: https://www.latex-project.org/
+
+- name: Flask
+  type: image
+  link: http://flask.pocoo.org
+  title: flask
+  alt: Flask
+  iconlink: /data/logos/flask-logo.png
+
+- name: NumPy
+  type: image
+  link: http://www.numpy.org
+  title: numpy
+  alt: NumPy
+  iconlink: /data/logos/numpy-logo.png
+
+- name: Seaborn
+  link: https://seaborn.pydata.org
+
+- name: SWI-Prolog
+  type: image
+  link: http://www.swi-prolog.org
+  title: swipl
+  alt: SWI Prolog
+  iconlink: /data/logos/swipl-logo.png
+
+- name: Haskell
+  type: image
+  link: https://www.haskell.org
+  title: haskell
+  alt: Haskell
+  iconlink: /data/logos/haskell-logo.png
+
+- name: love2d
+  type: image
+  link: https://love2d.org
+  title: love2d
+  alt: Love2d
+  iconlink: /data/logos/love-logo.png

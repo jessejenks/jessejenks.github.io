@@ -142,6 +142,13 @@ table {
 	display: inline-table;
 	width: 70%;
 }
+td > a {
+	color: inherit;
+	font-size: inherit;
+}
+/*td > a:hover {
+	text-shadow:none;
+}*/
 tbody {
 	display: inline-table;
 	vertical-align: baseline;
@@ -224,8 +231,12 @@ table img {
 	table {
 		width: 100%;
 	}
-	table > img {
+	table img {
 		height: 30px;
+	}
+	td > a {
+		color: inherit;
+		font-size: inherit;
 	}
 	#desktop-table {
 		display: none;
@@ -275,111 +286,49 @@ table img {
 <div class="section-header">Skills</div>
 <div class="normal-text">
 	<span class="bold-text indent">Languages &amp; Libraries</span>
-	<!-- <span class="bold-text">Languages and Libraries</span> -->
-	<!-- <span style="width:100%;"> -->
 		<br class="mobile-break">
 		<!-- Two columns for mobile -->
 		<table id="mobile-table">
-			<tr>
-				<td><i class="fab fa-java"></i>Java</td>
-				<td><i class="fab fa-python"></i>Python</td>
-			</tr>
-			<tr>
-				<td><i class="fab fa-js-square"></i>Javascript</td>
-				<td><img align="bottom" title="processing" alt="Processing" src="/data/logos/processing-logo.png">Processing</td>
-			</tr>
-			<tr>
-				<td><img align="bottom" title="p5js" alt="p5js" src="/data/logos/p5js.png">P5js</td>
-				<td><img title="D3js" src="https://d3js.org/logo.svg" alt="D3js">D3js</td>
-			</tr>
-			<tr>
-				<td>\(\LaTeX\)</td>
-				<td><img align="bottom" title="flask" alt="Flask" src="/data/logos/flask-logo.png">Flask</td>
-			</tr>
-			<tr>
-				<td><img align="bottom" title="numpy" alt="NumPy" src="/data/logos/numpy-logo.png">NumPy</td>
-				<td>Seaborn</td>
-			</tr>
-			<tr>
-				<td><img align="bottom" title="swipl" alt="SWI Prolog" src="/data/logos/swipl-logo.png">Prolog</td>
-				<td><img align="bottom" title="haskell" alt="Haskell" src="/data/logos/haskell-logo.png">Haskell</td>
-			</tr>
-			<tr>
-				<td><img align="bottom" title="lua" alt="Lua" src="/data/logos/lua-logo.gif">Lua</td>
-				<td></td>
-			</tr>
+			{% assign rows = site.data.languages.size | divided_by: 2.0 | ceil %}
+			{% for i in (1..rows) %}
+				{% assign offset = forloop.index0 | times: 2 %}
+				<tr>
+					{% for language in site.data.languages limit:2 offset:offset %}
+					<td style="width:40px;">
+						{% if language.type == "icon" %}
+							<i class="{{ language.iconlink }}"></i>
+						{% elsif language.type == "image" %}
+							<img align="bottom" title="{{ language.title }}" alt="{{ language.alt }}" src="{{ language.iconlink }}">
+						{% endif %}
+					</td>
+					<td>
+						<a href="{{ language.link }}">{{ language.name }}</a>
+					</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
 		</table>
 		<!-- Three columns for desktop -->
 		<table id="desktop-table">
-			<tr>
-				<td><i class="fab fa-java"></i>Java</td>
-				<td><i class="fab fa-python"></i>Python</td>
-				<td><i class="fab fa-js-square"></i>Javascript</td>
-			</tr>
-			<tr>
-				<td><img align="bottom" title="processing" alt="Processing" src="/data/logos/processing-logo.png">Processing</td>
-				<td><img align="bottom" title="p5js" alt="p5js" src="/data/logos/p5js.png">P5js</td>
-				<td><img title="D3js" src="https://d3js.org/logo.svg" alt="D3js">D3js</td>
-			</tr>
-			<tr>
-				<td>\(\LaTeX\)</td>
-				<td><img align="bottom" title="flask" alt="Flask" src="/data/logos/flask-logo.png">Flask</td>
-				<td><img align="bottom" title="numpy" alt="NumPy" src="/data/logos/numpy-logo.png">NumPy</td>
-			</tr>
-			<tr>
-				<td>Seaborn</td>
-				<td><img align="bottom" title="swipl" alt="SWI Prolog" src="/data/logos/swipl-logo.png">Prolog</td>
-				<td><img align="bottom" title="haskell" alt="Haskell" src="/data/logos/haskell-logo.png">Haskell</td>
-			</tr>
-			<tr>
-				<td><img align="bottom" title="lua" alt="Lua" src="/data/logos/lua-logo.gif">Lua</td>
-				<td></td>
-				<td></td>
-				<!-- <span class="dash">&nbsp;</span> -->
-			</tr>
+			{% assign rows = site.data.languages.size | divided_by: 3.0 | ceil %}
+			{% for i in (1..rows) %}
+				{% assign offset = forloop.index0 | times: 3 %}
+				<tr>
+					{% for language in site.data.languages limit:3 offset:offset %}
+					<td style="width:40px;">
+						{% if language.type == "icon" %}
+							<i class="{{ language.iconlink }}"></i>
+						{% elsif language.type == "image" %}
+							<img align="bottom" title="{{ language.title }}" alt="{{ language.alt }}" src="{{ language.iconlink }}">
+						{% endif %}
+					</td>
+					<td>
+						<a target="_blank" href="{{ language.link }}">{{ language.name }}</a>
+					</td>
+					{% endfor %}
+				</tr>
+			{% endfor %}
 		</table>
-	<!-- </span> -->
-<!-- 		<span id="lang-names">
-			<span class="lang">
-				<i class="fab fa-java"></i>Java<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				<i class="fab fa-python"></i>Python<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				<i class="fab fa-js-square"></i>Javascript<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				<img align="bottom" title="processing" alt="Processing" src="/data/logos/processing-logo.png">Processing<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				<img align="bottom" title="p5js" alt="p5js" src="/data/logos/p5js.png">P5js<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				<img title="D3js" src="https://d3js.org/logo.svg" alt="D3js">D3js<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				\(\LaTeX\)<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				<img align="bottom" title="flask" alt="Flask" src="/data/logos/flask-logo.png">Flask<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				<img align="bottom" title="numpy" alt="NumPy" src="/data/logos/numpy-logo.png">NumPy<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				Seaborn<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				<img align="bottom" title="swipl" alt="SWI Prolog" src="/data/logos/swipl-logo.png">Prolog<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				<img align="bottom" title="haskell" alt="Haskell" src="/data/logos/haskell-logo.png">Haskell<span class="dash">,&nbsp;</span>
-			</span>
-			<span class="lang">
-				<img align="bottom" title="lua" alt="Lua" src="/data/logos/lua-logo.gif">Lua
-			</span>
-		</span> -->
 		<br>
 	<span class="bold-text indent">Digital Media</span>
 		<br class="mobile-break">
