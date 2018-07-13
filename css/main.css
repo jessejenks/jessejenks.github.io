@@ -93,6 +93,10 @@ nav > input {display: none;}
 	width: 1cm;
 	height: 1cm;
 }*/
+#mobile-menu-icon {
+	display: inline-block;
+	padding-top: 0.125cm;
+}
 #icon-container {
 	position: fixed;
 	top:0;
@@ -260,6 +264,9 @@ footer ul li {
 h1 {
 	font-size: 1.5em;
 	font-family: 'Josefin Sans';
+}
+.highlight {
+	font-size: 16px;
 }
 p {
 	font-size: 1.2em;
