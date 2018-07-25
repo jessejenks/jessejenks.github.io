@@ -2,19 +2,29 @@
 layout: default
 title: Links
 ---
+<style>
+body {
+  font-size: 20px;
+}
+.left-indent {
+  margin-left:5%;
+}
+.names {
+  width:10%;
+  display:inline-block;
+}
+</style>
 <!-- <h1>{{ page.title }}</h1> -->
 <h2> Friends </h2>
-<ul>
-    <li>
-			<a target="_blank" href="http://mononoke.io/" title="mononoke.io">Alex Harris</a>
-		</li>
-    <li>
-      <a target="_blank" href="https://github.com/thavythach" title="thavy">Thavy Thach</a>
-    </li>
-</ul>
+  {% for friend in site.data.friends %}
+      <div class="names left-indent">{{ friend.name }}</div>
+      {% if friend.link != null %}
+        <a target="_blank" href="{{ friend.link }}" title="{{ friend.name }}'s website">{{ friend.site }}</a>
+      {% endif %}
+      <br>
+  {% endfor %}
 <h2> Cool links </h2>
-<ul>
-  <li>
-    <a target="_blank" href="https://oeis.org">The On-line Encyclopedia of Integer Sequences</a>
-  </li>
+  {% for link in site.data.cool_links %}
+		<a class="left-indent" target="_blank" href="{{ link.page }}" title="{{ link.name }}'">{{ link.name }}</a>
+  {% endfor %}
 </ul>
