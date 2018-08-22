@@ -1,19 +1,23 @@
+- name: Alden
+  link: https://www.aldenjenks.com
+  site: aldenjenks.com
+
 - name: Banji
   link: http://www.banj.io
-  site: www.banj.io
+  site: banj.io
 
 - name: Chili
   link: http://chilij.com
   site: chilij.com
 
-- name: Thavy
-  link: https://github.com/thavythach
-  site: github.com/thavythach
+- name: Ethan
+  link: https://etharooni.github.io
+  site: etharooni.github.io
 
-- name: Alden
-  link: https://www.aldenjenks.com
-  site: www.aldenjenks.com
+- name: Henry
+  link: https://henrywoody.com
+  site: henrywoody.com
 
 - name: Mikako
   link: https://www.mikakoendo.com
-  site: www.mikakoendo.com
+  site: mikakoendo.com
