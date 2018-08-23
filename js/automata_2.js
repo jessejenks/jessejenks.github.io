@@ -5,10 +5,7 @@ var welcome;
 var cells;
 var rules;
 
-// randomly generated but cool
-// [2,3,4,5,7],[2]
-// [2,3,4], [1,3,7]
-// 4578/12
+
 var rule_count, rule_indices, rule;
 var paused;
 var stay_on_rule;
@@ -110,19 +107,31 @@ function setup() {
 		['Amoeba', [1,3,5,8], [3,5,7], ''],
 		['Coagulations', [2,3,5,6,7,8], [3,7,8], ''],
 		['Diamoeba', [5,6,7,8], [3,5,6,7,8], 'Dean Hickerson'],
+		['Move', [2,4,5], [3,6,8], ''],
+		['Stains', [2,3,5,6,7,8], [3,6,7,8], ''],
+		// ['Serviettes', [], [2,3,4], ''],
 		// ['Long life', [5], [3,4,5], 'Andrew Trevorrow'],
 		// ['Flakes', [0,1,2,3,4,5,6,7,8], [3], 'Janko Gravner'],
 		// ['34 Life',[3,4],[3,4]],
 		// ['2x2',[1,2,5],[3,6]],
 		// ['Assimilation',[4,5,6,7],[3,4,5]],
 		// ['replicator',[1,3,5,7],[1,3,5,7]],
+		['branchy', [2,3,4,5,7],[2], 'me :)'],
+		// ['randomly generated 2', [2,3,4], [1,3,7], 'the Gods of Chaos'],
+		// ['randomly generated 3', [4,5,7,8], [1,2], 'the Gods of Chaos'],
 		['worms',[3,5,6,7],[3,6,7],'me :)']
 	];
+
+	// randomly generated and cool
+	// [2,3,4,5,7],[2]
+	// [2,3,4], [1,3,7]
+	// 4578/12
 
 	main_color = color(90,165,255);
 	white = color(255);
 
 	// // For generating a random rule
+	// // not used since it sometimes creates seizure inducing rules
 	// let randRule = ['randomly generated rule', [], []];
 	// for (let i = 0; i<=8; i++) {
 	// 	if (random() < 0.4) randRule[1].push(i);
@@ -132,24 +141,20 @@ function setup() {
 
 	rule_indices = fisher_yates(rules.length);
 	rule_count = 0;
-	rule = rule_indices[rule_count];
+	rule = rules.length-2;//rule_indices[rule_count];
 
 	displayRule();
-	// background(255);
 	noStroke();
 	frameRate(24);
 
-	frameCounter = 0;
+	frameCounter = 1;
 
 	initialize();
-	// background(255);
 
 	loadPixels();
 }
 
 function draw() {
-	background(255);
-	// loadPixels();
 	let xPos, yPos, c;
 	let j, k;
 	for (let i = 0; i<cells.length; i++) {
@@ -185,7 +190,7 @@ function update() {
 	let sum = 0;
 	let r = 0;
 	for (let i = 0; i<x*y; i++) {
-		if (i%x != x-1 && i%x != 0 && Math.floor(i/x) != 0 && Math.floor(i/x) != y-1) {
+		if (i%x !== x-1 && i%x !== 0 && Math.floor(i/x) !== 0 && Math.floor(i/x) !== y-1) {
 			// oh javascript, you're so crazy
 			sum = 0+cells[i-x]+cells[i+x]+cells[i-1]+cells[i+1]+cells[i-x-1]+cells[i-x+1]+cells[i+x-1]+cells[i+x+1];
 
@@ -213,12 +218,12 @@ function keyTyped() {
 }
 
 function keyPressed() {
-	if (keyCode === LEFT_ARROW) {
+	if (keyCode === RIGHT_ARROW) {
 		rule_count++;
 		rule_count%=rules.length;
 		rule = rule_indices[rule_count];
 		displayRule();
-	} else if (keyCode === RIGHT_ARROW) {
+	} else if (keyCode === LEFT_ARROW) {
 		rule_count--;
 		if (rule_count<0) rule_count = rules.length-1;
 		rule = rule_indices[rule_count];
@@ -234,10 +239,11 @@ function displayRule() {
 	for (r = 0; r<rules[rule][1].length; r++) str+=rules[rule][1][r];
 	str+='/'
 	for (r = 0; r<rules[rule][2].length; r++) str+=rules[rule][2][r];
-	// str+='\nThere are currently '+rules.length+' rules with more to be added';
+
 	document.getElementById("name_of_rule").innerText = str;
 }
 
+// change scale if screen is small
 function setScale() {
 	if (windowWidth < 640) {
 		scale = 2;
@@ -247,6 +253,7 @@ function setScale() {
 		top_buffer = 6;
 	}
 }
+
 function initialize() {
 	x = Math.floor(width/box_w)+1;
 	y = Math.floor(height/box_w)+1;
@@ -259,6 +266,8 @@ function initialize() {
 
 	let mod_size = 32;
 
+	// change message to shorter one if screen size is small
+	// not really necessary anymore
 	if (x > 32*scale) {
 		message = 0;
 		mod_size = 32;
@@ -283,13 +292,10 @@ function initialize() {
 		for (i = 0; i<welcome[message].length; i++) {
 			if (i%mod_size===0) {
 				j -= (j%x);
-				j += Math.floor((x/scale-mod_size)/2);//Math.floor((x-80)/2);
+				j += Math.floor((x/scale-mod_size)/2);
 				j += x;
 			}
-			// cells[2*j] = welcome[message][i];
-			// cells[2*j+1] = welcome[message][i];
-			// cells[2*j+x] = welcome[message][i];
-			// cells[2*j+x+1] = welcome[message][i];
+
 			for (k = 0; k<scale; k++) {
 				for (l = 0; l<scale; l++) {
 					cells[scale*j + k*x + l] = welcome[message][i];
@@ -299,6 +305,7 @@ function initialize() {
 			j++;
 		}
 	} else {
+		// if screen is too small, fill randomly
 		for (i = 0; i<cells.length; i++) {
 			cells[i] = (Math.random()<0.1)?1:0;
 		}
@@ -329,20 +336,3 @@ function fisher_yates (n) {
 
 	return arr;
 }
-//   if (window.innerWidth < 640) {
-//     message = 1;
-//     setup();
-//   } else {
-//     message = 0;
-//     setup();
-//   }
-//   // let new_scale = (window.innerWidth < 640)? 2 : 3;
-//   // if (new_scale != scale) {
-//   //   scale = new_scale;
-//   //   resizeCanvas(scale*x, scale*y);
-//   //   for (let i = 0; i<width*height; i++) {
-//   //     set(i%width,floor(i/width),white);
-//   //   }
-//   //   updatePixels();
-//   // }
-// }
