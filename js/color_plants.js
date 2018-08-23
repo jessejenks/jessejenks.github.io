@@ -10,7 +10,7 @@ function setup() {
 	cv.parent(elt);
 
 	// width and height of each cell
-	box_w = 35;
+	box_w = 10;//35;
 
 	// color increment
 	epsilon = 0.02;
@@ -27,23 +27,34 @@ function setup() {
 	initialize();
 
 	noStroke();
-	background(255);
-	frameRate(20);
+	// background(255);
+	frameRate(60);
+
+	loadPixels();
 }
 function draw() {
 	if (frontier.length > 0) {
 		let x, y;
 		let j;
+
+		let k, l;
+		let c;
 		for (let i = 0; i<frontier.length; ++i) {
 			// frontier stores indices of cells
 			j = frontier[i];
 			// values contains the index of colors
-			fill(cols[values[j]]);
-
+			// fill(cols[values[j]]);
+			c = cols[values[j]];
 			x = j%w;
 			y = floor(j/w);
 
-			rect(x*box_w, y*box_w, box_w, box_w);
+			
+			for (k = 0; k<box_w; k++) {
+				for (l = 0; l<box_w; l++) {
+					set(x*box_w + k, y*box_w + l, c);
+				}
+			}
+			// rect(x*box_w, y*box_w, box_w, box_w);
 		}
 	}
 
@@ -52,6 +63,7 @@ function draw() {
 	// after 'max_fails' many attempts
 	if (focused && fail_counter<max_fails) {
 		update();
+		updatePixels();
 	}
 }
 
@@ -71,7 +83,7 @@ function update() {
 	} else {
 		// curr = frontier.shift();
 		// curr = frontier.pop();
-		curr = (Math.random()<0.9)? frontier.shift(): frontier.pop();
+		curr = (Math.random()<0.85)? frontier.shift(): frontier.pop();
 	
 		fail_counter = 0;
 	}
@@ -145,7 +157,6 @@ function alter (t) {
 // I did that
 // NOTE n is ignored
 function fisher_yates (n) {
-
 	return permutations[floor(Math.random()*24)];
 
 	// let arr = [];
@@ -177,7 +188,7 @@ function initialize () {
 		values[i] = -1;
 	}
 
-	let start = 0;
+	let start = 10*w;
 	values[start] = 0;
 	frontier.unshift(start);
 }
@@ -196,7 +207,9 @@ function sinebow (u, v) {
 function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 	// leaves a weird artifact without loop();
-	loop();
-	background(255);
+	// loop();
+	// background(255);
+	clear();
+	loadPixels();
 	initialize();
 }
