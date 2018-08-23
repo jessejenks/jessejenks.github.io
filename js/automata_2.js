@@ -11,6 +11,7 @@ var rules;
 // 4578/12
 var rule_count, rule_indices, rule;
 var paused;
+var stay_on_rule;
 var message;
 var scale;
 
@@ -20,7 +21,7 @@ var main_color, white;
 var box_w;
 var top_buffer;
 
-var frameCounter;
+var pauseCounter, frameCounter;
 function setup() {
 	var cv = createCanvas(windowWidth, windowHeight);
 	cv.position(0,0);
@@ -35,7 +36,8 @@ function setup() {
 	setScale();
 
 	message = -1;
-	parent = false;
+	paused = false;
+	stay_on_rule = false;
 
 	// which message to display
 	message = 0;
@@ -117,38 +119,6 @@ function setup() {
 		['worms',[3,5,6,7],[3,6,7],'me :)']
 	];
 
-	// x = Math.floor(width/box_w)+1;
-	// y = Math.floor(height/box_w)+1;
-
-	// let row = [];
-	// if (message === -1) {
-	// 	message = 0;
-	// }
-
-	// message = (window.innerWidth < 640)? 1: 0;
-	// // message = 0;//floor(random()*welcome.length);
-
-	// for (let i = 0; i<welcome[message].length; i++) {
-	// row.push(welcome[message][i])
-	// if (i>0 && (i%32) === 31) {
-	// for (let j = 0; j<8; j++) {
-	// welcome2 = welcome2.concat(row);
-	// }
-	// row = [];
-	// }
-	// }
-
-	// for (let i = 0; i<x*y; i++) {
-	// cells[i] = welcome2[floor(i/8)];
-	// // cells[i] = welcome[floor(i/8)];
-	// }
-
-	// for (let i = 0; i<x*y; i++) {
-	// 	cells[i] = (Math.random()<0.2)?1:0;
-	// }
-	
-	
-
 	main_color = color(90,165,255);
 	white = color(255);
 
@@ -168,6 +138,8 @@ function setup() {
 	// background(255);
 	noStroke();
 	frameRate(24);
+
+	frameCounter = 0;
 
 	initialize();
 	// background(255);
@@ -191,21 +163,23 @@ function draw() {
 			}
 	}
 
-	if (focused && !paused && frameCounter > 24) {
-		update();
-	} else {
+	if (focused && !paused) {
+		if (pauseCounter > 24) {
+			update();
+		} else {
+			pauseCounter++;
+		}
+
+		if (!stay_on_rule && frameCounter % (10*24) === 0) {
+			initialize();
+			rule_count++;
+			rule_count%=rules.length;
+			rule = rule_indices[rule_count];
+			displayRule();
+		}
 		frameCounter++;
 	}
 	updatePixels();
-
-
-	if (frameCount % (10*24) === 0) {
-		initialize();
-		rule_count++;
-		rule_count%=rules.length;
-		rule = rule_indices[rule_count];
-		displayRule();
-	}
 }
 function update() {
 	let sum = 0;
@@ -233,6 +207,8 @@ function keyTyped() {
 		initialize();
 	} else if (key === 'p') {
 		paused = !paused;
+	} else if (key === 's') {
+		stay_on_rule = !stay_on_rule;
 	}
 }
 
@@ -261,8 +237,7 @@ function displayRule() {
 	// str+='\nThere are currently '+rules.length+' rules with more to be added';
 	document.getElementById("name_of_rule").innerText = str;
 }
-// why does this happen??
-// I kinda hate javascript???
+
 function setScale() {
 	if (windowWidth < 640) {
 		scale = 2;
@@ -329,7 +304,7 @@ function initialize() {
 		}
 	}
 
-	frameCounter = 0;
+	pauseCounter = 0;
 }
 
 function windowResized() {

@@ -11,7 +11,7 @@ You can contact me at <a href="mailto:jesseendojenks@gmail.com?Subject=Hello%20T
 
 <br>
 <h1>About the homepage</h1>
-My homepage shows various examples of what are known as cellular automata. If you would like to learn more about cellular automata, click
+My homepage shows various examples of what are known as 2D cellular automata. You can interact with the simulations with your keyboard. Press 'p' to pause, and 'r' to reset. Use your left and right arrows to move between rules, and 's' to stay on the current rule. If you would like to learn more about cellular automata, click
 <a href="http://mathworld.wolfram.com/CellularAutomaton.html">here</a>,
 <a href="https://plato.stanford.edu/entries/cellular-automata/">here</a>,
 <a href="http://www.mirekw.com/ca/rullex_life.html">here</a>,
