@@ -102,7 +102,7 @@ function setup() {
 		// ['Electric Maze',[1,2,3,4],[4,5]],
 		['Coral',[4,5,6,7,8],[3]],
 		['Day and Night',[3,4,6,7,8],[3,4,6,7,8],'Nathan Thompson'],
-		['gnarl',[1],[1],'Kellie Evans'],
+		// ['gnarl',[1],[1],'Kellie Evans'],
 		['Walled Cities',[2,3,4,5],[4,5,6,7,8],'David Macfarlane'],
 		['The (classic) Game of Life',[2,3],[3],'John Conway'],
 		['Amoeba', [1,3,5,8], [3,5,7]],
@@ -110,17 +110,17 @@ function setup() {
 		['Diamoeba', [5,6,7,8], [3,5,6,7,8], 'Dean Hickerson'],
 		['Move', [2,4,5], [3,6,8]],
 		['Stains', [2,3,5,6,7,8], [3,6,7,8]],
-		['Serviettes', [], [2,3,4], ''],
+		// ['Serviettes', [], [2,3,4], ''],
 		['Long life', [5], [3,4,5], 'Andrew Trevorrow'],
 		['Flakes', [0,1,2,3,4,5,6,7,8], [3], 'Janko Gravner'],
 		['34 Life',[3,4],[3,4]],
 		['2x2',[1,2,5],[3,6]],
 		['Assimilation',[4,5,6,7],[3,4,5]],
-		['replicator',[1,3,5,7],[1,3,5,7]],
+		// ['replicator',[1,3,5,7],[1,3,5,7]],
 		['Branchy', [2,3,4,5,7],[2], 'me :)'],
 		// ['randomly generated 2', [2,3,4], [1,3,7], 'the Gods of Chaos'],
 		// ['randomly generated 3', [4,5,7,8], [1,2], 'the Gods of Chaos'],
-		['Worms',[3,5,6,7],[3,6,7],'me :)']
+		// ['Worms',[3,5,6,7],[3,6,7],'me :)']
 	];
 
 	// randomly generated and cool
@@ -143,7 +143,7 @@ function setup() {
 
 	rule_indices = fisher_yates(rules.length);
 	rule_count = 0;
-	rule = rules.length-2;//rule_indices[rule_count];
+	rule = rule_indices[rule_count];
 
 	displayRule();
 	
@@ -154,7 +154,7 @@ function setup() {
 	pause_length = 1.5;
 	// how long to stay on a rule
 	// until changing to the next one
-	pause_on_rule = 6;
+	pause_on_rule = 8;
 
 	frames_per_second = 24;
 
