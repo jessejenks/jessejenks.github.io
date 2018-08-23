@@ -2,7 +2,7 @@ p5.disableFriendlyErrors = true
 
 var x, y;// = 64;
 var welcome;
-var cells;
+var cells, cells2;
 var rules;
 
 
@@ -18,7 +18,8 @@ var main_color, white;
 var box_w;
 var top_buffer;
 
-var pauseCounter, frameCounter;
+var pause_counter, frame_counter;
+var pause_length, pause_on_rule, frames_per_second;
 function setup() {
 	var cv = createCanvas(windowWidth, windowHeight);
 	cv.position(0,0);
@@ -95,31 +96,31 @@ function setup() {
 	];
 
 	rules = [
-		['maze',[1,2,3,4,5],[3]],
-		['mazectric',[1,2,3,4],[3],'Charles A. Rockafellor'],
-		['maze with mice',[1,2,3,4,5],[3,7]],
-		['electric maze',[1,2,3,4],[4,5]],
-		['coral',[4,5,6,7,8],[3]],
-		['day and night',[3,4,6,7,8],[3,4,6,7,8],'Nathan Thompson'],
-		// ['gnarl',[1],[1],'Kellie Evans'],
-		['walled cities',[2,3,4,5],[4,5,6,7,8],'David Macfarlane'],
-		['the (classic) game of life',[2,3],[3],'John Conway'],
-		['Amoeba', [1,3,5,8], [3,5,7], ''],
-		['Coagulations', [2,3,5,6,7,8], [3,7,8], ''],
+		['Maze',[1,2,3,4,5],[3]],
+		['Mazectric',[1,2,3,4],[3],'Charles A. Rockafellor'],
+		['Maze with Mice',[1,2,3,4,5],[3,7]],
+		// ['Electric Maze',[1,2,3,4],[4,5]],
+		['Coral',[4,5,6,7,8],[3]],
+		['Day and Night',[3,4,6,7,8],[3,4,6,7,8],'Nathan Thompson'],
+		['gnarl',[1],[1],'Kellie Evans'],
+		['Walled Cities',[2,3,4,5],[4,5,6,7,8],'David Macfarlane'],
+		['The (classic) Game of Life',[2,3],[3],'John Conway'],
+		['Amoeba', [1,3,5,8], [3,5,7]],
+		['Coagulations', [2,3,5,6,7,8], [3,7,8]],
 		['Diamoeba', [5,6,7,8], [3,5,6,7,8], 'Dean Hickerson'],
-		['Move', [2,4,5], [3,6,8], ''],
-		['Stains', [2,3,5,6,7,8], [3,6,7,8], ''],
-		// ['Serviettes', [], [2,3,4], ''],
-		// ['Long life', [5], [3,4,5], 'Andrew Trevorrow'],
-		// ['Flakes', [0,1,2,3,4,5,6,7,8], [3], 'Janko Gravner'],
-		// ['34 Life',[3,4],[3,4]],
-		// ['2x2',[1,2,5],[3,6]],
-		// ['Assimilation',[4,5,6,7],[3,4,5]],
-		// ['replicator',[1,3,5,7],[1,3,5,7]],
-		['branchy', [2,3,4,5,7],[2], 'me :)'],
+		['Move', [2,4,5], [3,6,8]],
+		['Stains', [2,3,5,6,7,8], [3,6,7,8]],
+		['Serviettes', [], [2,3,4], ''],
+		['Long life', [5], [3,4,5], 'Andrew Trevorrow'],
+		['Flakes', [0,1,2,3,4,5,6,7,8], [3], 'Janko Gravner'],
+		['34 Life',[3,4],[3,4]],
+		['2x2',[1,2,5],[3,6]],
+		['Assimilation',[4,5,6,7],[3,4,5]],
+		['replicator',[1,3,5,7],[1,3,5,7]],
+		['Branchy', [2,3,4,5,7],[2], 'me :)'],
 		// ['randomly generated 2', [2,3,4], [1,3,7], 'the Gods of Chaos'],
 		// ['randomly generated 3', [4,5,7,8], [1,2], 'the Gods of Chaos'],
-		['worms',[3,5,6,7],[3,6,7],'me :)']
+		['Worms',[3,5,6,7],[3,6,7],'me :)']
 	];
 
 	// randomly generated and cool
@@ -132,6 +133,7 @@ function setup() {
 
 	// // For generating a random rule
 	// // not used since it sometimes creates seizure inducing rules
+	// 
 	// let randRule = ['randomly generated rule', [], []];
 	// for (let i = 0; i<=8; i++) {
 	// 	if (random() < 0.4) randRule[1].push(i);
@@ -144,10 +146,19 @@ function setup() {
 	rule = rules.length-2;//rule_indices[rule_count];
 
 	displayRule();
-	noStroke();
-	frameRate(24);
+	
+	frame_counter = 1;
 
-	frameCounter = 1;
+	// delay in seconds;
+	// how long to display welcome text
+	pause_length = 1.5;
+	// how long to stay on a rule
+	// until changing to the next one
+	pause_on_rule = 6;
+
+	frames_per_second = 24;
+
+	frameRate(frames_per_second);
 
 	initialize();
 
@@ -169,20 +180,20 @@ function draw() {
 	}
 
 	if (focused && !paused) {
-		if (pauseCounter > 24) {
+		if (pause_counter > pause_length*frames_per_second) {
 			update();
 		} else {
-			pauseCounter++;
+			pause_counter++;
 		}
 
-		if (!stay_on_rule && frameCounter % (10*24) === 0) {
+		if (!stay_on_rule && frame_counter % (pause_on_rule*frames_per_second) === 0) {
 			initialize();
 			rule_count++;
 			rule_count%=rules.length;
 			rule = rule_indices[rule_count];
 			displayRule();
 		}
-		frameCounter++;
+		frame_counter++;
 	}
 	updatePixels();
 }
@@ -191,20 +202,43 @@ function update() {
 	let r = 0;
 	for (let i = 0; i<x*y; i++) {
 		if (i%x !== x-1 && i%x !== 0 && Math.floor(i/x) !== 0 && Math.floor(i/x) !== y-1) {
+			// counts the number of living neighbors
 			// oh javascript, you're so crazy
 			sum = 0+cells[i-x]+cells[i+x]+cells[i-1]+cells[i+1]+cells[i-x-1]+cells[i-x+1]+cells[i+x-1]+cells[i+x+1];
 
 			if (cells[i]) {
-				cells[i] = false;
-				for (r = 0; r<rules[rule][1].length; r++) if (sum===rules[rule][1][r]) cells[i] = true;
+				cells2[i] = false;
+				for (r = 0; r<rules[rule][1].length; r++) if (sum===rules[rule][1][r]) cells2[i] = true;
 			} else {
-				cells[i] = false;
-				for (r = 0; r<rules[rule][2].length; r++) if (sum===rules[rule][2][r]) cells[i] = true;
+				cells2[i] = false;
+				for (r = 0; r<rules[rule][2].length; r++) if (sum===rules[rule][2][r]) cells2[i] = true;
 			}
 
 			r = 0
 		}
 	}
+
+	for (let i = 0; i<cells.length; i++) cells[i] = cells2[i];
+
+	// let sum = 0;
+	// let r = 0;
+	// for (let i = 0; i<x*y; i++) {
+	// 	if (i%x !== x-1 && i%x !== 0 && Math.floor(i/x) !== 0 && Math.floor(i/x) !== y-1) {
+	// 		// counts the number of living neighbors
+	// 		// oh javascript, you're so crazy
+	// 		sum = 0+cells[i-x]+cells[i+x]+cells[i-1]+cells[i+1]+cells[i-x-1]+cells[i-x+1]+cells[i+x-1]+cells[i+x+1];
+
+	// 		if (cells[i]) {
+	// 			cells[i] = false;
+	// 			for (r = 0; r<rules[rule][1].length; r++) if (sum===rules[rule][1][r]) cells[i] = true;
+	// 		} else {
+	// 			cells[i] = false;
+	// 			for (r = 0; r<rules[rule][2].length; r++) if (sum===rules[rule][2][r]) cells[i] = true;
+	// 		}
+
+	// 		r = 0
+	// 	}
+	// }
 }
 
 function keyTyped() {
@@ -279,6 +313,7 @@ function initialize() {
 	}
 
 	cells = new Uint8Array(x*y);
+	cells2 = new Uint8Array(x*y);
 
 	let i;
 	if (message > -1 && y > scale*8) {
@@ -311,7 +346,7 @@ function initialize() {
 		}
 	}
 
-	pauseCounter = 0;
+	pause_counter = 0;
 }
 
 function windowResized() {
