@@ -6,12 +6,33 @@ title: Jesse Jenks
 	body {
 		text-shadow: 1px 0px 2px white,2px 0px 4px white;
 	}
+	#big-name {
+		font-size:42px;
+		display: flex;
+		justify-content: center;
+		text-align: center;"
+	}
+	#small-name {
+		display: none;
+	}
+	@media only screen and (max-width: 640px) {
+		#big-name {
+			display: none;
+		}
+		#small-name {
+			font-size:42px;
+			display: flex;
+			justify-content: center;
+			text-align: center;"
+		}
+	}
 </style>
 <!-- P5.js -->
 <script src="/js/libraries/p5.js" type="text/javascript"></script>
 <script src="../../../../js/libraries/p5.dom.js" type="text/javascript"></script>
 <script src="/js/automata_2.js"></script>
-<p style="font-size:42px; display: flex;justify-content: center;text-align: center;">Jesse Endo Jenks</p>
+<p id="big-name">Jesse Endo Jenks</p>
+<p id="small-name">Jesse E. Jenks</p>
 <!-- <div class="blurb">
 	<p style="display: flex;justify-content: center;text-align: center;">Jesse Endo Jenks</p>
 </div> -->

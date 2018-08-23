@@ -18,6 +18,7 @@ var main_color, white;
 
 
 var box_w;
+var top_buffer;
 
 var frameCounter;
 function setup() {
@@ -263,7 +264,13 @@ function displayRule() {
 // why does this happen??
 // I kinda hate javascript???
 function setScale() {
-	scale = 5;
+	if (windowWidth < 640) {
+		scale = 2;
+		top_buffer = 14;
+	} else {
+		scale = 4;
+		top_buffer = 6;
+	}
 }
 function initialize() {
 	x = Math.floor(width/box_w)+1;
@@ -271,9 +278,9 @@ function initialize() {
 
 	setScale();
 
-	// console.log("scale "+scale);
-	// console.log(width*height);
-	// console.log(pixels.length);
+	console.log("scale "+scale);
+	console.log(width*height);
+	console.log(pixels.length);
 
 	let mod_size = 32;
 
@@ -295,7 +302,7 @@ function initialize() {
 
 		let k, l;
 
-		j = 3*x;
+		j = top_buffer*x;
 
 
 		for (i = 0; i<welcome[message].length; i++) {
