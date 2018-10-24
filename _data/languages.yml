@@ -5,7 +5,7 @@
 
 - name: Python
   type: icon
-  link: python.org
+  link: https://python.org
   iconlink: "fab fa-python"
 
 - name: Javascript
