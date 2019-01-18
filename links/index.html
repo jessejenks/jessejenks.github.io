@@ -18,11 +18,21 @@ title: Links
 		font-size: 24px;
 	}
 </style>
-<script src="/js/libraries/p5.js" type="text/javascript"></script>
-<script src="/js/libraries/p5.dom.js" type="text/javascript"></script>
+<!-- <script src="/js/libraries/p5.js" type="text/javascript"></script> -->
+<!-- <script src="/js/libraries/p5.dom.js" type="text/javascript"></script> -->
+<script src="/js/utils.js"></script>
 <script src="/js/permutations.js"></script>
-<script src="/js/color_plants.js"></script>
+<script src="/js/colorful_maze.js"></script>
 <!-- <h1>{{ page.title }}</h1> -->
+
+<h2>Cool links</h2>
+<span class="main-text">
+{% for link in site.data.cool_links %}
+	<a class="left-indent" target="_blank" href="{{ link.page }}" title="{{ link.name }}'">{{ link.name }}</a>
+	<br>
+{% endfor %}
+</span>
+
 <h2>Friends</h2>
 <span class="main-text">
 {% for friend in site.data.friends %}
@@ -30,14 +40,6 @@ title: Links
 	{% if friend.link != null %}
 		<a target="_blank" href="{{ friend.link }}" title="{{ friend.name }}'s website">{{ friend.site }}</a>
 	{% endif %}
-	<br>
-{% endfor %}
-</span>
-
-<h2>Cool links</h2>
-<span class="main-text">
-{% for link in site.data.cool_links %}
-	<a class="left-indent" target="_blank" href="{{ link.page }}" title="{{ link.name }}'">{{ link.name }}</a>
 	<br>
 {% endfor %}
 </span>

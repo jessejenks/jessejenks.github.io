@@ -1,3 +1,396 @@
+(() => {
+const cv = document.createElement('canvas');
+cv.id = 'automata';
+cv.setAttribute('style', 'position: absolute; top: 0; left: 0; z-index: -1;');
+cv.width = window.innerWidth;
+cv.height = window.innerHeight;
+
+document.getElementsByTagName("BODY")[0].appendChild(cv);
+
+// const pixelRatio = window.devicePixelRatio;
+
+const ctx = cv.getContext('2d');
+// ctx.scale(pixelRatio, pixelRatio);
+// ctx.save();
+
+const nameDiv = document.getElementById("name-of-rule");
+const authorDiv = document.getElementById("author-of-rule");
+const encodingDiv = document.getElementById("encoding-of-rule");
+
+
+const greetingBitmap = [
+    [
+        0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0, 1,0,0,0,1, 0,1,1,1,0, 1,0,0,0, 1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,0,
+        0, 1,0,1,0,1, 0,1,0,0,0, 1,0,0,0, 1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,
+        0, 1,0,1,0,1, 0,1,1,1,0, 1,0,0,0, 1,0,0,1,0,1,0,1,0,1,0,1,0,1,1,1,0,
+        0, 1,0,1,0,1, 0,1,0,0,0, 1,0,0,0, 1,0,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0,
+        0, 1,1,1,1,1, 0,1,1,1,0, 1,1,1,0, 1,1,0,1,1,1,0,1,0,0,0,1,0,1,1,1,0,
+        0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        0, 0,0,0,0,0, 0,0,0,0,0, 0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    ],
+    [
+        0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,
+        0,0,0,0,0,0,1,0,1,0, 0,1,0,0,0,0,
+        0,0,0,0,0,0,1,0,1,0, 0,0,0,0,0,0,
+        0,0,0,0,0,0,1,1,1,0, 0,1,0,0,0,0,
+        0,0,0,0,0,0,1,0,1,0, 0,1,0,0,0,0,
+        0,0,0,0,0,0,1,0,1,0, 0,1,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0
+    ]
+];
+
+// const colorPalette = Array(5).fill(0).map((a,i) => lerpColor("#ffe4e1", "#fa8072", i/4));
+const colorPalette =
+// ['#568ea6', '#305f72']
+['#f18c8e','#f0b7a4','#f1d1b5'];
+let cellColors;
+
+const boxSize = 12;
+const scale = 3;
+
+let gridWidth, gridHeight, paddingTop;
+let cells, cells2;
+
+let whichMessageIndex, modSize;
+let screenIsBigEnough;
+
+let animationFrameID;
+let alternateCellBufferCounter;
+const fps = 10;
+const fpsInterval = 1000/fps;
+let now, then, elapsed;
+let animationCounter = 0;
+const delay = 2*fps;
+const duration = 10*fps;
+let currentFrameCount = 0;
+let paused = false;
+const shuffledRules = fisherYates(ruleDefinitions.length-1).concat(ruleDefinitions.length-1);
+// [...Array(ruleDefinitions.length).keys()];//
+let shuffledRuleIndex = shuffledRules.length-1;
+let whichRule;
+let drawOnce;
+
+
+function initialize() {
+    gridWidth = Math.floor(cv.width/boxSize)+1;
+    gridHeight = Math.floor(cv.height/boxSize)+1;
+
+    cells = new Uint8Array(gridWidth*gridHeight);
+    cells2 = new Uint8Array(cells.length);
+    cellColors = new Uint8Array(cells.length);
+
+    cellColors = cellColors.map(_ => Math.floor(Math.random()*colorPalette.length));
+
+
+    paddingTop = 4;    
+
+    if (gridWidth > 32*scale) {
+        whichMessageIndex = 0;
+        modSize = 32;
+    } else if (gridWidth > 16*scale) {
+        whichMessageIndex = 1;
+        modSize = 16;
+    } else {
+        whichMessageIndex = -1;
+    }
+    screenIsBigEnough = whichMessageIndex > -1 && gridHeight > 8;
+
+    fillCellArrays();
+
+    whichRule = 
+    // ruleDefinitions.length-1;
+    shuffledRules[shuffledRuleIndex];
+
+    displayRule(ruleDefinitions[whichRule]);
+
+    drawOnce = true;
+
+    alternateCellBufferCounter = 0;
+
+    then = window.performance.now();
+
+    draw();
+}
+
+const fillCellArrays = () => {
+    if (screenIsBigEnough) {
+
+        let i;
+        let j = paddingTop * gridWidth;
+
+        greetingBitmap[whichMessageIndex].forEach((isAlive,i) => {
+            if (i%modSize === 0) {
+                j = recenterIndex(j, gridWidth, modSize);
+            }
+
+            cells[j] = !!isAlive;
+
+            for (let p = 0; p<scale; ++p) {
+                for (let q = 0; q<scale; ++q) {
+                    if (!(p === 0 && q === 0)) {
+                        cells[j + p*gridWidth + q] = cells[j];
+                    }
+                }
+            }
+
+            j+=scale;
+
+
+        });
+    } else {
+        // cells = cells.map(a => Math.random() < .5);//001);
+
+        // butterfly
+        // nxn square -> pattern
+
+        // n  -> pattern
+        // ---------
+        // 1  -> death
+        // 2  -> stable 2x2
+        // 3  -> 3-blinker
+        // 4  -> 4-blinker
+        // 5  -> 3-blinker
+        // 6  -> 4-blinker
+        // 7  -> death
+        // 8  -> 4-blinker
+        // 9  -> death
+        // 10 -> stable 2x2
+        // 11 -> death
+        // 12 -> stable 2x2
+        // 13 -> death
+        // 14 -> 4-blinker
+        // 15 -> death
+        // 16 -> 4-blinker
+        // 17 -> death
+        // 18 -> 4-blinker
+        // 19 -> death
+        // 20 -> 4-blinker
+        // 21 -> death
+        // 22 -> 4-blinker (looks like 18 at some poitn)
+        // 23 -> death
+        // 24 -> 4-blinker
+        // 25 -> death
+
+        ////*** results may be incorrect
+        // 26 -> stable 2x2
+        // 27 -> death
+        // 28 -> 4-blinker
+        // 29 -> death
+        // 30 -> death
+        // 31 -> 4 new blinkers
+        // 32 -> 
+
+
+        let sides = 22;
+
+        for (let i = 0; i<sides; ++i) {
+            for (let j = 0; j<sides; ++j) {
+                // cells[Math.floor(cells.length/2 + gridWidth/2)] = true;
+                // cells[Math.floor(cells.length/2 - sides/2 - sides*gridWidth/2) + i*gridWidth + j] = true;
+                cells[(j + 3)*gridWidth + i + Math.floor(gridWidth/2 - sides/2)] = true;
+            }
+        }
+
+
+    }
+}
+
+const recenterIndex = (j, w, m) => {
+    j -= (j%w);
+    j += Math.floor((w - scale*m)/2);
+    j += scale*w;
+    return j;
+}
+
+const update = (rule, cells, cells2, w, h) => {
+    let sum = 0;
+    let i, j, which;
+    let onLeft, onRight, onTop, onBottom, onEdge;
+    const l = cells.length;
+
+    for (i = 0; i<l; ++i) {
+        onLeft = onTheLeft(i,w);
+        onRight = onTheRight(i,w);
+
+        onTop = onTheTop(i,w);
+        onBottom = onTheBottom(i,w,h);
+
+        // sum =   +cells[i-w]
+        //         +cells[i+w]
+        //         +cells[i-1]
+        //         +cells[i+1]
+        //         +cells[i-w-1]
+        //         +cells[i-w+1]
+        //         +cells[i+w-1]
+        //         +cells[i+w+1];
+
+        sum =   +(onTop ? cells[l-w + (i%w)] : cells[i-w])
+                +(onBottom ? cells[i%w] : cells[i+w])
+                +(onLeft ? cells[i+w-1] : cells[i-1])
+                +(onRight ? cells[i-w+1] : cells[i+1])
+                
+                +(onTop ?
+                    (onLeft ?
+                        cells[l-1] : cells[l-w + (i%w)-1]
+                    )
+                    :
+                    (onLeft ? 
+                        cells[i-1] : cells[i-w-1]
+                    )
+                )
+
+                +(onTop ?
+                    (onRight ?
+                        cells[l-w] : cells[l-w + (i%w)+1]
+                    )
+                    :
+                    (onRight ?
+                        cells[i-2*w+1] : cells[i-w+1]
+                    )
+                )
+
+                +(onBottom ? 
+                    (onLeft ?
+                        cells[w-1] :cells[(i%w)-1]
+                    )
+                    :
+                    (onLeft ?
+                        cells[i+2*w-1] : cells[i+w-1]
+                    )
+                )
+                +(onBottom ?
+                    (onRight ?
+                        cells[0] : cells[(i%w)+1]
+                    )
+                    :
+                    (onRight ?
+                        cells[i+1] : cells[i+w+1]
+                    )
+                );
+    
+        which = cells[i] ? 1 : 2;
+
+        cells2[i] = false;
+        for (j = 0; j<rule[which].length; ++j) {
+            if (sum === rule[which][j]) {
+                cells2[i] = true;
+                break;
+            }
+        }
+    }
+}
+
+const onTheLeft = (i, w) => i%w === 0;
+const onTheRight = (i, w) => i%w === w-1;
+
+const onTheTop = (i, w) => Math.floor(i/w) === 0;
+const onTheBottom = (i, w, h) => Math.floor(i/w) === h-1;
+
+// const onTheEdge = (i, w, h) => {
+//     const j = Math.floor(i/w);
+//     return (
+//             i%w === 0
+//         ||  i%w === w-1
+//         ||  j   === 0
+//         ||  j   === h-1
+//     );
+// }
+
+const draw = () => {
+    animationFrameID = requestAnimationFrame(draw);
+
+    if (!paused) {
+        now = window.performance.now();
+        elapsed = now - then;
+
+        if (elapsed > fpsInterval) {
+            if (drawOnce || animationCounter >= delay) {
+                ctx.clearRect(0,0,cv.width, cv.height);
+
+                const isEvenFrame = alternateCellBufferCounter === 0;
+                const c1 = isEvenFrame ? cells : cells2;
+                const c2 = isEvenFrame ? cells2 : cells;
+
+
+                c1.forEach((cell, i) => {
+                    if (cell) {
+                        ctx.fillStyle = colorPalette[cellColors[i]];
+
+                        // `rgb(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255})`;//"#0af";
+                        ctx.fillRect((i%gridWidth)*boxSize, Math.floor(i/gridWidth)*boxSize, boxSize, boxSize);
+                    }
+                });
+
+                update(ruleDefinitions[whichRule], c1, c2, gridWidth, gridHeight);
+
+                alternateCellBufferCounter = (++alternateCellBufferCounter)%2;
+                
+                if (drawOnce) drawOnce = false;  
+            }
+
+            animationCounter++;
+
+            if (animationCounter >= delay + duration) {
+                alternateCellBufferCounter = 0;
+                animationCounter = 0;
+                drawOnce = true;
+                shuffledRuleIndex = (++shuffledRuleIndex)%shuffledRules.length;
+                whichRule = shuffledRules[shuffledRuleIndex];
+                // console.log(ruleDefinitions[whichRule][0]);
+                displayRule(ruleDefinitions[whichRule]);
+                cells.fill(0);
+                fillCellArrays();
+            }
+
+            then = now - (elapsed % fpsInterval);
+        }
+    }
+}
+
+const displayRule = (rule) => {
+    nameDiv.innerText = '\''+rule[0]+'\'';
+    authorDiv.innerText = rule[3] ? 'by '+rule[3] : '';
+    encodingDiv.innerText =
+        'rule : {'
+        +rule[1].join(',')
+        +'}/{'
+        + rule[2].join(',')
+        +'}';
+}
+
+window.onresize = () => {
+    cv.width = window.innerWidth;
+    cv.height = window.innerHeight;
+    cancelAnimationFrame(animationFrameID);
+    initialize();
+}
+
+window.onkeyup = e => {
+    if (e.key === "ArrowRight") {
+        shuffledRuleIndex = (++shuffledRuleIndex)%shuffledRules.length;
+        whichRule = shuffledRules[shuffledRuleIndex];
+        animationCounter = delay;
+        displayRule(ruleDefinitions[whichRule]);
+    }
+    if (e.key === "ArrowLeft") {
+        shuffledRuleIndex--;
+        if (shuffledRuleIndex < 0) {
+            shuffledRuleIndex = ruleDefinitions.length-1;
+        }
+        whichRule = shuffledRules[shuffledRuleIndex];
+        animationCounter = delay;
+        displayRule(ruleDefinitions[whichRule]);
+    }
+    if (e.key === "p") paused = !paused;
+    if (e.key === "r") initialize();
+}
+
+initialize();
+
+})();
+/*
 p5.disableFriendlyErrors = true
 
 var x = 256;
@@ -231,3 +624,4 @@ function displayRule() {
 //   //   updatePixels();
 //   // }
 // }
+*/

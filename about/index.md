@@ -26,3 +26,6 @@ Where are people visiting from?
 <div style="display:flex; justify-content:center; max-width:100%;"><div style="display:inline-block; width:600px; float:right;"><script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0hbv4cjt8yu&amp;m=7&amp;c=5ba1b2&amp;cr1=ffffff&amp;sx=0&amp;dds=0&amp;ds=20" async="async"></script></div></div>
 
 <br>
+
+<script src="/js/utils.js"></script>
+<script src="/js/rain.js"></script>

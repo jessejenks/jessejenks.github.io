@@ -257,7 +257,8 @@ table img {
 	</a>
 </li>
 <!-- <li id="address">4386 Wheelock Student Center<br>Tacoma, WA 98416</li> -->
-<li id="address">726 Alcatraz Ave.<br>Oakland, CA 94609</li>
+<!-- <li id="address">726 Alcatraz Ave.<br>Oakland, CA 94609</li> -->
+<li id="address">Seattle, WA</li>
 </ul>
 <br id="spacer">
 <div class="section-header">Education</div>
@@ -275,7 +276,7 @@ table img {
 		<i>magna cum laude</i><br>
 	<span class="bold-text indent">Relevant Courses</span>
 		<br class="mobile-break">
-		<span class="bold-text">University of Puget Sound / Study Abroad in Budapest, Hungary</span><br>
+		<span class="bold-text">University of Puget Sound / Budapest Semesters in Mathematics, Study Abroad</span><br>
 	<ul class="ul-styling" style="list-style-type:none;">
 		<li>Algorithms, Artificial Intelligence, Optimization, Software Engineering, Theory of Computing</li>
 		<li>Abstract Algebra, Linear Algebra, Real Analysis, Set Theory, Topology, Mathematical Logic</li>
@@ -287,8 +288,6 @@ table img {
 <div class="normal-text">
 	<span class="bold-text indent">Languages &amp; Libraries</span>
 		<br class="mobile-break">
-		<!-- https://stackoverflow.com/questions/20924471/for-loop-wrap-every-two-posts-in-a-div -->
-		<!-- Two columns for mobile -->
 		<table id="mobile-table">
 			{% assign rows = site.data.languages.size | divided_by: 2.0 | ceil %}
 			{% for i in (1..rows) %}

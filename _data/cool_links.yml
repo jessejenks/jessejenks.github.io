@@ -1,5 +1,5 @@
+- name: Hex Insights
+  page: https://www.hexinsights.com
+
 - name: The On-line Encyclopedia of Integer Sequences
   page: https://oeis.org
-
-- name: Hex Insights
-  page: http://www.hexinsights.com.s3-website-us-west-2.amazonaws.com/
