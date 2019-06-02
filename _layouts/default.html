@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-	<html>
+	<html lang="en">
 		<head>
 			<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
 			<title>{{ page.title }}</title>
@@ -11,7 +11,6 @@
 			<!-- Main stylesheets -->
 			<link href='//fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
 			<link rel="stylesheet" type="text/css" href="/css/main.css">
-			<link rel="stylesheet" type="text/css" href="/css/syntax.css">
 
 			<!-- fontawesome for social media icons -->
 			<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
@@ -20,66 +19,41 @@
 				const toggleMenuVisibility = () => {
 				    document.querySelector('#main-nav-menu')
 				        .classList
-				        .toggle('show');
+				        .toggle('show-menu');
+				    document.querySelector('#mobile-menu-button')
+				        .classList
+				        .toggle('show-menu');
 				}
 			</script>
 		</head>
 		<body>
 			<nav>
-				<!-- <input type="checkbox" id="menu-toggle"/>
-				<span id="icon-container">
-					<label for="menu-toggle" id="mobile-menu-icon">
-						<i class="fas fa-bars"></i>
-					</label>
-				</span>
-
-				<ul id="nav-container">
-					<li class="dropdown" id="leftmost">
-						<a href="/" class="dropbtn">Home</a>
-					</li>
-					<li class="dropdown">
-						<a href="/about" class="dropbtn">About</a>
-					</li>
-					<li class="dropdown">
-						<a href="/links" class="dropbtn">Links</a>
-					</li>
-					<li class="dropdown">
-						<a href="/blog" class="dropbtn">Blog</a>
-					</li>
-					<li class="dropdown">
-						<label for="resume-toggle" class="dropbtn">Resume</label>
-						<input type="checkbox" id="resume-toggle"/>
-						<ul class="dropdown-content">
-							<li><a href="/resume">Online</a></li>
-							<li><a href="{{ "/data/Jesse_Jenks_Resume.pdf" | prepend: site.baseurl }}">PDF</a></li>
-						</ul>
-					</li>
-				</ul> -->
-
-				<ul id="main-nav-menu">
-		            <div 
+				<div id="mobile-menu-button-container">
+					<div
 		                id="mobile-menu-button"
 		                onclick="toggleMenuVisibility()"
 		            >
 		                <i class="fas fa-bars"></i>
 		            </div>
-		            <li><a href="#">Home</a></li>
-		            <li><a href="#">About</a></li>
+		        </div>
+				<ul id="main-nav-menu">
+		            <li><a href="/">Home</a></li>
+		            <li><a href="/about">About</a></li>
 		            <li class="subnav-title">
-		                <a href="/blog/">Blog</a>
+		                <a href="/blog">Blog</a>
 		                <ul class="subnav">
-		                    <li><a href="#">Interactive projects</a></li>
+		                    <li><a href="/blog">Interactive projects</a></li>
 		                    <li><a href="/blog/writing">Writing</a></li>
 		                </ul>
 		            </li>
 		            <li class="subnav-title">
-		                <a>Resume</a>
+		                <a href="/resume">Resume</a>
 		                <ul class="subnav">
-		                    <li><a href="#">Online&nbsp;CV</a></li>
-		                    <li><a href="#">One&nbsp;page PDF</a></li>
+		                    <li><a href="/resume">Online&nbsp;CV</a></li>
+		                    <li><a href="{{ "/data/Jesse_Jenks_Resume.pdf" | prepend: site.baseurl }}">One&nbsp;page PDF</a></li>
 		                </ul>
 		            </li>
-		            <li><a href="#">Links</a></li>
+		            <li><a href="/links">Links</a></li>
 		        </ul>
 		    </nav>
 			</nav>
@@ -88,17 +62,6 @@
 			{{ content }}
 
 			</main>
-
-			<!-- for the "What's this?" tabs -->
-			<!-- <script>
-			var acc = document.getElementsByClassName("accordion");
-			for (let i = 0; i<acc.length; i++) {
-				acc[i].onclick = function(){
-				this.classList.toggle("active");
-				this.parentNode.nextElementSibling.classList.toggle("show");
-			  };
-			};
-			</script> -->
 			<footer>
 				<hr>
 				<ul>
@@ -115,22 +78,16 @@
 					</li>
 					
 					<li>
-						<!-- hex from the official brand guidelines -->
+						<!-- color from the official brand guidelines -->
 						<a style="color:#0077B5;" target="_blank" href="https://www.linkedin.com/in/jesse-endo-jenks">
 							<i class="fab fa-linkedin fa-2x"></i>
 						</a>
 					</li>
 
 					<li>
-						<!-- hex from the official brand guidelines -->
+						<!-- color from the official brand guidelines -->
 						<a style="color:#1da1f2;" target="_blank" href="https://twitter.com/JesseEndoJenks">
 							<i class="fab fa-twitter fa-2x"></i>
-						</a>
-					</li>
-
-					<li>
-						<a target="_blank" href="http://p5js.org/">
-							<img align="middle" title="p5js" alt="p5js" src="/data/logos/p5js.png" height="32px" border="0">
 						</a>
 					</li>
 					

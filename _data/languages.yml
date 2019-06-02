@@ -1,3 +1,18 @@
+- name: Javascript
+  type: icon
+  link: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  iconlink: "fab fa-js-square"
+
+- name: React
+  type: icon
+  link: https://reactjs.org
+  iconlink: "fab fa-react"
+
+- name: Express
+  type: image
+  link: https://expressjs.com/
+  iconlink: /data/logos/expressjs-logo.svg
+
 - name: Java
   type: icon
   link: https://java.com
@@ -7,11 +22,6 @@
   type: icon
   link: https://python.org
   iconlink: "fab fa-python"
-
-- name: Javascript
-  type: icon
-  link: https://developer.mozilla.org/en-US/docs/Web/JavaScript
-  iconlink: "fab fa-js-square"
 
 - name: Processing
   type: image
@@ -62,8 +72,3 @@
   type: image
   link: https://www.haskell.org
   iconlink: /data/logos/haskell-logo.png
-
-- name: love2d
-  type: image
-  link: https://love2d.org
-  iconlink: /data/logos/love-logo.png

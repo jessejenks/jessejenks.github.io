@@ -3,18 +3,32 @@ layout: default
 title: Jesse Jenks
 ---
 <style>
-	/*body {
-		text-shadow: 1px 0px 2px white,2px 0px 4px white;
-	}*/
 	#big-name {
 		font-size:42px;
 		display: flex;
 		justify-content: center;
 		text-align: center;
 	}
+
 	#small-name {
 		display: none;
 	}
+
+	#automata-info-container {
+		align-self: flex-end;
+		font-size: 1rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+
+	#big-name,
+	#small-name,
+	#automata-info-container > div {
+		text-shadow: 0px 0px 2px white, 0px 0px 4px white;
+	}
+
 	@media only screen and (max-width: 640px) {
 		#big-name {
 			display: none;
@@ -31,15 +45,15 @@ title: Jesse Jenks
 <script src="/js/utils.js"></script>
 <script src="/js/rules.js"></script>
 
-<p id="big-name">Jesse Endo Jenks</p>
-<p id="small-name">Jesse E. Jenks</p>
+<div id="big-name">Jesse Endo Jenks</div>
+<div id="small-name">Jesse E. Jenks</div>
 
-<br><br><br><br><br><br><br>
-<div id="name-of-rule" style="display: flex;justify-content: center;text-align: center;"></div>
-<div id="author-of-rule" style="display: flex;justify-content: center;text-align: center;"></div>
-<div id="encoding-of-rule" style="display: flex;justify-content: center;text-align: center;"></div>
-<!-- <div style="display: flex;justify-content: center;text-align: center;">Use left and right arrows to change rules, press 'r' to reset, and 'p' to pause</div> -->
-<div style="display: flex;justify-content: center;text-align: center;">More info&nbsp;<a href="../about">here</a></div>
-<br>
+<div id="automata-info-container">
+	<div id="name-of-rule"></div>
+	<div id="author-of-rule"></div>
+	<div id="encoding-of-rule"></div>
+	<!-- <div style="display: flex;justify-content: center;text-align: center;">Use left and right arrows to change rules, press 'r' to reset, and 'p' to pause</div> -->
+	<div id="more-info-link">More info&nbsp;<a href="../about">here</a></div>
+</div>
 
 <script src="/js/automata.js"></script>
