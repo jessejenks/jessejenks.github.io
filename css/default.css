@@ -3,6 +3,7 @@
     --palette-blue: #5ba1b2;
     --palette-light-blue: #bdd9e0;
     --palette-very-light-blue: #eef5f7;
+    --palette-light-blue-transparent: rgba(189,217,224,.6);
     --palette-gray: #666;
     --palette-light-gray: #aaa;
     --palette-medium-light-gray: #ddd;
@@ -30,6 +31,7 @@
     --body-color: white;
 
     --drop-shadow-style: 3px 4px 6px 2px rgba(0,0,0,.05);
+    --text-shadow-style: 0px 0px 2px white, 0px 0px 4px white;
 
     --footer-height: 6rem;
 }
@@ -67,6 +69,25 @@ nav {
 a {
     text-decoration: none;
     color: inherit;
+}
+
+main a {
+    --link-lr-padding: .25rem;
+
+    padding: 0 var(--link-lr-padding);
+    border: .5px solid;
+    border-color: #f9f9f9;
+    border-radius: .25rem;
+    background-color: inherit;
+
+    will-change: background-color, border-color;
+
+    transition: background-color .2s, border-color .2s;
+}
+
+main a:hover {
+    border-color: var(--palette-light-blue);
+    background-color: var(--palette-light-blue-transparent);
 }
 
 nav > ul {
@@ -154,6 +175,13 @@ nav > ul li a:hover {
 
 main {
     flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    font-size: 16px;
+    width: 80%;
+    align-self: center;
 }
 
 footer {

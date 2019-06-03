@@ -1,12 +1,4 @@
-main {
-    font-size: 16px;
-    display: flex;
-    justify-content: center;
-}
-
 #resume-container {
-    width: 80%;
-
     --section-header-color: var(--palette-blue);
     --subsection-header-color: black;
     --default-text-color: #666;
@@ -42,7 +34,7 @@ hr {
     justify-content: space-between;
 }
 
-#resume-container a {
+/*#resume-container a {
     --link-lr-padding: .25rem;
 
     padding: 0 var(--link-lr-padding);
@@ -59,7 +51,7 @@ hr {
 #resume-container a:hover {
     border-color: var(--palette-very-light-blue);
     background-color: var(--palette-very-light-blue);
-}
+}*/
 
 .indent > a {
     margin-left: calc(-var(--link-lr-padding));
