@@ -1,0 +1,33 @@
+.posts {
+    list-style-type: none;
+}
+
+.posts .link-to-post {
+    font-size: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    padding: .5rem;
+    margin: .25rem 0;
+}
+
+.blog-details {
+    color: var(--palette-light-gray);
+}
+
+.blog-details.desktop {
+    display: inline;
+}
+
+.blog-details.mobile {
+    display: none;
+}
+
+@media screen and (max-width: 640px) {
+    .blog-details.desktop {
+        display: none;
+    }
+
+    .blog-details.mobile {
+        display: inline;
+    }
+}

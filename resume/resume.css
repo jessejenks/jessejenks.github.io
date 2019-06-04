@@ -16,6 +16,22 @@ hr {
     margin: 8px 0;
 }
 
+#current-page-info {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    left: 1rem;
+}
+
+#current-page-info > h2 {
+    margin-bottom: .5rem;
+}
+
+#current-page-info > a {
+    padding: .25rem;
+    color: var(--palette-light-gray);
+}
+
 #name {
     font-size: 4.5rem;
     font-family: 'Barlow Semi Condensed', sans-serif;
@@ -294,6 +310,19 @@ table img {
     display: none;
 }
 
+@media only screen and (max-width: 640px) {
+    #current-page-info {
+        left: 4rem;
+        top: 1rem;
+        flex-direction: row;
+        align-items: baseline;
+    }
+
+    #current-page-info > h2 {
+        margin: 0 1rem;
+    }
+}
+
 @media only screen and (max-width: 850px) {
     .align-on-right {
         width: 100%;
@@ -357,6 +386,13 @@ table img {
 }
 
 @media print {
+    main,
+    #resume-container {
+        margin: 0;
+        padding: 0;
+        width: auto;
+    }
+
     #resume-container a {
         border: none;
     }

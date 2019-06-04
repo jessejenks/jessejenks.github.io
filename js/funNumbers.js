@@ -1,4 +1,4 @@
-var transcendentals = [
+const funNumbers = [
   {
     number: '\\( \\sum_{n=1}^{\\infty}10^{-n!} \\)',
     link: "http://mathworld.wolfram.com/LiouvillesConstant.html"
@@ -12,7 +12,6 @@ var transcendentals = [
     link: "http://mathworld.wolfram.com/Gelfond-SchneiderConstant.html"
   },
   {
-    // number: '\\(\\frac{1}{4}\\left(2-\\frac{1\\cdot3\\cdot15\\cdot255\\cdots}{2\\cdot4\\cdot16\\cdot256\\cdots}\\right)\\)',
     number: '\\(\\frac{1}{4}\\left(2-\\frac{1\\cdot3\\cdot15\\cdot255\\cdots}{2\\cdot4\\cdot16\\cdot256\\cdots}\\right)\\)',
     link: "http://mathworld.wolfram.com/Thue-MorseConstant.html"
   },

@@ -23,6 +23,26 @@
   link: https://python.org
   iconlink: "fab fa-python"
 
+- name: Postgres
+  type: image
+  link: https://www.postgresql.org/
+  iconlink: /data/logos/postgres-logo.svg
+
+- name: Haskell
+  type: image
+  link: https://www.haskell.org
+  iconlink: /data/logos/haskell-logo.png
+
+- name: Prolog
+  type: image
+  link: http://www.swi-prolog.org
+  iconlink: /data/logos/swipl-logo.png
+
+- name: \(\LaTeX\)
+  type: image
+  link: https://www.latex-project.org/
+  iconlink: /data/logos/latex-logo.png
+
 - name: Processing
   type: image
   link: https://processing.org
@@ -37,11 +57,6 @@
   type: image
   link: https://d3js.org
   iconlink: https://d3js.org/logo.svg
-
-- name: \(\LaTeX\)
-  type: image
-  link: https://www.latex-project.org/
-  iconlink: /data/logos/latex-logo.png
 
 - name: Flask
   type: image
@@ -62,13 +77,3 @@
   type: image
   link: https://seaborn.pydata.org
   iconlink: /data/logos/seaborn-logo.png
-
-- name: Prolog
-  type: image
-  link: http://www.swi-prolog.org
-  iconlink: /data/logos/swipl-logo.png
-
-- name: Haskell
-  type: image
-  link: https://www.haskell.org
-  iconlink: /data/logos/haskell-logo.png
