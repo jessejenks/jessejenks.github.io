@@ -1,0 +1,54 @@
+.centered-image {
+    display: block;
+    margin: auto;
+    max-width: 100%;
+}
+
+button.accordion {
+    margin: .5rem 0;
+    padding: 1rem;
+
+    width: 100%;
+
+
+    text-align: left;
+    font-size: 1rem;
+
+    border: none;
+    outline: none;
+    border-radius: .25rem;
+    
+    cursor: pointer;
+    color: var(--palette-blue);
+    background-color: var(--palette-very-light-gray);
+    
+    will-change: background-color;
+
+    transition: background-color var(--default-transition-time);
+}
+button.accordion.active,
+button.accordion:hover {
+    background-color: var(--palette-medium-light-gray);
+}
+
+.panel {
+    display: none;
+}
+
+.panel.show {
+    display: block;
+}
+
+p {
+    margin: 1rem 0;
+}
+
+
+button.accordion:after {
+    content: "\002B";
+    font-weight: bold;
+    float: right;
+}
+button.accordion.active:after {
+    content: "\2212";
+}

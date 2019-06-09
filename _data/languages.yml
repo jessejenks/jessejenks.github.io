@@ -11,7 +11,7 @@
 - name: Express
   type: image
   link: https://expressjs.com/
-  iconlink: /data/logos/expressjs-logo.svg
+  iconlink: /assets/logos/expressjs-logo.svg
 
 - name: Java
   type: icon
@@ -26,32 +26,32 @@
 - name: Postgres
   type: image
   link: https://www.postgresql.org/
-  iconlink: /data/logos/postgres-logo.svg
+  iconlink: /assets/logos/postgres-logo.svg
 
 - name: Haskell
   type: image
   link: https://www.haskell.org
-  iconlink: /data/logos/haskell-logo.png
+  iconlink: /assets/logos/haskell-logo.png
 
 - name: Prolog
   type: image
   link: http://www.swi-prolog.org
-  iconlink: /data/logos/swipl-logo.png
+  iconlink: /assets/logos/swipl-logo.png
 
 - name: \(\LaTeX\)
   type: image
   link: https://www.latex-project.org/
-  iconlink: /data/logos/latex-logo.png
+  iconlink: /assets/logos/latex-logo.png
 
 - name: Processing
   type: image
   link: https://processing.org
-  iconlink: /data/logos/processing-logo.png
+  iconlink: /assets/logos/processing-logo.png
 
 - name: P5js
   type: image
   link: https://p5js.org
-  iconlink: /data/logos/p5js.png
+  iconlink: /assets/logos/p5js.png
 
 - name: D3js
   type: image
@@ -61,19 +61,19 @@
 - name: Flask
   type: image
   link: http://flask.pocoo.org
-  iconlink: /data/logos/flask-logo.png
+  iconlink: /assets/logos/flask-logo.png
 
 - name: Jekyll
   type: image
   link: https://jekyllrb.com
-  iconlink: /data/logos/jekyll-logo.png
+  iconlink: /assets/logos/jekyll-logo.png
 
 - name: NumPy
   type: image
   link: http://www.numpy.org
-  iconlink: /data/logos/numpy-logo.png
+  iconlink: /assets/logos/numpy-logo.png
 
 - name: Seaborn
   type: image
   link: https://seaborn.pydata.org
-  iconlink: /data/logos/seaborn-logo.png
+  iconlink: /assets/logos/seaborn-logo.png

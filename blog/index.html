@@ -5,13 +5,152 @@ title: Blog posts
 <script src="/js/libraries/p5.js" type="text/javascript"></script>
 <script src="/js/libraries/p5.dom.js" type="text/javascript"></script>
 <script src="/js/boids.js"></script>
+<script type="text/javascript">
+    let showAllPosts = true;
+    let filterByIntersection = true;
 
+    const filterList = [];
+
+    const handleChange = button => {
+        let newValue = button.value === "and";
+        if (newValue !== filterByIntersection) {
+            filterByIntersection = newValue
+            if (!showAllPosts) {
+                filterPosts();
+            }
+        }
+    }
+
+    const showPost = post => {
+        post.classList.toggle('hide', false);
+    }
+
+    const hidePost = post => {
+        post.classList.toggle('hide', true);
+    }
+
+    const containsATag = tagList => {
+        if (!tagList) return false;
+        const currTags = tagList.tags.split(',');
+        for (let i = 0; i<filterList.length; i++) {
+            if (currTags.includes(filterList[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const containsEveryTag = tagList => {
+        if (!tagList) return false;
+        const currTags = tagList.tags.split(',');
+
+        for (let i = 0; i<filterList.length; i++) {
+            if (!currTags.includes(filterList[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    const toggleFilter = rawFilter => {
+        const filter = rawFilter.replace(' ', '-');
+        const wrapper = document.querySelector(`#tags-list #${filter}`);
+        wrapper.classList.toggle('selected');
+
+        if (filterList.includes(filter)) {
+            filterList.splice(filterList.indexOf(filter),1);
+            if (filterList.length === 0) {
+                showAllPosts = true;
+            }
+        } else {
+            filterList.push(filter);
+            showAllPosts = false;
+        }
+
+        filterPosts();
+    }
+
+    const filterPosts = () => {
+        const allPosts = document.querySelectorAll('.link-to-post-container');
+        const filterFunction = filterByIntersection? containsEveryTag : containsATag;
+        const delimiter = filterByIntersection? ' and ' : ' or ';
+        let message = '';
+
+        if (!showAllPosts) {
+            message = filterList.map(word => word.replace('-', ' ')).join(delimiter);
+        }
+
+        document.querySelector('#filter-message').innerText = message;
+
+        let currentPost;
+        let nonEmpty = false;
+        for (let i = 0; i<allPosts.length; i++) {
+            currentPost = allPosts[i];
+
+            if (showAllPosts || filterFunction(currentPost.dataset)) {
+                showPost(currentPost);
+                nonEmpty = true;
+            } else {
+                hidePost(currentPost);
+            }
+        }
+
+        const noPostsMessage = document.querySelector('#no-posts-message');
+        if (nonEmpty) {
+            noPostsMessage.style.display = "none";
+        } else {
+            noPostsMessage.style.display = "flex";
+        }
+    }
+</script>
 <link rel="stylesheet" type="text/css" href="./blog.css">
+<div id="blog-header">
+    <h1>Blog posts</h1>
+    
+    <a id="random-post">Random Post</a>
+</div>
+<div id="tags-list-container">
+    <h3>Tags</h3>
+    <ul id="tags-list">
+        {% assign tag_names = "" | split:"" %}
 
-<h1>Blog posts</h1>
+        {% for tag in site.tags %}
+            {% assign tag_names = tag_names | push: tag[0] %}
+        {% endfor %}
+        
+        {% assign sorted_tags = tag_names | sort %}
+
+        {% for tag in sorted_tags %}
+        <li>
+            <a
+                id="{{ tag | replace: ' ', '-' }}"
+                class="filter"
+                onclick="toggleFilter('{{ tag }}')"
+            >
+                {{ tag }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <h4>Filter Options</h4>
+    <div id="filter-options">
+        <input id="and-filter" type="radio" name="filter-method" value="and" checked onclick="handleChange(this)" />
+        <label for="and-filter">AND</label>
+
+
+        <input id="or-filter" type="radio" name="filter-method" value="or" onclick="handleChange(this)"/>
+        <label for="or-filter">OR</label>
+
+        <div id="filter-message"></div>
+    </div>
+</div>
 <ul class="posts">
 	{% for post in site.posts %}
-	<li>
+	<li
+        class="link-to-post-container"
+        id="{{ post.title }}"
+        data-tags="{{ post.tags | join: ',' | replace: ' ', '-' }}"
+    >
 		<a
             class="link-to-post"
             href="{{ post.url }}"
@@ -28,3 +167,15 @@ title: Blog posts
 	</li>
 	{% endfor %}
 </ul>
+<div id="no-posts-message">
+    No posts found
+</div>
+
+<script type="text/javascript">    
+    const allPosts = document.querySelectorAll('.link-to-post');
+    const chosenPost = allPosts[Math.floor(Math.random()*allPosts.length)];
+    const randomPostLink = document.querySelector('#random-post');
+
+    randomPostLink.href = chosenPost.href;
+    randomPostLink.title = chosenPost.title;
+</script>

@@ -2,30 +2,32 @@
 layout: post
 title: "Lloyd Relaxation"
 date: 2018-01-18
+tags: [d3, animation]
 ---
 <script src="../../../../js/d3.v4.min.js"></script>
 <div style = "display: flex;justify-content: center;text-align: center;margin-below:50px;">
 	<canvas width="800" height="400"></canvas>
 </div>
+<p>Lloyd relaxation</p>
 <script>
-	var canvas = d3.select("canvas").node()
+	const canvas = d3.select("canvas").node()
 		context = canvas.getContext("2d"),
 		width = canvas.width,
 		height = canvas.height;
 
-	var centroids = [];
+	let centroids = [];
 
-	var target = [];
+	const target = [];
 
-	var buffer_zone = 10;
+	const buffer_zone = 10;
 
-	var num_points = 300;
+	const num_points = 300;
 
-	let num_sample_points = 50;
+	const num_sample_points = 50;
 	let theta = 0;
 
 
-	var dt = 0.125;
+	const dt = 0.125;
 
 	// create target shape
 	for (let i = 0; i<num_sample_points; i++) {
@@ -43,7 +45,7 @@ date: 2018-01-18
 	}
 
 	// let u1,u2,theta,r;
-	var sites = d3.range(num_points)
+	const sites = d3.range(num_points)
 		.map(function(d) {
 
 			return [15 + Math.random()*(width-30), 20 + Math.random()*(height-40)]

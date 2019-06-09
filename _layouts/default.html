@@ -4,7 +4,7 @@
 			<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
 			<title>{{ page.title }}</title>
 			<!-- favicon -->
-			<link rel="shortcut icon" type="image/png" href="{{ "/data/favicon.png?" | prepend: site.baseurl }}" >
+			<link rel="shortcut icon" type="image/png" href="{{ "/assets/favicon.png?" | prepend: site.baseurl }}" >
 			<!-- Load Mathjax -->
 			<script type="text/javascript" async src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 			<script type="text/javascript" src="/js/funNumbers.js"></script>
@@ -50,9 +50,8 @@
 									class="nav-current-page"
 								{% elsif nav_item.path != "/" and page.url contains nav_item.path %}
 									class="nav-current-page"
-								{% else %}
-									href="{{ nav_item.path }}"
 								{% endif %}
+								href="{{ nav_item.path }}"
 							>
 								{{ nav_item.label }}
 							</a>
@@ -130,7 +129,7 @@
 					</li>
 					
 					<!-- For tracking visits -->
-					<!-- <div style="display:none;"><script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0hbv4cjt8yu&amp;m=7&amp;c=5ba1b2&amp;cr1=ffffff&amp;sx=0&amp;dds=0&amp;ds=20" async="async"></script></div> -->
+					<div style="display:none;"><script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0hbv4cjt8yu&amp;m=7&amp;c=5ba1b2&amp;cr1=ffffff&amp;sx=0&amp;dds=0&amp;ds=20" async="async"></script></div>
 				</ul>
 				<script>
 					const whichFunNumber = Math.floor(Math.random()*funNumbers.length);

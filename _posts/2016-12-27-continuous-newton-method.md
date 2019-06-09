@@ -2,6 +2,7 @@
 layout: post
 title: "Continuous Newton Method"
 date: 2016-12-27
+tags: [math]
 ---
 <script src="/js/libraries/p5.js" type="text/javascript"></script>
 <script src="/js/libraries/p5.dom.js" type="text/javascript"></script>
