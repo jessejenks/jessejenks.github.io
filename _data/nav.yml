@@ -1,0 +1,20 @@
+- label: Home
+  path: /
+- label: About
+  path: /about/
+- label: Blog
+  path: /blog/
+  children:
+    - label: Blog posts
+      path: /blog
+    - label: Writing
+      path: /blog/writing
+- label: Resume
+  path: /resume/
+  children:
+    - label: Online&nbsp;CV
+      path: /resume/
+    - label: One&nbsp;page PDF
+      path: /resume/Jesse_Jenks_Resume.pdf
+- label: Links
+  path: /links/

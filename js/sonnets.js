@@ -14,17 +14,17 @@ var brewer;
 function preload() {
 	similarities = []
 	// load sonnets, tfidf, and cosine similarities
-	similarities[0] = loadJSON("../../../../data/sonnet_data/sonnet_similarities_10.json");
-	similarities[1] = loadJSON("../../../../data/sonnet_data/sonnet_similarities_20.json");
-	similarities[2] = loadJSON("../../../../data/sonnet_data/sonnet_similarities_30.json");
-	similarities[3] = loadJSON("../../../../data/sonnet_data/sonnet_similarities_40.json");
+	similarities[0] = loadJSON("/assets/sonnet_data/sonnet_similarities_10.json");
+	similarities[1] = loadJSON("/assets/sonnet_data/sonnet_similarities_20.json");
+	similarities[2] = loadJSON("/assets/sonnet_data/sonnet_similarities_30.json");
+	similarities[3] = loadJSON("/assets/sonnet_data/sonnet_similarities_40.json");
 
 	
 
 	tfidf_scores = [];
-	tfidf_scores[0] = loadStrings("../../../../data/sonnet_data/sonnet_1_tfidf.txt");
-	tfidf_scores[1] = loadStrings("../../../../data/sonnet_data/sonnet_18_tfidf.txt");
-	tfidf_scores[2] = loadStrings("../../../../data/sonnet_data/sonnet_127_tfidf.txt");
+	tfidf_scores[0] = loadStrings("/assets/sonnet_data/sonnet_1_tfidf.txt");
+	tfidf_scores[1] = loadStrings("/assets/sonnet_data/sonnet_18_tfidf.txt");
+	tfidf_scores[2] = loadStrings("/assets/sonnet_data/sonnet_127_tfidf.txt");
 	
 }
 function setup() {
@@ -129,34 +129,3 @@ function tfidf_changed() {
 		colorMode(RGB);
 	}
 }
-
-
-
-
-
-
-// var table;
-
-// function preload() {
-// 	table = loadTable("../../../../data/sonnet_data/sonnet_similarities_50.csv", "csv", "header");
-// }
-
-// function setup() {
-// 	noCanvas();
-
-// 	var json = {};
-// 	let curr_row, from, to, val;
-// 	for (var i = 0; i<table.getRowCount(); i++) {
-// 		curr_row = table.getRow(i);
-// 		from = parseInt(curr_row.arr[0]);
-// 		to = parseInt(curr_row.arr[1]);
-// 		val = parseFloat(curr_row.arr[2]);
-// 		if (!json.hasOwnProperty(from)) {
-// 			json[from] = {};
-// 		}
-			
-// 		json[from][to] = val;
-// 	}
-
-// 	saveJSON(json, 'sonnet_similarities_50.json');
-// }

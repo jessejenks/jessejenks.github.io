@@ -2,18 +2,75 @@
 layout: default
 title: About me
 ---
-<h1>{{ page.title }}</h1>
-<div class="about">
-	Hi! My name is Jesse Endo Jenks and I am currently a math, computer science, and cello student at the University of Puget Sound.<br>
-	You can contact me at <a href="mailto:jesseendojenks@gmail.com?Subject=Hello%20there!">JesseEndoJenks@gmail.com</a>
-</div><br>
-My homepage shows various examples of what are known as cellular automata. If you would like to learn more about cellular automata, click
-<a href="http://mathworld.wolfram.com/CellularAutomaton.html">here</a>,
-<a href="https://plato.stanford.edu/entries/cellular-automata/">here</a>,
-<a href="http://www.mirekw.com/ca/rullex_life.html">here</a>,
-or <a href="http://www.stephenwolfram.com/publications/academic/computation-theory-cellular-automata.pdf">here</a>,
-or read <a href="https://www.amazon.com/exec/obidos/ASIN/1579550088/ref=nosim/ericstreasuretro">this</a> gigantic book.
-<br><br>
-Here are my recent github contributions
-<div style="display: flex;justify-content: center;"><img src="http://ghchart.rshah.org/jessejenks" alt="My Github Contributions"/></div>
-<br>
+<link rel="stylesheet" type="text/css" href="./about.css">
+
+<h1>About me</h1>
+<div id="about-container">
+    <p>
+        Hi! My name is Jesse Endo Jenks and I am a software engineer at <a>Hex Insights</a> in Seattle Washington.
+    </p>
+    <p>
+        You can contact me at <a href="mailto:jesseendojenks@gmail.com?Subject=Hello%20There!">JesseEndoJenks@gmail.com</a>
+    </p>
+</div>
+
+<h1>About the homepage</h1>
+<div>
+    <p>
+        My homepage shows various examples of what are known as 2D cellular automata. You can interact with the simulations with your keyboard. Press 'p' to pause, and 'r' to reset. Use your left and right arrows to move between rules, and 's' to stay on the current rule. If you would like to learn more about cellular automata, here are some online resources.
+    </p>
+    <ul id="cellular-automata-resources">
+        <li>
+            <a
+                target="_blank"
+                href="https://en.wikipedia.org/wiki/Cellular_automata"
+            >
+                The Wikipedia entry for cellular automata
+            </a>
+        </li>
+        <li>
+            <a
+                target="_blank"
+                href="http://mathworld.wolfram.com/CellularAutomaton.html"
+            >
+                This Mathworld article gives a brief technical overview
+            </a>
+        </li>
+        <li>
+            <a
+                target="_blank"
+                href="https://plato.stanford.edu/entries/cellular-automata/"
+            >This entry in the Stanford Encyclopedia of Philosophy</a> gives a much longer overview from a philosophy of science point of view
+        </li>
+        <li>
+            <a
+                target="_blank"
+                href="http://www.mirekw.com/ca/rullex_life.html"
+            >
+                This page explains the rule encoding displayed on the home page
+            </a>
+        </li>
+        <li>
+            <a
+                target="_blank"
+                href="http://www.stephenwolfram.com/publications/academic/computation-theory-cellular-automata.pdf"
+            >This pdf is a technical paper by Stephen Wolfram</a> who has investigated cellular automata for many years
+        </li>
+        <li>
+            <a
+                target="_blank"
+                href="https://www.wolframscience.com/nks/"
+            >This enormous and free online book</a>, also by Stephen Wolfram
+        </li>
+    </ul>
+    <!-- Here are my recent github contributions -->
+    <!-- <div style="display:flex; justify-content:center;"><img style="max-width:100%;" src="http://ghchart.rshah.org/jessejenks" alt="My Github Contributions"/></div> -->
+</div>
+
+<h2>Where are people visiting from?</h2>
+<div>
+    <script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0hbv4cjt8yu&amp;m=7&amp;c=5ba1b2&amp;cr1=ffffff&amp;sx=0&amp;dds=0&amp;ds=20" async="async"></script>
+</div>
+
+<script src="/js/utils.js"></script>
+<script src="/js/rain.js"></script>

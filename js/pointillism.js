@@ -15,7 +15,7 @@ function preload () {
 	// aesthetic = 
 	// loadImage("https://mymodernmet.com/wp/wp-content/uploads/2018/01/pointillism-4.jpg");
 	// loadImage("http://mathcs.pugetsound.edu/~aasmith/coast.jpg");
-	aesthetic = loadImage("/data/steve_martin.jpg")
+	aesthetic = loadImage("/assets/steve_martin.jpg")
 	
 	// loadImage("https://mymodernmet.com/wp/wp-content/uploads/2018/01/pointillism-4.jpg", function(img) {
 	// 	aesthetic = img;

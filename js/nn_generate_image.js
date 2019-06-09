@@ -15,7 +15,7 @@ function preload() {
 	// weight_colors = d3.interpolateRdYlGn;
 	// 784 x 3000
 	// each row is 28 x 28
-	mnist_training = loadImage('../../../../data/mnist_batch_0_small.png');
+	mnist_training = loadImage('/assets/mnist_batch_0_small.png');
 }
 
 function setup() {

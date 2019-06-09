@@ -1,0 +1,8 @@
+#cellular-automata-resources {
+    list-style-type: circle;
+}
+
+#cellular-automata-resources li {
+    margin: .5rem 0;
+    margin-left: 1rem;
+}
