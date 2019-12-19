@@ -1,0 +1,54 @@
+<header>
+    <script type="text/javascript">
+        const toggleMenuVisibility = () => {
+            document.querySelector('#main-nav-menu')
+                .classList
+                .toggle('show-menu');
+            document.querySelector('#mobile-menu-button')
+                .classList
+                .toggle('show-menu');
+        }
+    </script>
+    <nav>
+        <div id="mobile-menu-button-container">
+            <div
+                id="mobile-menu-button"
+                onclick="toggleMenuVisibility()"
+            >
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+
+        <ul id="main-nav-menu">
+            {% for nav_item in site.data.nav %}
+                <li
+                    {% if nav_item.children %}
+                    class="subnav-title"
+                    {% endif %}
+                />
+                    <a
+                        {% if nav_item.path == "/" and page.url == "/" %}
+                            class="nav-current-page"
+                        {% elsif nav_item.path != "/" and page.url contains nav_item.path %}
+                            class="nav-current-page"
+                        {% endif %}
+                        href="{{ nav_item.path }}"
+                    >
+                        {{ nav_item.label }}
+                    </a>
+                    {% if nav_item.children %}
+                        <ul class="subnav">
+                            {% for child in nav_item.children %}
+                                <li>
+                                    <a href="{{ child.path }}">
+                                        {{ child.label }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+</header>

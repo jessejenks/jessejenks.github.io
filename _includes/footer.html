@@ -1,0 +1,63 @@
+<footer>
+    <hr>
+    <ul>
+        <li>
+            <a href="mailto:jesseendojenks@gmail.com">
+                <i class="far fa-envelope fa-2x"></i>
+            </a>
+        </li>
+
+        <li>
+            <a
+
+                style="color:black;"
+                target="_blank"
+                href="https://www.github.com/jessejenks"
+            >
+                <i class="fab fa-github fa-2x"></i>
+            </a>
+        </li>
+
+        <li>
+            <a
+                style="color:#0077B5;"
+                target="_blank"
+                href="https://www.linkedin.com/in/jesse-endo-jenks"
+            >
+                <i class="fab fa-linkedin fa-2x"></i>
+            </a>
+        </li>
+
+        <li>
+            <a
+                style="color:#1da1f2;"
+                target="_blank"
+                href="https://twitter.com/JesseEndoJenks"
+            >
+                <i class="fab fa-twitter fa-2x"></i>
+            </a>
+        </li>
+
+        <li>
+            <a
+                target="_blank"
+                href="https://www.mathjax.org"
+            >
+                <img align="middle" title="Powered by MathJax" src="https://cdn.mathjax.org/mathjax/badge/badge.gif" alt="Powered by MathJax" border="0">
+            </a>
+        </li>
+
+        <li>
+            <a target="_blank" id="fun-number"></a>
+        </li>
+
+        <!-- For tracking visits -->
+        <!-- <div style="display:none;"><script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0hbv4cjt8yu&amp;m=7&amp;c=5ba1b2&amp;cr1=ffffff&amp;sx=0&amp;dds=0&amp;ds=20" async="async"></script></div> -->
+    </ul>
+    <script>
+        const whichFunNumber = Math.floor(Math.random()*funNumbers.length);
+        const funNumberContainer = document.querySelector('#fun-number');
+        funNumberContainer.href = funNumbers[whichFunNumber].link;
+        funNumberContainer.innerText = funNumbers[whichFunNumber].number;
+    </script>
+</footer>

@@ -1,142 +1,26 @@
 <!DOCTYPE html>
-	<html lang="en">
-		<head>
-			<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
-			<title>{{ page.title }}</title>
-			<!-- favicon -->
-			<link rel="shortcut icon" type="image/png" href="{{ "/assets/favicon.png?" | prepend: site.baseurl }}" >
-			<!-- Load Mathjax -->
-			<script type="text/javascript" async src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-			<script type="text/javascript" src="/js/funNumbers.js"></script>
-			
-			<!-- Fonts and default stylesheets -->
-			<link href='//fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
-			<link rel="stylesheet" type="text/css" href="/css/default.css">
+<html lang="en">
+    <head>
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ page.title }}</title>
+        <!-- favicon -->
+        <link rel="shortcut icon" type="image/png" href="{{ "/assets/favicon.png?" | prepend: site.baseurl }}" >
+        <!-- Load Mathjax -->
+        <script type="text/javascript" async src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+        <script type="text/javascript" src="/js/funNumbers.js"></script>
 
-			<!-- fontawesome for social media icons -->
-			<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+        <!-- Fonts and default stylesheets -->
+        <link href='//fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
+        <link rel="stylesheet" type="text/css" href="/css/default.css">
 
-			<script type="text/javascript">
-				const toggleMenuVisibility = () => {
-				    document.querySelector('#main-nav-menu')
-				        .classList
-				        .toggle('show-menu');
-				    document.querySelector('#mobile-menu-button')
-				        .classList
-				        .toggle('show-menu');
-				}
-			</script>
-		</head>
-		<body>
-			<nav>
-				<div id="mobile-menu-button-container">
-					<div
-						id="mobile-menu-button"
-						onclick="toggleMenuVisibility()"
-					>
-						<i class="fas fa-bars"></i>
-					</div>
-				</div>
-
-				<ul id="main-nav-menu">
-					{% for nav_item in site.data.nav %}
-						{% if nav_item.children %}
-						<li class="subnav-title">
-						{% else %}
-						<li>
-						{% endif %}
-							<a
-								{% if nav_item.path == "/" and page.url == "/" %}
-									class="nav-current-page"
-								{% elsif nav_item.path != "/" and page.url contains nav_item.path %}
-									class="nav-current-page"
-								{% endif %}
-								href="{{ nav_item.path }}"
-							>
-								{{ nav_item.label }}
-							</a>
-							{% if nav_item.children %}
-								<ul class="subnav">
-									{% for child in nav_item.children %}
-										<li>
-											<a href="{{ child.path }}">
-												{{ child.label }}
-											</a>
-										</li>
-									{% endfor %}
-								</ul>
-							{% endif %}
-						</li>
-				   	{% endfor %}
-		    	</ul>
-		    </nav>
-			<main class="container">
-
-			{{ content }}
-
-			</main>
-			<footer>
-				<hr>
-				<ul>
-					<li>
-						<a href="mailto:jesseendojenks@gmail.com">
-							<i class="far fa-envelope fa-2x"></i>
-						</a>
-					</li>
-					
-					<li>
-						<a
-						
-							style="color:black;"
-							target="_blank"
-							href="https://www.github.com/jessejenks"
-						>
-							<i class="fab fa-github fa-2x"></i>
-						</a>
-					</li>
-					
-					<li>
-						<a
-							style="color:#0077B5;"
-							target="_blank"
-							href="https://www.linkedin.com/in/jesse-endo-jenks"
-						>
-							<i class="fab fa-linkedin fa-2x"></i>
-						</a>
-					</li>
-
-					<li>
-						<a
-							style="color:#1da1f2;"
-							target="_blank"
-							href="https://twitter.com/JesseEndoJenks"
-						>
-							<i class="fab fa-twitter fa-2x"></i>
-						</a>
-					</li>
-					
-					<li>
-						<a
-							target="_blank"
-							href="https://www.mathjax.org"
-						>
-							<img align="middle" title="Powered by MathJax" src="https://cdn.mathjax.org/mathjax/badge/badge.gif" alt="Powered by MathJax" border="0">
-						</a>
-					</li>
-
-					<li>
-						<a target="_blank" id="fun-number"></a>
-					</li>
-					
-					<!-- For tracking visits -->
-					<div style="display:none;"><script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0hbv4cjt8yu&amp;m=7&amp;c=5ba1b2&amp;cr1=ffffff&amp;sx=0&amp;dds=0&amp;ds=20" async="async"></script></div>
-				</ul>
-				<script>
-					const whichFunNumber = Math.floor(Math.random()*funNumbers.length);
-					const funNumberContainer = document.querySelector('#fun-number');
-					funNumberContainer.href = funNumbers[whichFunNumber].link;
-					funNumberContainer.innerText = funNumbers[whichFunNumber].number;
-				</script>
-			</footer>
-		</body>
-	</html>
+        <!-- fontawesome for social media icons -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    </head>
+    <body>
+        {% include header.html %}
+        <main>
+            {{ content }}
+        </main>
+        {% include footer.html %}
+    </body>
+</html>
