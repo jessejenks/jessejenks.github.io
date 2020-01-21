@@ -1,17 +1,33 @@
-- name: Javascript
-  type: icon
-  link: https://developer.mozilla.org/en-US/docs/Web/JavaScript
-  iconlink: "fab fa-js-square"
-
 - name: React
   type: icon
   link: https://reactjs.org
   iconlink: "fab fa-react"
 
+- name: Typescript
+  type: image
+  link: https://www.typescriptlang.org/
+  iconlink: /assets/logos/typescript-logo.png
+
 - name: Express
   type: image
   link: https://expressjs.com/
   iconlink: /assets/logos/expressjs-logo.svg
+  style: "-webkit-filter: invert(100%); filter: invert(100%);"
+
+- name: Go
+  type: image
+  link: https://golang.org/
+  iconlink: /assets/logos/golang-logo.svg
+
+- name: Postgres
+  type: image
+  link: https://www.postgresql.org/
+  iconlink: /assets/logos/postgres-logo.svg
+
+- name: Javascript
+  type: icon
+  link: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  iconlink: "fab fa-js-square"
 
 - name: Java
   type: icon
@@ -22,11 +38,6 @@
   type: icon
   link: https://python.org
   iconlink: "fab fa-python"
-
-- name: Postgres
-  type: image
-  link: https://www.postgresql.org/
-  iconlink: /assets/logos/postgres-logo.svg
 
 - name: Haskell
   type: image
@@ -62,6 +73,7 @@
   type: image
   link: http://flask.pocoo.org
   iconlink: /assets/logos/flask-logo.png
+  style: "-webkit-filter: invert(100%); filter: invert(100%);"
 
 - name: Jekyll
   type: image
