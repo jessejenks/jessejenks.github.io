@@ -12,9 +12,9 @@
 - label: Resume
   path: /resume/
   children:
-    - label: Online&nbsp;CV
+    - label: Online CV
       path: /resume/
-    - label: One&nbsp;page PDF
+    - label: One page PDF
       path: /resume/Jesse_Jenks_Resume.pdf
 - label: Links
   path: /links/

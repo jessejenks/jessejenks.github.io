@@ -6,11 +6,22 @@
         <!-- favicon -->
         <link rel="shortcut icon" type="image/png" href="{{ "/assets/favicon.png?" | prepend: site.baseurl }}" >
         <!-- Load Mathjax -->
-        <script type="text/javascript" async src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+        <script
+            id="MathJax-script"
+            type="text/javascript"
+            async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+        ></script>
+        <script type="text/javascript">
+            MathJax = {
+                tex: {
+                    displayMath: [ ['\\[','\\]'] ]
+                }
+            }
+        </script>
         <script type="text/javascript" src="/js/funNumbers.js"></script>
 
         <!-- Fonts and default stylesheets -->
-        <link href='//fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
+        <link href='//fonts.googleapis.com/css?family=Quicksand:400,700' rel='stylesheet'>
         <link rel="stylesheet" type="text/css" href="/css/default.css">
 
         <!-- fontawesome for social media icons -->

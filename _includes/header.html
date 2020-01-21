@@ -10,15 +10,6 @@
         }
     </script>
     <nav>
-        <div id="mobile-menu-button-container">
-            <div
-                id="mobile-menu-button"
-                onclick="toggleMenuVisibility()"
-            >
-                <i class="fas fa-bars"></i>
-            </div>
-        </div>
-
         <ul id="main-nav-menu">
             {% for nav_item in site.data.nav %}
                 <li
@@ -50,5 +41,13 @@
                 </li>
             {% endfor %}
         </ul>
+        <div id="mobile-menu-button-container">
+            <div
+                id="mobile-menu-button"
+                onclick="toggleMenuVisibility()"
+            >
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
     </nav>
 </header>
