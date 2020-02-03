@@ -21,21 +21,20 @@ title: Jesse Jenks
 	}
 
 	#automata-info-container {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 
 		margin: 1rem 0;
-		padding: 1rem;
+		padding: 1rem 2.5rem;
 
 		text-shadow: var(--short-text-shadow-style);
 	}
 
 	#big-name,
 	#small-name {
-
-
 		font-size: 3.5rem;
 		justify-content: center;
 		text-align: center;
@@ -52,6 +51,79 @@ title: Jesse Jenks
 		background-color: rgba(62, 82, 101, 0.5);
 		border: 2px solid var(--nav-background-color);
 		border-radius: 0.5rem;
+		cursor: default;
+
+		will-change: background-color;
+		transition: background-color var(--default-transition-time);
+	}
+
+	#big-name:hover,
+	#small-name:hover,
+	#automata-info-container:hover {
+		background-color: var(--nav-background-color);
+	}
+
+	#animation-control-button-container {
+		text-align: center;
+		margin-top: 0.5rem;
+	}
+
+	#animation-control-button-container > #pause-reset-button-container {
+		margin-bottom: 0.25rem;
+	}
+
+	#next-rule-button,
+	#previous-rule-button,
+	#play-pause-button,
+	#reset-button,
+	#stay-button {
+		outline: none;
+		border: 1px solid var(--palette-blue-5);
+		border-radius: 0.25rem;
+		background-color: var(--palette-blue-1);
+		color: var(--text-color);
+		padding: 0.5rem;
+		white-space: pre;
+	}
+
+	#next-rule-button:active,
+	#previous-rule-button:active,
+	#play-pause-button:active,
+	#reset-button:active,
+	#stay-button:active {
+		transform: translate(0, 1px);
+	}
+
+	#next-rule-button:hover,
+	#previous-rule-button:hover,
+	#play-pause-button:hover,
+	#reset-button:hover,
+	#stay-button:hover {
+		background-color: var(--palette-blue-5);
+		cursor: pointer;
+	}
+
+	#next-rule-button,
+	#previous-rule-button {
+		position: absolute;
+		font-size: 1.125rem;
+	}
+
+	#next-rule-button {
+		right: 0.5rem;
+	}
+
+	#previous-rule-button {
+		left: 0.5rem;
+	}
+
+	#play-pause-button,
+	#reset-button {
+		width: 4rem;
+	}
+
+	#stay-button {
+		width: 9rem;
 	}
 
 	@media only screen and (max-width: 640px) {
@@ -75,7 +147,19 @@ title: Jesse Jenks
 		<div id="name-of-rule"></div>
 		<div id="author-of-rule"></div>
 		<div id="encoding-of-rule"></div>
-		<div id="more-info-link">More info&nbsp;<a href="../about">here</a></div>
+		<div id="more-info-link">
+			More info&nbsp;<a href="../about">here</a>
+		</div>
+		<button type="button" id="next-rule-button">></button>
+		<button type="button" id="previous-rule-button"><</button>
+
+		<div id="animation-control-button-container">
+			<div id="pause-reset-button-container">
+				<button type="button" id="play-pause-button">Pause (P)</button>
+				<button type="button" id="reset-button">Reset (R)</button>
+			</div>
+			<button type="button" id="stay-button">Stay On Rule (S)</button>
+		</div>
 	</div>
 </div>
 
