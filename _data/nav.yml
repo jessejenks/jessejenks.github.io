@@ -9,6 +9,8 @@
       path: /blog
     - label: Writing
       path: /blog/writing
+    - label: Gallery
+      path: /blog/gallery
 - label: Resume
   path: /resume/
   children:
