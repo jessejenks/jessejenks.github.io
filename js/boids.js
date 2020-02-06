@@ -1,242 +1,408 @@
-var boids,boidVel;
-var n, xMin, yMin, xMax, yMax;
-var minDist, seeDist, avoid_distance;
-var dt,vLim;
-// var colors;
-// var colormap;
-//based on pseudocode from http://www.kfish.org/boids/pseudocode.html
-function setup() {
-  var cv = createCanvas(windowWidth, windowHeight);
-  cv.position(0,0);
-  cv.style("z-index:-1");
-  // var elt = document.getElementsByClassName('container')[0];
-  var elt = document.getElementsByTagName("BODY")[0];
-  cv.parent(elt);
+(function() {
+const cv = document.createElement("canvas");
+cv.setAttribute("id", "boids");
+cv.setAttribute("style", "position: fixed; top: 0; left: 0; z-index: -1; width: 100vw; height: 100vh;");
+document.querySelector("body").appendChild(cv);
 
-  boids = [];
-  boidVel = [];
-  n = 140;
-  xMin = 10;
-  yMin = 10;
-  xMax = width-xMin;
-  yMax = height-yMin;
-  minDist = 10;
-  seeDist = 50;
-  avoid_distance = 70;
-  dt = 0.1;
-  vLim = 20;
+const pixelRatio = window.devicePixelRatio || 1;
+let rect = cv.getBoundingClientRect();
+cv.width = rect.width * pixelRatio;
+cv.height = rect.height * pixelRatio;
 
-  // colors = [
-  //   // color(102,204,204),
-  //   // color(153,204,102),
-  //   // color(153,102,204),
-  //   // color(204,102,102)
-  //   color(225,247,213),
-  //   color(255,189,189),
-  //   color(201,201,255),
-  //   color(241,203,255)
-  // ];
+const ctx = cv.getContext("2d");
+ctx.scale(pixelRatio, pixelRatio);
 
-  // colormap = [];
+let DEBUG_MODE = false;
 
+let animationFrameId;
+const fps = 60;
+const fpsInterval = 1000/fps;
+let now, then, elapsed;
 
-  for (let i = 0; i<n; i++) {
-    boids[i] = {x:random(width), y:random(height)};
-    // createVector(random(width/4, 3*width/4), random(height/4, 3*height/4))
-    boidVel[i] = {x:-10, y:10};
+const numBoids = 150;
+const boidPositions = new Float32Array(numBoids * 2);
+const boidVelocities = new Float32Array(numBoids * 2);
 
-    // colormap[i] = colors[Math.floor(Math.random()*colors.length)];
-    // createVector(0,0);
-  }
-  background(255);
-  strokeWeight(4);
-  // colorMode(HSB);
+const seeingDistance = 80;
+const seeingDistanceSquared = seeingDistance * seeingDistance;
+
+const minimumDistance = 10;
+const minimumDistanceSquared = minimumDistance * minimumDistance;
+
+const maxVelocity = 2;
+const maxVelocitySquared = maxVelocity * maxVelocity;
+
+const boidSize = 2;
+
+const mousePosition = { x: 0, y: 0 };
+
+// forces
+const centeringForce = { x: 0, y: 0 };
+let centeringCounter = 0;
+
+const avoidanceForce = { x: 0, y: 0 };
+let avoidanceCounter = 0;
+
+const matchVelocityForce = { x: 0, y: 0 };
+let matchVelocityCounter = 0;
+
+const mouseForce = { x: 0, y: 0 };
+
+const windForce = { x: 0, y: 0 };
+
+const centeringForceScaleFactor = 0.08;
+const avoidanceForceScaleFactor = 0.3;
+const matchVelocityForceScaleFactor = 0.1;
+const windForceScaleFactor = 0.01;
+const mouseForceScaleFactor = 1;
+
+const force = { x: 0, y: 0 };
+
+const thisBoid = { x: 0, y: 0 };
+const otherBoid = { x: 0, y: 0, quadrance: 0 };
+
+const paddingX = 150;
+const paddingY = 150;
+
+function initialize() {
+    ctx.fillStyle = "#3e5265";
+    ctx.strokeStyle = ctx.fillStyle;
+    ctx.lineWidth = 2*boidSize;
+    ctx.lineCap = "round";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    initializePositionsAndVelocities();
+
+    then = window.performance.now();
+    draw();
 }
+
+function initializePositionsAndVelocities() {
+    for (let i = 0; i < boidPositions.length; i += 2) {
+        boidPositions[i] = paddingX + Math.random() * (rect.width - 2*paddingX);
+        boidPositions[i+1] = paddingY + Math.random() * (rect.height - 2*paddingY);
+
+        boidVelocities[i] = Math.random();
+        boidVelocities[i+1] = 2*Math.random()-1;
+    }
+}
+
 function draw() {
-  background(255);
-  stroke(255,189,189);
-  drawBoids();
-  if (focused) update();
+    animationFrameId = window.requestAnimationFrame(draw);
+
+    now = window.performance.now();
+    elapsed = now - then;
+
+    if (elapsed > fpsInterval) {
+        ctx.clearRect(0, 0, rect.width, rect.height);
+
+        drawBoids();
+        updateBoids();
+
+        then = now - (elapsed % fpsInterval);
+    }
 }
 
 function drawBoids() {
-  for (let i = 0; i<n; i++) {
-    // stroke(colormap[i]);
-    point(boids[i].x, boids[i].y);
-  }
-}
-function update() {
-  // var vs = [];
-  for (let i = 0; i<n; i++) {
-    // boidVel[i] = createVector(0,0);
-    // var v = createVector(0,0);
-    var r1 = rule1(i);
-    var r2 = rule2(i);
-    var r3 = rule3(i);
-    var m = attractMouse({x:mouseX,y:mouseY}, i);
-    var rand = noise(boids[i].x/50, boids[i].y/50, frameCount*0.001  )*TWO_PI;
-    boidVel[i].x +=
-      r1.x*0.01 +
-      r2.x +
-      r3.x*0.125 +
-      m.x +
-      cos(rand);
-
-    boidVel[i].y +=
-      r1.y*0.01 +
-      r2.y +
-      r3.y*0.125 +
-      m.y +
-      sin(rand);
-
-    limitVelocity(i);
-    // boids[i].add(boidVel[i].mult(dt));
-    boids[i].x+=(boidVel[i].x*dt);
-    boids[i].y+=(boidVel[i].y*dt);
-    bound(i);
-  }
-  // for (let i = 0; i<n; i++) {
-  //   boidVel[i] = vs[i];
-  //   limitVelocity(i);
-  //   bound(i);
-  // }
-}
-// move towards center of mass/ avergae position of the other boids
-//vector
-function rule1(i) {
-  var pcj = {x:0,y:0};
-  // createVector(0, 0);
-  var counter = 0;
-  for (let j = 0; j<n; j++) {
-    // if (j!=i && boids[i].dist(boids[j])<seeDist) {
-    if (j!=i && (boids[i].x-boids[j].x)*(boids[i].x-boids[j].x) + (boids[i].y-boids[j].y)*(boids[i].y-boids[j].y)<seeDist*seeDist) {
-      // pcj.add(boids[j]);
-      pcj.x+=boids[j].x;
-      pcj.y+=boids[j].y;
-      counter++;
+    for (let i = 0; i < boidPositions.length; i += 2) {
+        if (DEBUG_MODE) {
+            ctx.fillText(i/2, boidPositions[i], boidPositions[i+1] - 10);
+        } else {
+            ctx.beginPath();
+            ctx.moveTo(boidPositions[i], boidPositions[i+1]);
+            ctx.lineTo(
+                boidPositions[i] - 10*boidVelocities[i]/maxVelocity,
+                boidPositions[i+1] - 10*boidVelocities[i+1]/maxVelocity
+            );
+            ctx.stroke();
+        }
     }
-  }
-  // pcj.div(n-1);
-
-  if (counter!=0) {
-  //   // pcj.div(counter);
-    pcj.x/=counter;
-    pcj.y/=counter;
-  }
-  // pcj.x/=(n-1);
-  // pcj.y/=(n-1);
-  pcj.x-=boids[i].x;
-  pcj.y-=boids[i].y;
-  // pcj.sub(boids[i]);
-
-  return pcj;
 }
-// don't get too close other boids
-function rule2(i) {
-  let c = {x:0,y:0};
-  // createVector(0, 0);
-  let counter = 0;
-  for (let j = 0; j<n; j++) {
-    // if (j!=i && boids[j].dist(boids[i])<2*minDist) {
-    //     var c2 = createVector(0,0);
-    //     c2.sub(boids[j]);
-    //     c2.add(boids[i]);
-    //     c2.mult(1/(exp(boids[j].dist(boids[i])-minDist)+1));
-    //     c.add(c2);
-    // }
-    if (j!=i && (boids[i].x-boids[j].x)*(boids[i].x-boids[j].x) + (boids[i].y-boids[j].y)*(boids[i].y-boids[j].y)<minDist*minDist) {
-      // c.sub(boids[j]);
-      // c.add(boids[i]);
-      c.x -= (boids[j].x - boids[i].x);
-      c.y -= (boids[j].y - boids[i].y);
-      counter++;
+
+function updateBoids() {
+    for (let i = 0; i < boidPositions.length; i += 2) {
+        setForce(i, force);
+
+        boidVelocities[i] += force.x;
+        boidVelocities[i+1] += force.y;
+
+        limitVelocity(i);
     }
-  }
-  if (counter!=0) {
-    // c.div(counter);
-    c.x/=counter;
-    c.y/=counter;
-  }
-  // c.mult(eLoss);
-  return c;
-}
-// try to match average velocity
-//vector boid bj arg
-function rule3(i) {
-  // vector pvj
-  var pvj = {x:0,y:0};
-  // createVector(0, 0);
-  // for each b in boid
-  // if b!=bj then
-  // pvj+=b.velocity
-  var counter = 0;
-  for (let j = 0; j<n; j++) {
-    if (j!=i && (boids[i].x-boids[j].x)*(boids[i].x-boids[j].x) + (boids[i].y-boids[j].y)*(boids[i].y-boids[j].y)<seeDist*seeDist) {
-      // pvj.add(boidVel[j]);
-      pvj.x+=boidVel[j].x;
-      pvj.y+=boidVel[j].y;
-      counter++;
+
+    for (let i = 0; i < boidPositions.length; i += 2) {
+        boidPositions[i] += boidVelocities[i];
+        boidPositions[i+1] += boidVelocities[i+1];
+
+        boundPosition(i);
     }
-  }
-
-  if (counter!=0){
-    // pvj.div(counter);
-    pvj.x/=counter;
-    pvj.y/=counter;
-  }
-  // pvj.sub(boidVel[i]);
-  pvj.x-=boidVel[i].x;
-  pvj.y-=boidVel[i].y;
-  return pvj;
 }
 
-function bound(i) {
-  // var v = createVector(0, 0);
-  // if (boids[i].x < xMin) v.x = 1;
-  // if (boids[i].x > xMax) v.x = -1;
-  // if (boids[i].y < yMin) v.y = 1;
-  // if (boids[i].y > yMax) v.y = -1;
-  // return v;
-  if (boids[i].x < xMin) boids[i].x = xMax;
-  if (boids[i].x > xMax) boids[i].x = xMin;
-  if (boids[i].y < yMin) boids[i].y = yMax;
-  if (boids[i].y > yMax) boids[i].y = yMin;
+let windTheta;
+let currentQuadrance, avoidanceFactor;
+function setForce(i, force) {
+    centeringForce.x = 0;
+    centeringForce.y = 0;
+    centeringCounter = 0;
+
+    avoidanceForce.x = 0;
+    avoidanceForce.y = 0;
+    avoidanceCounter = 0;
+
+    matchVelocityForce.x = 0;
+    matchVelocityForce.y = 0;
+    matchVelocityCounter = 0;
+
+    mouseForce.x = 0;
+    mouseForce.y = 0;
+
+    thisBoid.x = boidPositions[i];
+    thisBoid.y = boidPositions[i+1];
+
+    windTheta = getWindTheta(thisBoid.y/rect.height);
+    windForce.x = Math.cos(windTheta);
+    windForce.y = -Math.sin(windTheta);
+
+    currentQuadrance = quadrance(thisBoid.x, thisBoid.y, mousePosition.x, mousePosition.y);
+    avoidanceFactor = Math.min(minimumDistanceSquared/currentQuadrance, 1);
+
+    if (avoidanceFactor > 1/9) {
+        mouseForce.x = -(mousePosition.x - thisBoid.x) * avoidanceFactor;
+        mouseForce.y = -(mousePosition.y - thisBoid.y) * avoidanceFactor;
+    }
+
+    for (let j = 0; j < boidPositions.length; j += 2) {
+        if (j === i) {
+            continue;
+        }
+
+        otherBoid.x = boidPositions[j];
+        otherBoid.y = boidPositions[j+1];
+
+        setTorusEquivalentPoint(thisBoid, otherBoid);
+        currentQuadrance = otherBoid.quadrance;
+
+        if (currentQuadrance < seeingDistanceSquared) {
+            centeringForce.x += otherBoid.x;
+            centeringForce.y += otherBoid.y;
+            centeringCounter++;
+
+            matchVelocityForce.x += boidVelocities[j];
+            matchVelocityForce.y += boidVelocities[j+1];
+            matchVelocityCounter++;
+        }
+
+        avoidanceFactor = Math.min(minimumDistanceSquared/currentQuadrance, 1);
+        if (avoidanceFactor > 1/9) {
+            avoidanceForce.x -= (otherBoid.x - thisBoid.x) * avoidanceFactor;
+            avoidanceForce.y -= (otherBoid.y - thisBoid.y) * avoidanceFactor;
+            avoidanceCounter++;
+        }
+    }
+
+    if (centeringCounter > 0) {
+        centeringForce.x /= centeringCounter;
+        centeringForce.y /= centeringCounter;
+
+        centeringForce.x -= thisBoid.x;
+        centeringForce.y -= thisBoid.y;
+
+        normalizeForce(centeringForce);
+    }
+
+    if (matchVelocityCounter > 0) {
+        matchVelocityForce.x /= matchVelocityCounter;
+        matchVelocityForce.y /= matchVelocityCounter;
+
+        matchVelocityForce.x -= boidVelocities[i];
+        matchVelocityForce.y -= boidVelocities[i+1];
+
+        normalizeForce(matchVelocityForce);
+    }
+
+    if (avoidanceCounter > 0) {
+        normalizeForce(avoidanceForce);
+    }
+
+    force.x = centeringForce.x * centeringForceScaleFactor
+        + avoidanceForce.x     * avoidanceForceScaleFactor
+        + matchVelocityForce.x * matchVelocityForceScaleFactor
+        + mouseForce.x         * mouseForceScaleFactor
+        + windForce.x          * windForceScaleFactor
+    ;
+    force.y = centeringForce.y * centeringForceScaleFactor
+        + avoidanceForce.y     * avoidanceForceScaleFactor
+        + matchVelocityForce.y * matchVelocityForceScaleFactor
+        + mouseForce.y         * mouseForceScaleFactor
+        + windForce.y          * windForceScaleFactor
+    ;
+
+    if (DEBUG_MODE) {
+        ctx.strokeStyle = "green";
+        ctx.beginPath();
+        ctx.moveTo(thisBoid.x, thisBoid.y);
+        ctx.lineTo(
+            thisBoid.x + centeringForce.x * centeringForceScaleFactor * 50,
+            thisBoid.y + centeringForce.y * centeringForceScaleFactor * 50
+        );
+        ctx.stroke();
+
+        ctx.strokeStyle = "orange";
+        ctx.beginPath();
+        ctx.moveTo(thisBoid.x, thisBoid.y);
+        ctx.lineTo(
+            thisBoid.x + avoidanceForce.x * avoidanceForceScaleFactor * 50,
+            thisBoid.y + avoidanceForce.y * avoidanceForceScaleFactor * 50
+        );
+        ctx.stroke();
+
+        ctx.strokeStyle = "yellow";
+        ctx.beginPath();
+        ctx.moveTo(thisBoid.x, thisBoid.y);
+        ctx.lineTo(
+            thisBoid.x + matchVelocityForce.x * matchVelocityForceScaleFactor * 50,
+            thisBoid.y + matchVelocityForce.y * matchVelocityForceScaleFactor * 50
+        );
+        ctx.stroke();
+
+        ctx.strokeStyle = "aqua";
+        ctx.beginPath();
+        ctx.moveTo(thisBoid.x, thisBoid.y);
+        ctx.lineTo(
+            thisBoid.x + windForce.x * windForceScaleFactor * 50,
+            thisBoid.y + windForce.y * windForceScaleFactor * 50,
+        );
+        ctx.stroke();
+
+        ctx.strokeStyle = "pink";
+        ctx.beginPath();
+        ctx.moveTo(thisBoid.x, thisBoid.y);
+        ctx.lineTo(
+            thisBoid.x + mouseForce.x * mouseForceScaleFactor * 50,
+            thisBoid.y + mouseForce.y * mouseForceScaleFactor * 50
+        );
+        ctx.stroke();
+    }
+}
+
+let x;
+function getWindTheta(heightRatio) {
+    return Math.PI*(3/2 - 4/7*bump(randomMix(heightRatio)));
+}
+
+function bump(x) {
+    return 1 - 2*Math.abs(x - 0.5);
+}
+
+function randomMix(x) {
+    return 0.7*x + 0.3*Math.random();
+}
+
+let x1, y1, x2, y2;
+let shiftedX, shiftedY;
+let shortestQuadrance, currentShortestQuadrance;
+function setTorusEquivalentPoint(currentPos, closestPos) {
+    x1 = currentPos.x;
+    y1 = currentPos.y;
+    x2 = closestPos.x;
+    y2 = closestPos.y;
+
+    shortestQuadrance = quadrance(x1, y1, x2, y2);
+
+    shiftedX = x2 < rect.width/2  ? x2 + rect.width  : x2 - rect.width;
+    shiftedY = y2 < rect.height/2 ? y2 + rect.height : y2 - rect.height;
+
+    currentShortestQuadrance = quadrance(x1, y1, shiftedX, y2);
+    if (currentShortestQuadrance < shortestQuadrance) {
+        shortestQuadrance = currentShortestQuadrance;
+        closestPos.x = shiftedX;
+    }
+
+    currentShortestQuadrance = quadrance(x1, y1, x2, shiftedY);
+    if (currentShortestQuadrance < shortestQuadrance) {
+        shortestQuadrance = currentShortestQuadrance;
+        closestPos.x = x2;
+        closestPos.y = shiftedY;
+    }
+
+    currentShortestQuadrance = quadrance(x1, y1, shiftedX, shiftedY);
+    if (currentShortestQuadrance < shortestQuadrance) {
+        shortestQuadrance = currentShortestQuadrance;
+        closestPos.x = shiftedX;
+        closestPos.y = shiftedY;
+    }
+
+    closestPos.quadrance = shortestQuadrance;
+}
+
+function quadrance(x1, y1, x2, y2) {
+    return (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2);
+}
+
+function normalizeForce(force) {
+    const mag = Math.sqrt(force.x*force.x + force.y*force.y);
+    force.x = force.x/mag;
+    force.y = force.y/mag;
 }
 
 function limitVelocity(i) {
-  // if (boidVel[i].magSq() > vLim*vLim) {
-  if (boidVel[i].x*boidVel[i].x+boidVel[i].y*boidVel[i].y > vLim*vLim) {
-    // boidVel[i].normalize();//.setMag(vLim);
-    // boidVel[i].mult(vLim);
-    var x = vLim*boidVel[i].x/sqrt(boidVel[i].x*boidVel[i].x+boidVel[i].y*boidVel[i].y);
-    var y = vLim*boidVel[i].y/sqrt(boidVel[i].x*boidVel[i].x+boidVel[i].y*boidVel[i].y);
-    boidVel[i].x = x;
-    boidVel[i].y = y;
-  }
+    let quad = boidVelocities[i] * boidVelocities[i] + boidVelocities[i+1] * boidVelocities[i+1];
+    if (quad > maxVelocitySquared) {
+        quad = Math.sqrt(quad);
+        boidVelocities[i] = maxVelocity * boidVelocities[i] / quad;
+        boidVelocities[i+1] = maxVelocity * boidVelocities[i+1] / quad;
+    }
 }
 
-function attractMouse(mouseVec, i) {
-  var c = {x:0,y:0};
-  // createVector(0,0);
-  // if (boids[i].dist(mouseVec) < avoid_distance) {
-  if ((boids[i].x-mouseVec.x)*(boids[i].x-mouseVec.x) + (boids[i].y-mouseVec.y)*(boids[i].y-mouseVec.y)<avoid_distance*avoid_distance) {
-    // c.sub(mouseVec);
-    // c.sub(mouseVec);
-    c.x-=mouseVec.x;
-    c.y-=mouseVec.y;
+function boundPosition(i) {
+    if (boidPositions[i] < 0) {
+        boidPositions[i] = rect.width;
+    } else if (boidPositions[i] > rect.width) {
+        boidPositions[i] = 0;
+    }
 
-
-    // c.add(boids[i]);
-    // c.add(boids[i]);
-    c.x+=boids[i].x;
-    c.y+=boids[i].y;
-  }
-
-  // c.normalize();
-
-  return c;
+    if (boidPositions[i+1] < 0) {
+        boidPositions[i+1] = rect.height;
+    } else if (boidPositions[i+1] > rect.height) {
+        boidPositions[i+1] = 0;
+    }
 }
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+window.onresize = function() {
+    window.cancelAnimationFrame(animationFrameId);
+    rect = cv.getBoundingClientRect();
+    cv.width = rect.width * pixelRatio;
+    cv.height = rect.height * pixelRatio;
+    ctx.scale(pixelRatio, pixelRatio);
+    initialize();
 }
+
+window.onkeyup = function(keyboardEvent) {
+    if (keyboardEvent.key === "d") {
+        DEBUG_MODE = !DEBUG_MODE;
+        if (DEBUG_MODE) {
+            ctx.lineWidth = 1;
+            const d = document.createElement("CODE");
+            d.innerText = "DEBUG_MODE (d)";
+            d.setAttribute("id", "debug-message");
+            d.setAttribute("style", "position: fixed; top: 100px; right: 100px;");
+            document.querySelector("body").appendChild(d);
+        } else {
+            ctx.strokeStyle = ctx.fillStyle;
+            ctx.lineWidth = boidSize*2;
+            document.querySelector("#debug-message").remove();
+        }
+    }
+
+    if (keyboardEvent.key === "r") {
+        initializePositionsAndVelocities();
+    }
+}
+
+window.onmousemove = function(mouseEvent) {
+    mousePosition.x = mouseEvent.clientX;
+    mousePosition.y = mouseEvent.clientY;
+}
+
+initialize();
+})();
