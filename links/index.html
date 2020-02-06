@@ -3,20 +3,15 @@ layout: default
 title: Links
 ---
 <style>
-	main {
-		font-size: 1.25rem;
-		text-shadow: var(--text-shadow-style);
-	}
-	
 	.list-of-links {
 		list-style-type: none;
 		margin-bottom: 1rem;
 	}
 
-	.left-indent {
-		margin-left:1rem;
+	.list-of-links > li {
+		padding-left: 1rem;
 	}
-	
+
 	.name {
 		width:25%;
 		display:inline-block;
@@ -26,21 +21,31 @@ title: Links
 <script src="/js/permutations.js"></script>
 <script src="/js/colorful_maze.js"></script>
 
-<h2>Cool links</h2>
-<ul class="list-of-links">
-	{% for link in site.data.cool_links %}
-		<li><a class="left-indent" target="_blank" href="{{ link.page }}" title="{{ link.name }}'">{{ link.name }}</a></li>
-	{% endfor %}
-</ul>
+<section>
+	<h2>Cool links</h2>
+	<ul class="list-of-links">
+		{% for link in site.data.cool_links %}
+			<li>
+				<a target="_blank" rel="noopener" href="{{ link.page }}" title="{{ link.name }}'">
+					{{ link.name }}
+				</a>
+			</li>
+		{% endfor %}
+	</ul>
+</section>
 
-<h2>Friends</h2>
-<ul class="list-of-links">
-	{% for friend in site.data.friends %}
-		<li>
-			<div class="name left-indent">{{ friend.name }}</div>
-			{% if friend.link %}
-				<a target="_blank" href="{{ friend.link }}" title="{{ friend.name }}'s website">{{ friend.site }}</a>
-			{% endif %}
-		</li>
-	{% endfor %}
-</ul>
+<section>
+	<h2>Friends</h2>
+	<ul class="list-of-links">
+		{% for friend in site.data.friends %}
+			<li>
+				<div class="name">{{ friend.name }}</div>
+				{% if friend.link %}
+					<a target="_blank" rel="noopener" href="{{ friend.link }}" title="{{ friend.name }}'s website">
+						{{ friend.site }}
+					</a>
+				{% endif %}
+			</li>
+		{% endfor %}
+	</ul>
+</section>
