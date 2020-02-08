@@ -1,0 +1,25 @@
+<style type="text/css">
+    .four-oh-four-message {
+        width: 100%;
+        margin: 2rem 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        cursor: default;
+    }
+
+    .four-oh-four-message code {
+        margin: 0 1rem;
+    }
+</style>
+
+<div class="four-oh-four-message">Sorry, that page doesn't exist</div>
+
+<p style="display:flex;justify-content:center;"></p>
+<script type="text/javascript">
+    document.querySelector(".four-oh-four-message").innerHTML = "Sorry, the page: <code>"
+    + window.decodeURI(window.location.pathname)
+    + "</code> doesn't exist";
+</script>
