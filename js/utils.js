@@ -1,9 +1,35 @@
-const requestAnimationFrame = window.requestAnimationFrame
-                            || window.mozRequestAnimationFrame
-                            || window.webkitRequestAnimationFrame
-                            || window.msRequestAnimationFrame;
+function initializeCanvas(cv) {
+    const pixelRatio = window.devicePixelRatio || 1;
+    const rect = cv.getBoundingClientRect();
+    cv.width = rect.width * pixelRatio;
+    cv.height = rect.height * pixelRatio;
 
-const cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
+    const ctx = cv.getContext("2d");
+    ctx.scale(pixelRatio, pixelRatio);
+    return ctx;
+}
+
+function arrowTo(ctx, targetX, targetY, { angle=0, size=40, arrowAngle=Math.PI/4, arrowSize=8, padding=0 }={}) {
+    const cos = Math.cos(angle);
+    const sin = - Math.sin(angle);
+
+    ctx.beginPath();
+    ctx.moveTo(targetX + cos * (size + padding), targetY + sin * (size + padding));
+    ctx.lineTo(targetX + cos * padding, targetY + sin * padding);
+
+    ctx.lineTo(
+        targetX + cos * padding + Math.cos(angle + arrowAngle) * arrowSize,
+        targetY + sin * padding - Math.sin(angle + arrowAngle) * arrowSize,
+    );
+
+    ctx.moveTo(targetX + cos * padding, targetY + sin * padding);
+    ctx.lineTo(
+        targetX + cos * padding + Math.cos(angle - arrowAngle) * arrowSize,
+        targetY + sin * padding - Math.sin(angle - arrowAngle) * arrowSize,
+    );
+
+    ctx.stroke();
+}
 
 /**
  * A linear interpolator for hexadecimal colors
@@ -56,12 +82,9 @@ const hslToHex = (h, s, l) => {
 	}
 
 	return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-	// return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
 }
 
 const choice = a => a[Math.floor(Math.random()*a.length)];
-
-
 
 const easeOutQuad = t => t*(2-t);
 const easeOutCubic = t => (--t)*t*t+1;
@@ -82,9 +105,6 @@ const sinebow = (u, v) => {
     b = 255*((1-v) + v*b*b);
 
 	return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-    // return "#"  +Math.floor(r).toString(16)
-    //             +Math.floor(g).toString(16)
-    //             +Math.floor(b).toString(16);
 }
 
 const fisherYates = n => {
