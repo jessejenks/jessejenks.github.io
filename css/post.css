@@ -1,54 +1,94 @@
-.centered-image {
-    display: block;
-    margin: auto;
-    max-width: 100%;
+/* https://www.sitepoint.com/accessible-footnotes-css/ */
+.post {
+    counter-reset: footnotes references;
 }
 
-button.accordion {
-    margin: .5rem 0;
-    padding: 1rem;
-
-    width: 100%;
-
-
-    text-align: left;
-    font-size: 1rem;
+.post section a[aria-describedby="footnote-label"] {
+    counter-increment: footnotes;
 
     border: none;
+    text-decoration: none;
+    color: inherit;
     outline: none;
-    border-radius: .25rem;
-    
-    cursor: pointer;
-    color: var(--palette-blue);
-    background-color: var(--palette-very-light-gray);
-    
-    will-change: background-color;
-
-    transition: background-color var(--default-transition-time);
-}
-button.accordion.active,
-button.accordion:hover {
-    background-color: var(--palette-medium-light-gray);
 }
 
-.panel {
-    display: none;
+.post section a[aria-describedby="reference-label"] {
+    counter-increment: references;
+
+    border: none;
+    text-decoration: none;
+    color: inherit;
+    outline: none;
 }
 
-.panel.show {
-    display: block;
+.post section a[aria-describedby="footnote-label"]::after,
+.post section a[aria-describedby="reference-label"]::after {
+    vertical-align: super;
+    font-size: 0.6rem;
+    margin-left: 2px;
+    text-decoration: underline;
 }
 
-p {
-    margin: 1rem 0;
+.post section a[aria-describedby="footnote-label"]::after {
+    content: '[' counter(footnotes) ']';
+    color: var(--footnote-number-color);
 }
 
-
-button.accordion:after {
-    content: "\002B";
-    font-weight: bold;
-    float: right;
+.post section a[aria-describedby="reference-label"]::after {
+    content: '[' counter(references) ']';
+    color: var(--reference-number-color);
 }
-button.accordion.active:after {
-    content: "\2212";
+
+.post section a[aria-describedby="footnote-label"]:focus,
+.post section a[aria-describedby="reference-label"]:focus {
+    outline: thin dashed;
+}
+
+.post section a[aria-describedby="footnote-label"]:focus {
+    outline-color: var(--footnote-number-color);
+}
+
+.post section a[aria-describedby="reference-label"]:focus {
+    outline-color: var(--reference-number-color);
+}
+
+.post section > .footnotes :target,
+.post section > .references :target {
+    background-color: var(--palette-blue-5-very-transparent);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    margin: 0.5rem 0;
+}
+
+.post section > .footnotes a[aria-label="Back to content"]::after,
+.post section > .references a[aria-label="Back to content"]::after {
+    content: '\21A9';
+    font-size: 0.8rem;
+}
+
+.post .overflow-ellipsis {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.post figure {
+    margin: 1rem 0.25rem;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    padding: 0.5rem;
+    border: 1px solid var(--palette-blue-5);
+}
+
+.post figcaption {
+    font-size: 0.9rem;
+    font-style: italic;
+    padding: 0 1rem;
+    color: var(--palette-blue-3);
+}
+
+.post ol,
+.post ul {
+    margin-inline-start: 1rem;
 }

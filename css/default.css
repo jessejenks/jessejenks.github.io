@@ -46,9 +46,6 @@
 
     --default-transition-time: .2s;
 
-    --section-background-color: var(--palette-blue-1-slightly-transparent);
-    --section-border-color: var(--palette-blue-5);
-
     --text-shadow-color: black;
 
     --short-text-shadow-style:
@@ -84,6 +81,12 @@
         4.5px 6.75px var(--text-shadow-color),
         4.75px 7.125px var(--text-shadow-color),
         5px 7.5px var(--text-shadow-color);
+
+    --section-background-color: var(--palette-blue-1-slightly-transparent);
+    --section-border-color: var(--palette-blue-5);
+
+    --footnote-number-color: var(--palette-sangria);
+    --reference-number-color: var(--palette-blue-3);
 }
 
 * {
