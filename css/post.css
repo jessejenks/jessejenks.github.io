@@ -3,6 +3,12 @@
     counter-reset: footnotes references;
 }
 
+.post section a[aria-describedby="footnote-label"],
+.post section a[aria-describedby="reference-label"],
+.post section a[aria-label="Back to content"] {
+    padding: 0;
+}
+
 .post section a[aria-describedby="footnote-label"] {
     counter-increment: footnotes;
 
@@ -52,16 +58,15 @@
     outline-color: var(--reference-number-color);
 }
 
-.post section > .footnotes :target,
-.post section > .references :target {
-    background-color: var(--palette-blue-5-very-transparent);
+.post section .footnotes :target,
+.post section .references :target {
+    background-color: var(--footer-target-background-color);
     border-radius: 0.25rem;
     padding: 0.25rem 0.5rem;
     margin: 0.5rem 0;
 }
 
-.post section > .footnotes a[aria-label="Back to content"]::after,
-.post section > .references a[aria-label="Back to content"]::after {
+.post section a[aria-label="Back to content"]::after {
     content: '\21A9';
     font-size: 0.8rem;
 }

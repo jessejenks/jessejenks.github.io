@@ -7,6 +7,7 @@
 
     --palette-blue-1-slightly-transparent: rgba(62, 82, 101, 0.8);
     --palette-blue-5-very-transparent: rgba(90, 119, 144, 0.2);
+    --palette-blue-5-semi-transparent: rgba(90, 119, 144, 0.5);
     --palette-blue-5-slightly-transparent: rgba(90, 119, 144, 0.8);
 
     --palette-gold: #eccd8f;
@@ -87,6 +88,8 @@
 
     --footnote-number-color: var(--palette-sangria);
     --reference-number-color: var(--palette-blue-3);
+
+    --footer-target-background-color: var(--palette-blue-5-semi-transparent);
 }
 
 * {
