@@ -11,55 +11,46 @@
         </li>
 
         <li>
-            <a
+            {% include link
                 id="github-link"
-                target="_blank"
-                href="https://www.github.com/jessejenks"
                 title="Github"
-            >
-                <i class="fab fa-github"></i>
-            </a>
+                href="https://www.github.com/jessejenks"
+                content='<i class="fab fa-github"></i>'
+            %}
         </li>
 
         <li>
-            <a
+            {% include link
                 id="linkedin-link"
-                target="_blank"
-                href="https://www.linkedin.com/in/jesse-endo-jenks"
                 title="Linkedin"
-            >
-                <i class="fab fa-linkedin"></i>
-            </a>
+                href="https://www.linkedin.com/in/jesse-endo-jenks"
+                content='<i class="fab fa-linkedin"></i>'
+            %}
         </li>
 
         <li>
-            <a
+            {% include link
                 id="twitter-link"
-                target="_blank"
-                href="https://twitter.com/JesseEndoJenks"
                 title="Twitter"
-            >
-                <i class="fab fa-twitter"></i>
-            </a>
+                href="https://twitter.com/JesseEndoJenks"
+                content='<i class="fab fa-twitter"></i>'
+            %}
         </li>
 
         <li>
-            <a
+            {% include link
                 id="mathjax-link"
-                target="_blank"
+                title="MathJax"
                 href="https://www.mathjax.org"
-            >
-                <img
-                    title="Powered by MathJax"
-                    src="https://www.mathjax.org/badge/badge-square.svg"
-                    border="0"
-                    alt="Powered by MathJax"
-                />
-            </a>
+                content='<img title="Powered by MathJax" src="https://www.mathjax.org/badge/badge-square.svg" border="0" alt="Powered by MathJax"/>'
+            %}
         </li>
 
         <li>
-            <a target="_blank" id="fun-number" title="Fun Number"></a>
+            {% include link
+                id="fun-number"
+                title="Fun Number"
+            %}
         </li>
 
         <!-- For tracking visits -->
