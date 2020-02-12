@@ -332,6 +332,16 @@ body > main a:hover {
     background-color: var(--palette-blue-5-very-transparent);
 }
 
+body > main button {
+    padding: 0.5rem 0.75rem;
+    background-color: var(--palette-blue-1);
+    color: var(--text-color);
+    border: 1px solid var(--palette-blue-5);
+    border-radius: 0.25rem;
+    cursor: pointer;
+    outline: none;
+}
+
 @media screen and (max-width: 640px) {
     body > header {
         width: 10rem;

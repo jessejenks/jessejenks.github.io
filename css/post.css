@@ -77,6 +77,39 @@
     white-space: nowrap;
 }
 
+.post h2 {
+    margin-top: 1rem;
+}
+
+.post h3 {
+    margin-top: 0.75rem;
+}
+
+.post .show-hide-button {
+    margin: 0.5rem 0;
+    width: 100%;
+    font-size: 1rem;
+    text-align: start;
+}
+
+.post .show-hide-button::after {
+    content: "\002B";
+    font-weight: bold;
+    float: right;
+}
+
+.post .show-hide-button.active::after {
+    content: "\2212";
+}
+
+.post .panel {
+    display: none;
+}
+
+.post .panel.show {
+    display: initial;
+}
+
 .post figure {
     margin: 1rem 0.25rem;
     display: flex;

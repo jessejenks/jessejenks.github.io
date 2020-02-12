@@ -14,3 +14,14 @@ function addClickListeners(anchorNodes) {
         });
     }
 }
+
+const showHideButtons = document.querySelectorAll(".show-hide-button");
+
+for (let i = 0; i < showHideButtons.length; i++) {
+    showHideButtons[i].addEventListener("click", function() {
+        showHideButtons[i].classList.toggle("active");
+        if (showHideButtons[i].nextElementSibling) {
+            showHideButtons[i].nextElementSibling.classList.toggle("show");
+        }
+    });
+}
