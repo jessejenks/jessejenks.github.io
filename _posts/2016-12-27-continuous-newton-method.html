@@ -1,0 +1,26 @@
+---
+layout: post
+title: "Continuous Newton Method"
+date: 2016-12-27
+tags: [math]
+---
+<script src="/js/utils.js"></script>
+<script src="/js/complex.js"></script>
+<figure>
+    <figcaption>
+        <div>\(\dot{s}(t) = -\frac{p(s(t))}{p'(s(t))}\)</div>
+        <div>\(p(z) = z^4 - 3z^2 + 3\)</div>
+    </figcaption>
+    <div style="position: relative; width: 400px; height: 400px;">
+        <canvas id="trajectories"></canvas>
+        <canvas id="trajectory-arrows" style="position: absolute;"></canvas>
+    </div>
+</figure>
+
+<section>
+    <p>What if we treat <a href="/blog/newton-fractal">Newton's method</a> as a differential equation? This is called the "continuous" Newton's method. Unlike the usual Newton's method, this is much more stable. The tradeoff is of course, that it is much more computationally intensive.</p>
+
+    <p>Here we see the trajectories of 64 points as they move according to the formulas above.</p>
+</section>
+
+<script src="/js/newton-method/continuous-newton-method.js"></script>

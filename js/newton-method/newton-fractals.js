@@ -49,7 +49,6 @@
             bottom = pPrime(z);
             newZ = z.subtract(top.divide(bottom));
             if (newZ.distance_sqr(z) < toleranceSquared) {
-            // if (newZ.real*newZ.real + newZ.imag*newZ.imag < toleranceSquared) {
                 return j;
             }
             z = newZ;
