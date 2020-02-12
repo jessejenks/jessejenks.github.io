@@ -52,15 +52,6 @@ function draw() {
       x = cr + rMin + (rMax-rMin)*(i%width)/width
       y = ci + iMax + (iMin-iMax)*floor(i/width)/height
     }
-
-    let equation ;
-    if (method.value() === 'Householder\'s method') {
-      equation = "$$z_{n+1} = z_{n} - \\frac{p(z_n)}{p'(z_n)}\\left(1+\\frac{p(z_n)p''(z_n)}{2p'(z_n)^2}\\right)$$";
-    } else {
-      equation = "$$z_{n+1} = z_{n} - \\frac{p(z_n)}{p'(z_n)}\\left(1+\\frac{p(z_n)p''(z_n)}{2p'(z_n)^2}\\right)$$";
-    }
-
-    document.getElementById('equation').innerHTML = equation
     
     // const x = cr + rMin + (rMax-rMin)*(i%width)/width
     // const y = ci + iMax + (iMin-iMax)*floor(i/width)/height

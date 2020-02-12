@@ -10,10 +10,22 @@ tags: [cellular automata]
 
 <div id="cars" style="display: flex;justify-content: center;"></div><br><br>
 
-<br>
-<button class="accordion">What's this?</button>
-<div class="panel">
-<p>
-Simulating traffic! Time flows from top to bottom, and each car traces out a diagonal path from top left to bottom right. When they reach the bottom, everything starts over, but each iteration is more crowded and you can even see traffic jams as lines going from the top right to bottom left. In fact, even though it looks kind of random, traffic flow follows a very clear pattern. This traffic flow data is plotted as traffic density vs flow and velocity. This is based on code I wrote for the COMAP MCM.
-</p>
-</div>
+<section>
+    <p>Simulating traffic! Cars drive from left to right, while time flows from top to bottom. Each car traces out a diagonal path from top left to bottom right. When they reach the bottom, everything starts over, but each iteration is more crowded and you can even see traffic jams as lines going from the top right to bottom left. In fact, even though it looks kind of random, traffic flow follows a very clear pattern. This is based on code I wrote for the {% include footnote-link id="mcm" content="COMAP MCM" %}.</p>
+</section>
+
+<section>
+    <footer class="footnotes">
+        <h3>Footnotes</h3>
+        <hr>
+        <ol>
+            {% capture link-to-article %}
+                It was event in {% include link
+                    href="https://www.seattletimes.com/education-lab/local-university-team-is-top-scorer-in-math-competition-on-self-driving-cars/"
+                    content="the news"
+                %}!
+            {% endcapture %}
+            {% include footnote id="mcm" content=link-to-article %}
+        </ol>
+    </footer>
+</section>

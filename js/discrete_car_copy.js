@@ -1,4 +1,4 @@
-var max_N = 130;
+var max_N = 50;
 var interval_N = 5;
 var cars;
 var N = 10;
@@ -58,26 +58,6 @@ function draw() {
 			N += interval_N;
 			reset_sim();
 		} else {
-
-			stroke(255)
-			for (var i = 0; i<width*height; i++) point(i%width, floor(i/width))
-
-			for (var i = 0; i<stats.length; i++) {
-				stroke(stats[i].percent*255, 255, 255);
-				point(width*stats[i].n/L, height/2 - height*stats[i].flow/2);
-				point(width*stats[i].n/L, height - height*stats[i].flow/(2*v_max*stats[i].n/L));
-			}
-
-			for (var r = 1; r<10; r++) {
-				var x = r*width/10;
-				stroke(0);
-				noFill();
-				line(x, height, x, height-10);
-				noStroke();
-				fill(0);
-				text(r/10, x, height-15)
-			}
-
 			noLoop();
 		}
 	}
@@ -138,9 +118,6 @@ function update() {
 
 function reset_sim() {
 	cars = new Array(L);
-	// number of self-driving cars
-	// var num_selfDriving = Math.floor(N*percent_selfDriving);
-	// var counter = num_selfDriving;
 
 	for (var j = 0; j<N; j++) {
 		var index = Math.floor(Math.random()*L);
@@ -148,6 +125,5 @@ function reset_sim() {
 			index = Math.floor(Math.random()*L);
 		}
 		cars[index] = {vel: 0, id: j}
-		// if (counter>0)counter--;
 	}
 }

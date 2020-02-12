@@ -4,12 +4,34 @@ title: "A Fractal Polygon"
 date: 2018-07-12
 tags: [math, fractals, animation]
 ---
-<img src="/assets/fractal-polygon/final-5.gif" class="centered-image">
+<figure>
+    <img src="/assets/fractal-polygon/final-5.gif" class="centered-image">
+</figure>
 
-<p>This is a parametric fractal built up from a pentagon. Here is an animation showing its construction.</p>
+<section>
+    <p>This is a parametric fractal built up from a pentagon. Here is an animation showing its {% include footnote-link id="inspiration" content="construction" %}.</p>
+</section>
 
-<img src="/assets/fractal-polygon/stages-5.gif" class="centered-image">
+<figure>
+    <img src="/assets/fractal-polygon/stages-5.gif" class="centered-image">
+</figure>
 
-<p>This construction is closely related to the <a target="_blank" href="https://en.wikipedia.org/wiki/Blancmange_curve">Takagi Curve</a> which is a <a target="_blank" href="https://arxiv.org/abs/1110.1691">very interesting function</a>.</p>
+<section>
+    <p>This construction is closely related to the {% include link href="https://en.wikipedia.org/wiki/Blancmange_curve" content="Takagi Curve" %} which is a {% include link href="https://arxiv.org/abs/1110.1691" content="very interesting function" %}.</p>
+</section>
 
-<p>Loosely inspired by <a href="http://www.tylerlhobbs.com/writings/watercolor">Tyler Hobbs</a>.</p>
+<section>
+    <footer class="footnotes">
+        <h3>Footnotes</h3>
+        <hr>
+        <ol>
+            {% capture tyler-hobbs-link %}
+                Inspired by {% include link
+                    href="https://tylerxhobbs.com/essays/2017/a-generative-approach-to-simulating-watercolor-paints"
+                    content="Tyler Hobbs"
+                %}.
+            {% endcapture %}
+            {% include footnote id="inspiration" content=tyler-hobbs-link %}
+        </ol>
+    </footer>
+</section>
