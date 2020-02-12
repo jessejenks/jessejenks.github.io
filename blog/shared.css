@@ -1,0 +1,23 @@
+.index-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    margin: 1rem 0;
+}
+
+.index-header h1 {
+    margin: 0;
+}
+
+.index-header .link-to-adjacent-page {
+    padding: .25rem 0.5rem;
+}
+.index-header .link-to-adjacent-page.left::before {
+    content: "\276C";
+    margin-right: 0.5rem;
+}
+.index-header .link-to-adjacent-page.right::after {
+    content: "\276D";
+    margin-left: 0.5rem;
+}

@@ -7,10 +7,10 @@
   children:
     - label: Blog posts
       path: /blog
-    - label: Writing
-      path: /blog/writing
     - label: Gallery
       path: /blog/gallery
+    - label: Writing
+      path: /blog/writings
 - label: Resume
   path: /resume/
   children:

@@ -113,8 +113,16 @@ title: Jesse Jenks
 		right: 0.5rem;
 	}
 
+	#next-rule-button::after {
+		content: "\276D";
+	}
+
 	#previous-rule-button {
 		left: 0.5rem;
+	}
+
+	#previous-rule-button::before {
+		content: "\276C";
 	}
 
 	#play-pause-button,
@@ -150,8 +158,8 @@ title: Jesse Jenks
 		<div id="more-info-link">
 			More info&nbsp;<a href="../about">here</a>
 		</div>
-		<button type="button" id="next-rule-button">></button>
-		<button type="button" id="previous-rule-button"><</button>
+		<button type="button" id="next-rule-button"></button>
+		<button type="button" id="previous-rule-button"></button>
 
 		<div id="animation-control-button-container">
 			<div id="pause-reset-button-container">

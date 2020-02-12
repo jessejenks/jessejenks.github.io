@@ -1,22 +1,22 @@
 ---
 layout: default
-title: Gallery
+title: Writings
 ---
 <link rel="stylesheet" type="text/css" href="../shared.css">
 
 <header class="index-header">
-    <h1>Gallery</h1>
+    <h1>Writings</h1>
     <div>
         <a class="link-to-adjacent-page left" href="/blog">Blog</a>
-        <a class="link-to-adjacent-page right" href="/blog/writings">Writings</a>
+        <a class="link-to-adjacent-page left" href="/blog/gallery">Gallery</a>
     </div>
 </header>
-<ul class="works">
-    {% if site.works == empty  %}
+<ul class="writings">
+    {% if site.writings == empty %}
         {% include coming-soon.html %}
     {% else %}
-        {% for work in site.works %}
-            <li><a href="{{ work.url }}" title="{{ v.title }}">
+        {% for work in site.writings %}
+            <li><a href="{{ work.url }}" title="{{ work.title }}">
                 {{ work.title }}
             </a></li>
         {% endfor %}

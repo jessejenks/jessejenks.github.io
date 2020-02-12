@@ -1,13 +1,21 @@
 title: "Jesse Jenks"
-description: "Homepage for Jesse Jenks"
+description: "Homepage for Jesse Endo Jenks"
 
 author:
-  name: 'Jesse Jenks'
-  first_name: 'Jesse'
-  last_name: 'Jenks'
-  email: 'JesseEndoJenks@pugetsound.edu'
-  github_username: 'jessejenks'
+  name: "Jesse Jenks"
+  first_name: "Jesse"
+  last_name: "Jenks"
+  email: "JesseEndoJenks@gmail.com"
+  github_username: "jessejenks"
 
 markdown: kramdown
 
-permalink: /blog/:title
+collections:
+  posts:
+    permalink: /blog/:title
+  works:
+    output: true
+    permalink: /blog/gallery/:title
+  writings:
+    output: true
+    permalink: /blog/writings/:title
