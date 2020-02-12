@@ -1,7 +1,7 @@
 #resume-container {
     --section-header-color: var(--palette-blue-4);
     --subsection-header-color: var(--text-color);
-    --default-text-color: var(--palette-gray);
+    --default-text-color: var(--palette-gray-1);
 
     --bold-font-size: 1.25rem;
     --bold-font-weight: 600;
@@ -19,11 +19,17 @@
     left: 1rem;
 }
 
-#resume-container > #current-page-info > a {
+#resume-container > #current-page-info > #link-to-resume {
     padding: .25rem 0.5rem;
     color: var(--palette-gray-2);
     height: fit-content;
     font-style: italic;
+}
+
+#resume-container > #current-page-info > #link-to-resume::after {
+    content: "\276D";
+    font-style: initial;
+    margin-left: 0.5rem;
 }
 
 #resume-container > #name {
@@ -54,11 +60,19 @@
 
 #resume-container > section {
     position: relative;
+    display: flex;
+    flex-flow: column;
+}
+
+#resume-container > section:not(:first-of-type) {
+    margin-top: 1rem;
 }
 
 #resume-container > section > .section-header {
     position: sticky;
     top: 0.5rem;
+
+    display: flex;
 
     width: fit-content;
 
@@ -77,9 +91,11 @@
 
 #resume-container > section > .section-container {
     color: var(--default-text-color);
+    display: flex;
+    flex-flow: column;
 }
 
-#resume-container > section > .section-row,
+#resume-container > section .section-row,
 #resume-container > section > .subsection-header {
     display: flex;
 }
@@ -226,15 +242,21 @@ table img {
 }
 
 @media only screen and (max-width: 640px) {
-    #current-page-info {
+    #resume-container > #current-page-info {
         left: 4rem;
         top: 1rem;
         flex-direction: row;
         align-items: baseline;
     }
 
-    #current-page-info > h2 {
+    #resume-container > #current-page-info > h2 {
         margin: 0 1rem;
+    }
+
+    #resume-container > section > .section-header {
+        top: 1.5rem;
+        width: 100%;
+        justify-content: center;
     }
 }
 
@@ -256,19 +278,19 @@ table img {
         margin-bottom: 0;
     }
 
-    .section-row,
-    .subsection-header {
+    #resume-container > section .section-row,
+    #resume-container > section > .subsection-header {
         flex-direction: column;
         align-items: baseline;
         margin-top: .5rem;
     }
 
-    .subsection-list {
-        list-style-position: outside;
+    #resume-container > section > .section-container .normal-text.small.right {
+        margin: 0;
     }
 
-    .normal-text.small.right {
-        margin: 0;
+    .subsection-list {
+        list-style-position: outside;
     }
 
     #name {
@@ -308,8 +330,21 @@ table img {
         width: auto;
     }
 
+    #resume-container > #current-page-info {
+        display: none;
+    }
+
     #resume-container a {
         border: none;
+    }
+
+    #resume-container > section > .section-header {
+        border: none;
+        position: initial;
+    }
+
+    #resume-container #animated-code-container {
+        display: none;
     }
 
     #animated-code-container {

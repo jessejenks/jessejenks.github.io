@@ -8,7 +8,7 @@ title: Resume
 <div id="resume-container">
 	<div id="current-page-info">
 		<h2>CV</h2>
-		<a href="/resume/Jesse_Jenks_Resume.pdf">See resume instead</a>
+		<a id="link-to-resume" href="/resume/Jesse-Jenks-Resume.pdf">See resume instead</a>
 	</div>
 	<div id="name">
 		<div>Jesse</div>
@@ -62,7 +62,7 @@ title: Resume
 	<section>
 		<h2 class="section-header">Skills</h2>
 		<div class="section-container">
-			<div class="section-row align-top">
+			<div class="align-top">
 				<div class="bold-text align-on-right">Languages &amp; Libraries</div>
 
 				<div class="normal-text" id="language-table-container">
@@ -91,9 +91,13 @@ title: Resume
 										{% endif %}
 									</td>
 									<td>
-										<a target="_blank" href="{{ language.link }}">
+										{% capture language-link %}
+											{{ language.link }}
+										{% endcapture %}
+										{% capture language-name %}
 											{{ language.name }}
-										</a>
+										{% endcapture %}
+										{% include link href=language-link content=language-name %}
 									</td>
 									{% endfor %}
 								</tr>
@@ -159,7 +163,7 @@ title: Resume
 			</div>
 			<div class="subsection-container normal-text">
 				<ul class="subsection-list">
-					<li>Wrote a neural net library from scratch in javascript to visualize in <a href="/blog/2018/04/10/NeuralNetjs">this&nbsp;blog&nbsp;post</a></li>
+					<li>Wrote a neural net library from scratch in javascript to visualize in <a href="/blog/NeuralNetjs">this&nbsp;blog&nbsp;post</a></li>
 					<li>Implements backpropagation Includes a variety of activation and cost functions</li>
 				</ul>
 			</div>
@@ -184,7 +188,7 @@ title: Resume
 			<div class="subsection-container normal-text">
 				<ul class="subsection-list">
 					<li>Created a custom language for filtering blog posts, and implemented a parser and interpreter.</li>
-					<li>Built a <a href="https://github.com/jessejenks/filter-parser">demo page</a> with a syntax highlighted input box.</li>
+					<li>Built a {% include link href="https://github.com/jessejenks/filter-parser" content="demo page" %} with a syntax highlighted input box.</li>
 				</ul>
 			</div>
 
@@ -206,9 +210,7 @@ title: Resume
 			</div>
 			<div class="subsection-container normal-text">
 				<div class="normal-text indent">
-					<a target="_blank" href="https://soundideas.pugetsound.edu/summer_research/276/">
-						What Do We Mean by Logical Consequence?
-					</a>
+					{% include link href="https://soundideas.pugetsound.edu/summer_research/276/" content="<em>What Do We Mean by Logical Consequence?</em>" %}
 				</div>
 				<ul class="subsection-list">
 					<li>Conducted independent research on differing views within a main subfield of mathematical logic</li>
@@ -236,16 +238,15 @@ title: Resume
 			</div>
 			<div class="subsection-container">
 				<div class="bold-text default-color indent">
-					<a target="_blank" href="https://hexinsights.com">
-						Hex Insights
-					</a>
+					{% include link href="https://hexinsights.com" content="Hex Insights" %}
 				</div>
 				<ul class="subsection-list">
-					<li>Working in a small team focused on full-stack development</li>
-					<li>Using modern web technologies including React, Express, Django, and Postgres</li>
+					<li>Working on a small team building single-page applications with React, Express, Django, and Postgres</li>
+					<li>Conduct unit and integration tests using the Jest framework</li>
+					<li>Implemented custom API query system that dropped page load times from 30 seconds to 150 milliseconds</li>
+					<li>Designing RESTful APIs to interface with custom databases</li>
 				</ul>
 			</div>
-
 
 			<div class="subsection-header">
 				<div class="bold-text subsection-title">
@@ -261,9 +262,7 @@ title: Resume
 			</div>
 			<div class="subsection-container">
 				<div class="bold-text default-color indent">
-					<a target="_blank" href="http://research.pugetsound.edu/makerspace">
-						Collins Library
-					</a>
+					{% include link href="http://research.pugetsound.edu/makerspace" content="Collins Library" %}
 				</div>
 				<ul class="subsection-list">
 					<li>Assisted students and faculty in using 3D printers, Arduino boards, Raspberry Pis, a laser cutter, a silhouette cutter, button makers, and other equipment</li>
@@ -285,9 +284,7 @@ title: Resume
 			</div>
 			<div class="subsection-container">
 				<div class="bold-text default-color indent">
-					<a target="_blank" href="https://www.pugetsound.edu/academics/departments-and-programs/undergraduate/philosophy/">
-						Philosophy Department
-					</a>
+					{% include link href="https://www.pugetsound.edu/academics/departments-and-programs/undergraduate/philosophy/" content="Philosophy Department" %}
 				</div>
 				<ul class="subsection-list">
 					<li>Assisted professor in administration for class of 19 students on Formal Logic</li>
@@ -310,15 +307,12 @@ title: Resume
 			</div>
 			<div class="subsection-container">
 				<div class="bold-text default-color indent">
-					<a target="_blank" href="https://mathcs.pugetsound.edu">
-						Computer Science Department
-					</a>
+					{% include link href="https://mathcs.pugetsound.edu" content="Computer Science Department" %}
 				</div>
 				<ul class="subsection-list">
 					<li>Provided weekly peer tutoring for all class levels</li>
 				</ul>
 			</div>
-
 
 			<div class="subsection-header">
 				<div class="bold-text subsection-title">
@@ -334,9 +328,7 @@ title: Resume
 			</div>
 			<div class="subsection-container">
 				<div class="bold-text default-color indent">
-					<a target="_blank" href="https://www.pugetsound.edu/about/offices-services/technology-services/media-services/">
-						Technology Services
-					</a>
+					{% include link href="https://www.pugetsound.edu/about/offices-services/technology-services/media-services/" content="Technology Services" %}
 				</div>
 				<ul class="subsection-list">
 					<li>Performed troubleshooting for staff and faculty on campus</li>
@@ -351,7 +343,7 @@ title: Resume
 		<div class="section-container">
 			<div class="subsection-header">
 				<div class="bold-text subsection-title align-on-right small">ACM</div>
-				<div class="bold-text default-color">President<div class="normal-text ">,&nbsp;</div></div>
+				<div class="bold-text default-color">President<div class="normal-text">,&nbsp;</div></div>
 				<div class="normal-text">Computer Science club</div>
 				<div class="normal-text small right">2016 - 2017</div>
 			</div>
