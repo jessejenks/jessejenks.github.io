@@ -110,6 +110,19 @@
     display: initial;
 }
 
+.post code.boxed {
+    padding: 0.5rem 0.75rem;
+    margin: 0.5rem 0;
+    background-color: var(--palette-blue-1);
+    display: block;
+}
+
+.post code.boxed.inline {
+    padding: 0.25rem 0.5rem;
+    background-color: var(--palette-blue-1);
+    display: inline;
+}
+
 .post figure {
     margin: 1rem 0.25rem;
     display: flex;
