@@ -51,40 +51,19 @@
     --text-shadow-color: black;
 
     --short-text-shadow-style:
-        0px 0px var(--text-shadow-color),
-        0.25px 0.375px var(--text-shadow-color),
-        0.5px 0.75px var(--text-shadow-color),
-        0.75px 1.125px var(--text-shadow-color),
-        1px 1.5px var(--text-shadow-color),
-        1.25px 1.875px var(--text-shadow-color),
-        1.5px 2.25px var(--text-shadow-color),
-        1.75px 2.625px var(--text-shadow-color),
-        2px 3px var(--text-shadow-color);
+        1px 1px var(--text-shadow-color);
 
     --long-text-shadow-style:
         0px 0px var(--text-shadow-color),
-        0.25px 0.375px var(--text-shadow-color),
-        0.5px 0.75px var(--text-shadow-color),
-        0.75px 1.125px var(--text-shadow-color),
-        1px 1.5px var(--text-shadow-color),
-        1.25px 1.875px var(--text-shadow-color),
-        1.5px 2.25px var(--text-shadow-color),
-        1.75px 2.625px var(--text-shadow-color),
-        2px 3px var(--text-shadow-color),
-        2.25px 3.375px var(--text-shadow-color),
-        2.5px 3.75px var(--text-shadow-color),
-        2.75px 4.125px var(--text-shadow-color),
-        3px 4.5px var(--text-shadow-color),
-        3.25px 4.875px var(--text-shadow-color),
-        3.5px 5.25px var(--text-shadow-color),
-        3.75px 5.625px var(--text-shadow-color),
-        4px 6px var(--text-shadow-color),
-        4.25px 6.375px var(--text-shadow-color),
-        4.5px 6.75px var(--text-shadow-color),
-        4.75px 7.125px var(--text-shadow-color),
-        5px 7.5px var(--text-shadow-color);
+        1px 1px var(--text-shadow-color),
+        2px 2px var(--text-shadow-color),
+        3px 3px var(--text-shadow-color),
+        4px 4px var(--text-shadow-color),
+        5px 5px var(--text-shadow-color),
+        6px 6px var(--text-shadow-color);
 
     --section-background-color: var(--palette-blue-1-slightly-transparent);
+    --section-hovered-background-color: var(--palette-blue-1);
     --section-border-color: var(--palette-blue-5);
 
     --footnote-number-color: var(--palette-sangria);
@@ -312,6 +291,15 @@ body > main > section {
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
     text-shadow: var(--short-text-shadow-style);
+    -moz-text-shadow: var(--short-text-shadow-style);
+    -webkit-text-shadow: var(--short-text-shadow-style);
+
+    will-change: background-color;
+    transition: background-color var(--default-transition-time);
+}
+
+body > main > section:hover {
+    background-color: var(--section-hovered-background-color);
 }
 
 body > main > section:not(:first-of-type) {

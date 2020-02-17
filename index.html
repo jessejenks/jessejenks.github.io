@@ -43,6 +43,8 @@ title: Jesse Jenks
 		padding: 0 1rem;
 
 		text-shadow: var(--long-text-shadow-style);
+		-moz-text-shadow: var(--long-text-shadow-style);
+		-webkit-text-shadow: var(--long-text-shadow-style);
 	}
 
 	#big-name,
@@ -52,15 +54,6 @@ title: Jesse Jenks
 		border: 2px solid var(--nav-background-color);
 		border-radius: 0.5rem;
 		cursor: default;
-
-		will-change: background-color;
-		transition: background-color var(--default-transition-time);
-	}
-
-	#big-name:hover,
-	#small-name:hover,
-	#automata-info-container:hover {
-		background-color: var(--nav-background-color);
 	}
 
 	#animation-control-button-container {
