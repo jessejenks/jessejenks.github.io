@@ -1,6 +1,6 @@
 <a
     target="_blank"
-    rel="noopener"
+    rel="noreferrer"
     {% if include.href %}
         href="{{ include.href }}"
     {% endif %}
