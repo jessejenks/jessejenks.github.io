@@ -1,0 +1,121 @@
+- name: Add the Value of Two Cells
+  snippets:
+    - code: |-
+        +++.>+++++.[<+>-]<.
+    - code: |-
+        sum of two cells
+        +      cell(0) = 1
+        .      print
+        >      move to cell(1)
+        ++     cell(1) = 2
+        .      print
+        [      go to matching bracket if this cell is non zero
+            <  go back to cell(0)
+            +  increment cell(0)
+            >  go to cell(1)
+            -  decrement
+        ]      go back to matching bracket if this cell is zero
+        <.     print result
+      note: With comments
+
+- name: Replace the value of a cell
+  snippets:
+    - code: |
+        +++++.[-]++.
+    - code: |
+        Replace the value of a cell
+        +++++. load a value
+        [-]     clear the cell
+        ++++++. the new value
+      note: With comments
+
+- name: Move the contents of a cell to another
+  snippets:
+    - code: |
+        +++++. load a value
+
+        [
+            - decrement
+            > move
+            + increment
+            < go back
+        ]
+
+- name: Duplicate the contents of a cell
+  snippets:
+    - code: |
+        +++++.
+
+        [
+            - decrement
+            > move
+            + increment
+            > move
+            + increment
+            << go back
+        ]
+
+- name: Multiply a cell by a fixed value
+  snippets:
+    - code: |
+        +++++. load 5
+
+        [->+>+<<] copy contents into a new cell
+        >>
+        [->
+            +++ multiply by 3
+        <]
+        >. print result
+
+- name: Swap the Value of Two Cells
+  snippets:
+    - code: |-
+        swaps cell(0) and cell(1)
+        +++++.>++++++++.< load some values
+
+        [->>+<-<]
+        >[-<+>]
+        >[-<+<+>>]
+
+- name: Print the number 42
+  snippets:
+    - code: |-
+        --[>+<++++++]>-
+      note: The shortest known bf code to generate 42
+    - code: |-
+        >>++[-<+++[-<+++++++>]>]<<.
+      note: Simpler code to generate 42. Compare this to the multiplications example. Do you see the trick?
+
+- name: Fibonacci
+  snippets:
+    - code: |-
+        ++++>+.>+<<[->>.[->+>+<<]>>[-<<+>>]<<<[->+<]>>[-<<+>>]<<<]>>.
+    - code: |-
+        Fibonacci
+        number of iterations
+        ++++ This program will print this many fibonacci numbers
+        plus the first two terms we initialize here
+        >
+        +. 1   (put 2 here for the Lucas numbers)
+        >
+        +  1
+        <<
+        start loop
+        [-
+            copy second term
+            >>.
+            [->+>+<<]
+            move copy to blank cell
+            >>
+            [-<<+>>]
+            sum first and second terms
+            <<<
+            [->+<]
+            move (old) second to first place
+            >>
+            [-<<+>>]
+            go to first cell to restart loop
+            <<<
+        ]
+        >>. print last term
+      note: With comments.

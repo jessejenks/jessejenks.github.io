@@ -1,0 +1,604 @@
+---
+layout: post
+title: "Brainf*ck Turing Machine Interpreter"
+date: 2020-02-20
+tags: [computer science, interactive, turing machines, esolang]
+---
+<link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet">
+<style>
+    figure#brainf-ck-instructions-container {
+        padding: 0;
+        border: none;
+    }
+
+    figure#brainf-ck-instructions-container table#brainf-ck-instructions,
+    figure#brainf-ck-instructions-container table#brainf-ck-instructions th,
+    figure#brainf-ck-instructions-container table#brainf-ck-instructions td {
+        border-collapse: collapse;
+    }
+
+    figure#brainf-ck-instructions-container table#brainf-ck-instructions caption {
+        white-space: normal;
+    }
+
+    figure#brainf-ck-instructions-container table#brainf-ck-instructions {
+        margin: 0.5rem 0;
+    }
+
+    figure#brainf-ck-instructions-container table#brainf-ck-instructions th,
+    figure#brainf-ck-instructions-container table#brainf-ck-instructions td {
+        padding: 0.25rem 0.5rem;
+        border: 1px solid var(--palette-blue-5);
+    }
+
+    figure#brainf-ck-instructions-container table#brainf-ck-instructions tr:first-child th:first-child {
+        border-top-left-radius: 0.25rem;
+    }
+
+    .highlight {
+        background: none;
+    }
+
+    #code-section #code-container {
+        position: relative;
+        display: flex;
+        width: 100%;
+        min-height: 1rem;
+        overflow: scroll;
+        margin-bottom: 1rem;
+    }
+
+    #code-section #code-container #height-controller {
+        padding-top: 0.5rem;
+        padding-left: 0.5rem;
+        font-size: 1rem;
+        font-family: monospace;
+        color: var(--blue4);
+    }
+
+    #code-section #code-container #code-input,
+    #code-section #code-container #code-highlighted {
+        position: absolute;
+
+        font-size: 1rem;
+        font-family: monospace;
+
+        width: 100%;
+        padding: 0.5rem 1rem;
+        padding-left: 2rem;
+
+        white-space: pre;
+        word-wrap: normal;
+    }
+
+    #code-section #code-container #code-input {
+        background: transparent;
+        color: transparent;
+        min-height: 100%;
+        border: none;
+        caret-color: var(--orange);
+        outline: none;
+        resize: none;
+        overflow: hidden;
+        line-height: 1.5rem;
+    }
+
+    #code-section #code-container #code-highlighted {
+        background: var(--blue3);
+        color: var(--white3);
+        height: fit-content;
+        border-radius: 0.5rem;
+        z-index: -1;
+    }
+
+    #code-section #code-container #code-highlighted .token-left,
+    #code-section #code-container #code-highlighted .token-right {
+        color: var(--green);
+    }
+
+    #code-section #code-container #code-highlighted .token-increment,
+    #code-section #code-container #code-highlighted .token-decrement {
+        color: var(--red2);
+    }
+
+    #code-section #code-container #code-highlighted .token-bracket-left,
+    #code-section #code-container #code-highlighted .token-bracket-right {
+        color: var(--orange);
+    }
+
+    #code-section #code-container #code-highlighted .token-input,
+    #code-section #code-container #code-highlighted .token-output {
+        color: var(--blue);
+    }
+
+    #code-section #code-container #code-highlighted .token-comment {
+        color: var(--blue6);
+    }
+    
+    #code-section button:disabled {
+        color: var(--palette-blue-2);
+        border-color: var(--palette-blue-1);
+        cursor: default;
+    }
+
+    #code-section #run-button {
+        background-color: var(--palette-red-1);
+        border-color: var(--palette-sangria);
+    }
+
+    #code-section #run-button:disabled {
+        color: var(--palette-sangria);
+        border-color: var(--palette-red-1);
+    }
+
+    #code-section #settings label {
+        display: inline-block;
+    }
+
+    #code-section #settings label span,
+    #code-section #settings #ascii-mode-controller,
+    #code-section #settings #speed-controller {
+        vertical-align: middle;
+    }
+
+    #code-section #settings #instructions-per-second {
+        font-size: 0.8rem;
+        color: var(--palette-gray-2);
+    }
+
+    #code-section #settings #ascii-mode-controller {
+        margin-left: 2rem;
+    }
+
+    #code-section canvas#turing-machine {
+        width: 100%;
+        height: 200px;
+    }
+
+    #code-section #input-label {
+        display: flex;
+    }
+    
+    #code-section #input {
+        padding: 0.25rem 0.5rem;
+        margin-right: 0.25rem;
+        font-size: 1.25rem;
+        color: var(--palette-blue-1);
+        background-color: var(--palette-blue-3);
+        border: 1px solid var(--palette-blue-5);
+        border-radius: 0.25rem;
+    }
+
+    #code-section #input:disabled {
+        background-color: var(--palette-blue-1);
+    }
+
+    #code-section #output {
+        display: flex;
+        width: 100%;
+        height: 2.75rem;
+        background-color: var(--terminal-background);
+        border: 1px solid var(--palette-blue-5);
+        border-radius: 0.25rem;
+        color: var(--terminal-green);
+        font-family: 'VT323', monospace;
+        font-size: 1.5rem;
+        margin: 0.5rem 0;
+        padding: 0.25rem 0.5rem;
+    }
+
+    #code-section #output > span {
+        margin-right: 0.5rem;
+    }
+
+    #code-section #output > span.eof {
+        margin: 0;
+        color: var(--palette-blue-5);
+    }
+
+    #code-section #errors {
+        height: 3rem;
+        color: var(--palette-red-1);
+    }
+
+    #code-section #errors.has-error {
+        display: flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        background-color: var(--palette-pink-1);
+        border: 1px solid var(--palette-sangria);
+        border-radius: 0.25rem;
+    }
+
+    #code-section #errors .error-location {
+        margin-left: 0.5rem;
+        font-size: 0.9rem;
+        font-style: italic;
+    }
+
+    .panel.show.list-of-examples {
+        display: flex;
+        flex-flow: column;
+        align-items: flex-end;
+    }
+
+    .show-hide-button.example {
+        width: 95%;
+    }
+
+    .panel.show.example {
+        width: 90%;
+        display: flex;
+        flex-flow: column;
+        align-items: flex-start;
+    }
+</style>
+
+<section id="code-section">
+    <div id="code-container" class="highlight">
+        <span id="height-controller" style="min-height: 10px;"></span>
+        <span id="code-highlighted" contenteditable></span>
+        <textarea
+            id="code-input"
+            rows="1"
+            spellcheck="false"
+            disabled
+        >+.>++.[<+>-]<.</textarea>
+    </div>
+    <div id="start-stop-buttons-container">
+        <button
+            type="button"
+            id="run-button"
+            onclick="runCode()"
+            disabled
+        >
+            RUN
+        </button>
+        <button
+            type="button"
+            id="stop-button"
+            onclick="stopCode()"
+            disabled
+        >
+            STOP
+        </button>
+    </div>
+    <div id="settings">
+        <label>
+            <input
+                type="range"
+                id="speed-controller"
+                min="1"
+                max="10"
+                step="0.5"
+                value="9"
+                onchange="changeSpeed(event)"
+            >
+            <span>Speed</span>
+            <span id="instructions-per-second"></span>
+        </label>
+        <label>
+            <input
+                type="checkbox"
+                id="ascii-mode-controller"
+                value="false"
+                onchange="changeAsciiMode(event)"
+                title="Output a raw number or the character whose ascii code is that number"
+            >
+            <span>Output as Ascii</span>
+        </label>
+    </div>
+    <form>
+        <label id="input-label">
+            <input
+                type="text"
+                id="input"
+                maxlength="1"
+                disabled
+            >
+            <button
+                type="submit"
+                id="input-button"
+                onclick="readInput(event)"
+                disabled
+            >
+                INPUT
+            </button>
+        </label>
+    </form>
+    <code id="output"></code>
+    <code id="errors"></code>
+    <figure>
+        <canvas id="turing-machine"></canvas>
+    </figure>
+</section>
+
+<section>
+    <button type="button" class="show-hide-button">Examples ({{ site.data.posts.bf-examples | size }})</button>
+    <span class="panel list-of-examples">
+    {% for example in site.data.posts.bf-examples %}
+        <button type="button" class="show-hide-button example">{{ example.name }}</button>
+        <span class="panel example">
+        {% for snippet in example.snippets %}
+            {% if snippet.note %}
+            <p>{{ snippet.note }}</p>
+            {% endif %}
+            <button type="button" class="load-example" onclick="loadExample(event)">Load This Example</button>
+            <figure class="highlight">
+                <pre>{{- snippet.code -}}</pre>
+            </figure>
+        {% endfor %}
+        </span>
+    {% endfor %}
+    </span>
+</section>
+
+<section>
+    <h2>The Brainf*ck Language</h2>
+    <hr>
+    <figure id="brainf-ck-instructions-container">
+        <table id="brainf-ck-instructions">
+            <thead>
+                <tr>
+                    <th>Instruction</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>></code></td>
+                    <td>Move the tape pointer to the right</td>
+                </tr>
+                <tr>
+                    <td><code><</code></td>
+                    <td>Move the tape pointer to the left</td>
+                </tr>
+                <tr>
+                    <td><code>+</code></td>
+                    <td>Increment the tape cell under the pointer</td>
+                </tr>
+                <tr>
+                    <td><code>-</code></td>
+                    <td>Decrement the tape cell under the pointer</td>
+                </tr>
+                <tr>
+                    <td><code>[</code></td>
+                    <td>Jump past the matching right bracket if the cell under the pointer is 0</td>
+                </tr>
+                <tr>
+                    <td><code>]</code></td>
+                    <td>Jump back to the matching left bracket if the cell under the pointer is nonzero</td>
+                </tr>
+                <tr>
+                    <td><code>,</code></td>
+                    <td>Input a character and store it in the cell at the pointer</td>
+                </tr>
+                <tr>
+                    <td><code>.</code></td>
+                    <td>Output the character signified by the cell at the pointer</td>
+                </tr>
+                <tr>
+                    <td>Anything else</td>
+                    <td>Ignored</td>
+                </tr>
+            </tbody>
+        </table>
+        <caption>
+            <p>Brainf*ck Keywords</p>
+            <p>Adapted from {% include reference-link id="esolangs-site" content="esolangs.org" %}</p>
+        </caption>
+    </figure>
+
+    <p>Brainf*ck (or BF) is one of the most famous "esoteric" programming languages. Invented in 1993 by Urban M&uuml;ller, it was intentionally designed to be an extremely small language. The language consists of {% include footnote-link id="keywords" content="only 8 keywords" %} meant to correspond to the behavior of a Turing machine. Every program starts on the first cell of an infinite tape of cells, and each cell can hold a value between 0 and 255. You can move the tape "pointer" left or right and increment or decrement the values in a cell. The most difficult part to get your head around is using the brackets (<code>[</code> and <code>]</code>) to repeat a block of code over and over again. But it is this ability to <em>conditionally</em> run a block of code which promotes BF from a language which just puts values in cells to a {% include reference-link id="proof-of-turing-completeness" content="full-fledged Turing-complete programming language" %}.</p>
+</section>
+
+<section>
+    <h2>Notes</h2>
+    <hr>
+    <p>I opted for a "wrapping" implementation of brainf*ck, meaning that if you decrement a cell with a 0 in it, it will wrap around to 255. Similarly, if a cell contains 255, incrementing will cause it to wrap to 0.</p>
+    
+    <p>In most implementations of BF, output is interpreted as the ascii encoding of a character. So for example, to print the character 'A', you need to increment a cell to 65, and then output with the <code>.</code> instruction. However, I felt this would make even simple programs take far too long to animate, so, by default, output is just the literal number in a cell.</p>
+    
+    <p>I had the idea to make a Turing machine interpreter for brainf*ck a while ago and couldn't find any examples of this online. Until, of course, right after I completed it. Here is a very similar page created by {% include link href="https://fatiherikli.github.io/brainfuck-visualizer" content="Fatih Erikli" %}. He has some other really neat things on his page, so check it out!
+    </p>
+</section>
+
+<section>
+    <footer class="footnotes">
+        <h3>Footnotes</h3>
+        <hr>
+        <ol>
+            {% include footnote
+                id="keywords"
+                content="Compare this to a language like Java or C which have dozens of keywords."
+            %}
+        </ol>
+    </footer>
+
+    <footer class="references">
+        <h3>References</h3>
+        <hr>
+        <ol>
+            {% capture esolangs-link %}
+                {% include link href="https://esolangs.org/wiki/Brainfuck#Language_overview" content="esolangs.org" %} is a great rabbit hole of bizarre programming languages.
+            {% endcapture %}
+            {% include reference id="esolangs-site" content=esolangs-link %}
+
+            {% capture proof-of-turing-completeness-link %}
+                Daniel B Cristofani has proven directly that brainf*ck is Turing complete by effectively {% include link href="http://www.hevanet.com/cristofd/brainfuck/utm.b" content="implementing a universal Turing machine in brainf*ck" %}. Based on an {% include link href="https://www.sciencedirect.com/science/article/pii/S0304397596000771" content="article by Yurii Rogozhin" %}.
+            {% endcapture %}
+            {% include reference id="proof-of-turing-completeness" content=proof-of-turing-completeness-link %}
+        </ol>
+    </footer>
+</section>
+
+<script src="/js/utils.js"></script>
+<script src="/js/brainf-ck-turing-machine/utils.js"></script>
+<script src="/js/brainf-ck-turing-machine/BFLexer.js"></script>
+<script src="/js/brainf-ck-turing-machine/Errors.js"></script>
+<script src="/js/brainf-ck-turing-machine/BFInterpreter.js"></script>
+<script src="/js/brainf-ck-turing-machine/TuringMachineAnimator.js"></script>
+<script src="/js/brainf-ck-turing-machine/BFController.js"></script>
+<script>
+    let currentHeight = 10;
+    const heightControllerNode = document.querySelector("#height-controller");
+    const codeHighlightedNode = document.querySelector("#code-highlighted");
+    const codeInputNode = document.querySelector("#code-input");
+    const lexer = new BFLexer();
+
+    codeInputNode.onkeydown = checkForTabs;
+    codeInputNode.onkeyup = highlightCode;
+
+    const TAB = "Tab";
+    function checkForTabs(event) {
+        let startPosition = this.selectionStart;
+        if (event.key === TAB) {
+            event.preventDefault();
+            this.value = this.value.substring(0, startPosition) + "    " + this.value.substring(startPosition);
+            this.selectionEnd = startPosition + 4;
+            return false;
+        }
+    }
+
+    function loadExample(event) {
+        codeInputNode.value = event.target.nextElementSibling.querySelector("pre").innerText.trim();
+        highlightCode();
+    }
+
+    function highlightCode() {
+        codeHighlightedNode.innerHTML = lexer.tokenize(codeInputNode.value).join("")
+            + "<span class=\"token-whitespace\"> </span>"; // slight hack to get trailing newline issue in textarea
+        setLineNumbers(lexer.lineCount);
+    }
+
+    function setLineNumbers(numLines) {
+        let h = codeHighlightedNode.getBoundingClientRect().height;
+        heightControllerNode.innerHTML = getLineNumbers(numLines);
+
+        if (h !== currentHeight) {
+            currentHeight = h;
+            heightControllerNode.style = `height: ${currentHeight}px;`
+        }
+    }
+
+    function getLineNumbers(n) {
+        let output = "";
+        for (let i = 0; i <= n; i++) {
+            if (i > 0) {
+                output += "<br>";
+            }
+            output += (i+1);
+        }
+        return output;
+    }
+</script>
+<script>
+    const runButton = document.querySelector("#run-button");
+    const stopButton = document.querySelector("#stop-button");
+    const speedController = document.querySelector("#speed-controller");
+    const instructionsPerSecond = document.querySelector("#instructions-per-second");
+    const outputModeCheckbox = document.querySelector("#ascii-mode-controller");
+    const inputNode = document.querySelector("#input");
+    const inputButton = document.querySelector("#input-button");
+    const outputNode = document.querySelector("#output");
+    const errorsNode = document.querySelector("#errors");
+
+    const controller = new BFController(
+        new BFInterpreter(),
+        new TuringMachineAnimator(document.querySelector("canvas#turing-machine")),
+    );
+
+    controller.interpreterWriteOutput = function(output, className) {
+        let outputSpan = "<span>" + output + "</span>";
+        if (Boolean(className)) {
+            outputSpan = "<span class=\"" + className + "\">" + output + "</span>";
+        }
+        outputNode.innerHTML += outputSpan;
+    }
+
+    controller.interpreterAwaitInput = function() {
+        inputNode.disabled = false;
+        inputNode.focus();
+        inputButton.disabled = false;
+    }
+
+    controller.writeError = function(error) {
+        errorsNode.classList.toggle("has-error", true);
+        errorsNode.innerHTML += error.message;
+    }
+
+    function readInput(event) {
+        event.preventDefault();
+        controller.interpreter.writeToTape(inputNode.value.charCodeAt(0));
+        inputNode.value = "";
+        inputNode.disabled = true;
+        inputButton.disabled = true;
+        controller.continue();
+    }
+
+    function runCode() {
+        runButton.disabled = true;
+        stopButton.disabled = false;
+        outputModeCheckbox.disabled = true;
+        outputNode.innerHTML = "";
+        errorsNode.classList.toggle("has-error", false);
+        errorsNode.innerHTML = "";
+        controller.run(codeInputNode.value);
+    }
+
+    function stopCode() {
+        controller.interpreter.stop();
+        controller.animator.stop();
+        runButton.disabled = false;
+        stopButton.disabled = true;
+        outputModeCheckbox.disabled = false;
+    }
+
+    controller.finish = function() {
+        runButton.disabled = false;
+        stopButton.disabled = true;
+        outputModeCheckbox.disabled = false;
+        inputNode.disabled = true;
+        inputButton.disabled = true;
+    }
+
+    function changeSpeed(event) {
+        controller.animator.changeSpeed(Number.parseFloat(event.target.value))
+        displaySpeed();
+    }
+
+    function changeAsciiMode(event) {
+        controller.interpreter.setAsciiOutputMode(event.target.checked);
+    }
+
+    window.onresize = function() {
+        controller.animator.windowChangedSize();
+        if (controller.interpreter.done) {
+            controller.animator.drawTape();
+            controller.animator.drawTapeHead(0);
+        } else {
+            controller.animator.draw();
+        }
+    }
+
+    window.onload = function() {
+        highlightCode();
+        codeInputNode.disabled = false;
+        runButton.disabled = false;
+        controller.drawInitialTape();
+        displaySpeed();
+    }
+
+    function displaySpeed() {
+        instructionsPerSecond.innerText = "(~"
+            + round(1000/controller.animator.animationDuration, 2)
+            + " instructions/second)";
+    }
+
+    function round(number, numDigits) {
+        return number.toLocaleString("en-US", {
+            minimumFractionDigits: numDigits,
+            maximumFractionDigits: numDigits,
+        });
+    }
+</script>

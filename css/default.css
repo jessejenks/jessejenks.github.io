@@ -70,6 +70,9 @@
     --reference-number-color: var(--palette-blue-3);
 
     --footer-target-background-color: var(--palette-blue-5-semi-transparent);
+
+    --terminal-green: #36d600;
+    --terminal-background: #1f1f1f;
 }
 
 * {
@@ -96,6 +99,9 @@ body {
     font-family: 'Quicksand', sans-serif;
     font-size: 16px;
     color: var(--text-color);
+}
+body button {
+    font-family: 'Quicksand', sans-serif;
 }
 
 body > header {
