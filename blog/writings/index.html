@@ -6,18 +6,16 @@ title: Writings
 
 <header class="index-header">
     <h1>Writings</h1>
-    <div>
-        <a class="link-to-adjacent-page left" href="/blog">Blog</a>
-        <a class="link-to-adjacent-page left" href="/blog/gallery">Gallery</a>
-    </div>
+    {% include blog-nav %}
 </header>
+
 <ul class="writings">
     {% if site.writings == empty %}
         {% include coming-soon.html %}
     {% else %}
-        {% for work in site.writings %}
-            <li><a href="{{ work.url }}" title="{{ work.title }}">
-                {{ work.title }}
+        {% for writing in site.writings %}
+            <li><a href="{{ writing.url }}" title="{{ writing.title }}">
+                {{ writing.title }}
             </a></li>
         {% endfor %}
     {% endif %}

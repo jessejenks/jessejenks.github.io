@@ -112,10 +112,12 @@ title: Blog posts
         }
     }
 </script>
+
 <header class="index-header">
     <h1>Blog posts</h1>
-    <a class="link-to-adjacent-page right" href="/blog/gallery">Gallery</a>
+    {% include blog-nav %}
 </header>
+
 <div id="tags-list-container">
     <h3>Tags</h3>
     <ul id="tags-list">
@@ -139,6 +141,7 @@ title: Blog posts
         </li>
         {% endfor %}
     </ul>
+
     <h4>Filter Options</h4>
     <div id="filter-options">
         <input id="and-filter" type="radio" name="filter-method" value="and" checked onclick="handleChange(this)" />
@@ -151,6 +154,7 @@ title: Blog posts
         <div id="filter-message"></div>
     </div>
 </div>
+
 <ul class="posts">
 	{% for post in site.posts %}
 	<li
@@ -179,6 +183,7 @@ title: Blog posts
 	</li>
 	{% endfor %}
 </ul>
+
 <div id="no-posts-message">
     No posts found
 </div>

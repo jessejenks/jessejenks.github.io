@@ -6,17 +6,15 @@ title: Gallery
 
 <header class="index-header">
     <h1>Gallery</h1>
-    <div>
-        <a class="link-to-adjacent-page left" href="/blog">Blog</a>
-        <a class="link-to-adjacent-page right" href="/blog/writings">Writings</a>
-    </div>
+    {% include blog-nav %}
 </header>
+
 <ul class="works">
     {% if site.works == empty  %}
         {% include coming-soon.html %}
     {% else %}
         {% for work in site.works %}
-            <li><a href="{{ work.url }}" title="{{ v.title }}">
+            <li><a href="{{ work.url }}" title="{{ work.title }}">
                 {{ work.title }}
             </a></li>
         {% endfor %}
