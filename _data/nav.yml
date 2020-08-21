@@ -6,11 +6,11 @@
   path: /blog/
   children:
     - label: Blog posts
-      path: /blog
+      path: /blog/
     - label: Gallery
-      path: /blog/gallery
+      path: /blog/gallery/
     - label: Writing
-      path: /blog/writings
+      path: /blog/writings/
 - label: Resume
   path: /resume/
   children:

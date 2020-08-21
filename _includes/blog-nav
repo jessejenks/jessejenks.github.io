@@ -1,0 +1,27 @@
+{% assign blog_nav_links = site.data.nav[2].children %}
+{% assign prev_index = -1 %}
+{% assign next_index = 1000 %}
+
+{% for blog_nav_link in blog_nav_links %}
+    {% if page.url == blog_nav_link.path %}
+        {% assign prev_index = forloop.index0 | minus: 1 %}
+        {% assign next_index = forloop.index0 | plus: 1 %}
+        {% break %}
+    {% endif %}
+{% endfor %}
+
+<div>
+    {% if prev_index > -1 %}
+        {% assign prev_page = blog_nav_links[prev_index] %}
+        <a class="link-to-adjacent-page left" href="{{ prev_page.path }}">
+            {{ prev_page.label }}
+        </a>
+    {% endif %}
+
+    {% if next_index < blog_nav_links.size %}
+        {% assign next_page = blog_nav_links[next_index] %}
+        <a class="link-to-adjacent-page right" href="{{ next_page.path }}">
+            {{ next_page.label }}
+        </a>
+    {% endif %}
+</div>
