@@ -395,12 +395,37 @@ tags: [computer science, interactive, turing machines, esolang]
 <section>
     <h2>Notes</h2>
     <hr>
-    <p>I opted for a "wrapping" implementation of brainf*ck, meaning that if you decrement a cell with a 0 in it, it will wrap around to 255. Similarly, if a cell contains 255, incrementing will cause it to wrap to 0.</p>
-    
-    <p>In most implementations of BF, output is interpreted as the ascii encoding of a character. So for example, to print the character 'A', you need to increment a cell to 65, and then output with the <code>.</code> instruction. However, I felt this would make even simple programs take far too long to animate, so, by default, output is just the literal number in a cell.</p>
-    
-    <p>I had the idea to make a Turing machine interpreter for brainf*ck a while ago and couldn't find any examples of this online. Until, of course, right after I completed it. Here is a very similar page created by {% include link href="https://fatiherikli.github.io/brainfuck-visualizer" content="Fatih Erikli" %}. He has some other really neat things on his page, so check it out!
-    </p>
+    <ul>
+        <li>
+            I opted for a "wrapping" implementation of brainf*ck, meaning that if you decrement a cell with a 0 in it,
+            it will wrap around to 255. Similarly, if a cell contains 255, incrementing will cause it to wrap to 0.
+        </li>
+
+        <li>
+            In most implementations of BF, output is interpreted as the ascii encoding of a character. So for example,
+            to print the character 'A', you need to increment a cell to 65, and then output with the "<code>.</code>"
+            instruction. However, I felt this would make even simple programs take far too long to animate, so, by
+            default, output is just the literal number in a cell.
+        </li>
+
+        <li>
+            I had the idea to make a Turing machine interpreter for brainf*ck a while ago and couldn't find any examples
+            of this online. Until, of course, right after I completed it. Here is a very similar page created by
+            {% include link
+                href="https://fatiherikli.github.io/brainfuck-visualizer"
+                content="Fatih Erikli"
+            %}. He has some other really neat things on his page, so check it out!
+        </li>
+
+        <li>
+            In my Recursion Theory class, my teacher {% include link
+                href="http://johannesmarti.com/"
+                content="Johannes Marti"
+            %} showed us a website which lets you play with Turing machines in a similar way. You can check it out at
+            {% include link
+                href="https://turingmachinesimulator.com/"
+                content="turingmachinesimulator.com"
+            %}.</p>
 </section>
 
 <section>
@@ -410,7 +435,7 @@ tags: [computer science, interactive, turing machines, esolang]
         <ol>
             {% include footnote
                 id="keywords"
-                content="Compare this to a language like Java or C which have dozens of keywords."
+                content="Compare this to languages like Java or C which have dozens of keywords."
             %}
         </ol>
     </footer>
