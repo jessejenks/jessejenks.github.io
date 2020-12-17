@@ -1,0 +1,733 @@
+<!--
+---
+layout: post
+title: "Retro Duck Duck Go"
+date: 2020-02-26
+---
+-->
+
+<!-- https://elgoog.im/terminal/ -->
+<!-- https://www.masswerk.at/termlib/ -->
+<!-- http://aleclownes.com/2017/02/01/crt-display.html -->
+
+<!-- <link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet"> -->
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #2b3945;
+    }
+
+    #beige-box {
+        background-color: #9e9d8a;
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    #terminal-section {
+        position: relative;
+        --default-font-size: 14px;
+    }
+
+    #terminal,
+    #terminal-section #prompts-container {
+        font-size: var(--default-font-size);
+        font-family: monospace;
+        letter-spacing: 1px;
+
+        color: #3faf3f;
+        text-shadow: 0 0 4px currentColor;
+    }
+
+    #terminal-section #prompts-container {
+        position: absolute;
+        padding-top: var(--default-font-size);
+        padding-left: var(--default-font-size);
+        top: 0;
+        left: 0;
+        z-index: 1;
+        white-space: pre;
+    }
+
+    #terminal {
+        padding: var(--default-font-size);
+        /* padding-left: calc(2 * var(--default-font-size)); */
+        border-radius: var(--default-font-size);
+        position: relative;
+        
+        background-color: #171717;
+
+        cursor: default;
+    }
+
+    /* based on */
+    /* http://aleclownes.com/2017/02/01/crt-display.html */
+    #terminal::before {
+        content: " ";
+        border-radius: var(--default-font-size);
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+        z-index: 2;
+        background-size: 100% 3px;
+        pointer-events: none;
+    }
+
+    #terminal #terminal-body tr td {
+        --row-height: calc(var(--default-font-size) + 3px);
+        max-height: var(--row-height);
+        min-height: var(--row-height);
+        height: var(--row-height);
+        white-space: nowrap;
+    }
+
+    #terminal #terminal-body tr td .caret {
+        background-color: #3faf3f;
+        color: #171717;
+        text-shadow: none;
+
+        will-change: background-color, color, text-shadow;
+        animation: blink-caret 1s;
+        animation-timing-function: step-start;
+        animation-iteration-count: infinite;
+    }
+
+    @keyframes blink-caret {
+        0% {
+            background-color: #3faf3f;
+            color: #171717;
+            text-shadow: none;
+        }
+        50% {
+            background-color: #3a3a3a;
+            color: #3faf3f;
+            text-shadow: 0 0 4px currentColor;
+        }
+        100% {
+            background-color: #3faf3f;
+            color: #171717;
+            text-shadow: none;
+        }
+    }
+</style>
+
+<section>
+    <p>Inspired by elgoog/terminal</p>
+</section>
+
+<!-- <section>
+    <figure>
+        <div id="beige-box"> -->
+            <section id="terminal-section">
+                <!-- <table id="prompts-container">
+                    <tbody id="prompts"></tbody>
+                </table> -->
+                <table id="terminal">
+                    <tbody id="terminal-body"></tbody>
+                </table>
+            </section>
+        <!-- </div>
+        <figcaption>Nice</figcaption>
+    </figure>
+</section> -->
+
+<section>
+    <p>Probably won't work on your phone.</p>
+</section>
+
+<script>
+    class Terminal {
+        constructor(width=80, height=16, promptSymbol=">") {
+            this.width = width;
+            this.height = height;
+            this.promptSymbol = promptSymbol;
+            this.cursorIsVisible = true;
+            this.preventDeletingBeforeColumn = this.promptSymbol.length + 1;
+
+            this.clearScreen();
+        }
+
+        setPromptSymbol(symbol) {
+            this.promptSymbol = symbol;
+            this.preventDeletingBeforeColumn = this.promptSymbol.length + 1;
+        }
+
+        setCursorVisibility(bool) {
+            this.cursorIsVisible = Boolean(bool);
+        }
+
+        clearScreen() {
+            this.lines = new Array(this.height);
+            for (let i = 0; i < this.lines.length; i++) {
+                this.lines[i] = new Array(this.width);
+            }
+
+            this.cursorPosition = {
+                line: 0,
+                column: 0,
+            }
+        }
+
+        enterChar(char) {
+            if (char === " ") {
+                char = "&nbsp;";
+            }
+
+            this.lines[this.cursorPosition.line].splice(this.cursorPosition.column, 0, char);
+            this.lines[this.cursorPosition.line].pop();
+            if (this.cursorPosition.column < this.width - 1) {
+                this.cursorPosition.column++;
+            }
+        }
+
+        deleteChar() {
+            if (this.cursorPosition.column <= this.preventDeletingBeforeColumn) {
+                return;
+            }
+            this.cursorPosition.column--;
+            this.lines[this.cursorPosition.line].splice(this.cursorPosition.column, 1);
+            this.lines[this.cursorPosition.line].push(undefined);
+        }
+
+        caretLeft() {
+            if (this.cursorPosition.column > 0) {
+                this.cursorPosition.column--;
+            }
+        }
+
+        caretRight() {
+            if (this.cursorPosition.column >= this.width - 1) {
+                return;
+            }
+
+            if (this.lines[this.cursorPosition.line][this.cursorPosition.column] === undefined) {
+                return;
+            }
+
+            this.cursorPosition.column++;
+        }
+
+        getCurrentLine() {
+            return this.lines[this.cursorPosition.line].join("").replace(/&nbsp;/g, " ");
+        }
+
+        prompt(options) {
+            this.stdOut(this.promptSymbol + " ", options);
+        }
+
+        stdOut(output, options) {
+            output = output.split("");
+
+            if (!Boolean(options) || !Boolean(options.append)) {
+                this.newLine();
+            } else if (options.replace) {
+                this.lines[this.cursorPosition.line] = new Array(this.width);
+                this.cursorPosition.column = 0;
+            }
+
+            for (let i = 0; i < output.length; i++) {
+                if ((i > 0) && (i % this.width === 0)) {
+                    this.newLine();
+                    this.enterChar(output[i]);
+                } else if (output[i] === "\n") {
+                    this.newLine();
+                } else if (output[i] === "\t") {
+                    this.enterChar(" ");
+                    this.enterChar(" ");
+                    this.enterChar(" ");
+                    this.enterChar(" ");
+                } else {
+                    this.enterChar(output[i]);
+                }
+            }
+        }
+
+        newLine() {
+            this.carriageReturn();
+            this.lineFeed();
+        }
+        
+        carriageReturn() {
+            if (this.cursorPosition.line >= this.height - 1) {
+                this.scrollLineDown();
+            } else {
+                this.cursorPosition.line++;
+            }
+            this.newlines++;
+        }
+
+        lineFeed() {
+            this.cursorPosition.column = 0;
+        }
+
+        scrollLineDown() {
+            this.lines.shift();
+            this.lines.push(new Array(this.width));
+        }
+
+        getScreenHtml() {
+            const outputHtml = new Array(this.height);
+            let line;
+            let char;
+
+            for (let i = 0; i < this.height; i++) {
+                line = new Array(this.width);
+
+                for (let j = 0; j < this.width; j++) {
+                    char = this.lines[i][j];
+                    if (char === undefined) {
+                        char = "&nbsp";
+                    }
+
+                    if (this.cursorIsVisible && i === this.cursorPosition.line && j === this.cursorPosition.column) {
+                        line[j] = "<span class=\"caret\">" + char + "</span>";
+                    } else {
+                        line[j] = "<span>" + char + "</span>";
+                    }
+                }
+
+                line.unshift("<tr><td>");
+                line.push("</td></tr>");
+                outputHtml[i] = line.join("");
+            }
+
+            return outputHtml.join("");
+        }
+    }
+</script>
+<script>
+    const commands = {
+        search: "search",
+        echo: "echo",
+        cat: "cat",
+        clear: "cl",
+        list: "ls",
+    }
+
+    const fakeFiles = {
+        "test.txt": "Once opon a time, there was a person.\nThe end.",
+        "do-not-open.sh": "rm -rf ~/",
+        "Nice.java": "public class Nice {\n\tint nice;\n\tNice(int nice) {\n\t\tthis.nice = nice;\n\t}\n}",
+    };
+    const fakeFileNames = Object.keys(fakeFiles);
+
+    class Shell {
+        constructor(terminal) {
+            this.isAcceptingInput = true;
+            this.isAwaitingInput = false;
+
+            this.currentProgram = null;
+            this.currentInput = null;
+
+            this.terminal = terminal;
+            this.animationFrameId = null;
+
+            this.now;
+            this.then;
+            this.elapsed;
+
+            this.frameDuration = 400; // ms
+
+            this.frameCount = 0;
+            this.loadingCount = 0;
+
+            this.isLastFrame = false;
+            this.isLoading = false;
+        }
+
+/*
+        interpret(input) {
+            if (typeof input !== "string" || input === "") {
+                this.terminal.newLine();
+                drawScreen();
+                drawPrompts();
+                return;
+            }
+
+            input = input.replace(/&nbsp;/g, " ").trim();
+            const command = input.split(" ")[0];
+
+            let searchTerm;
+            if (command === commands.echo) {
+                this.terminal.stdOut("\"" + input.slice(commands.echo.length + 1) + "\"");
+                this.terminal.newLine();
+                drawScreen();
+                drawPrompts();
+                return;
+            } else if (command === commands.clear) {
+                this.terminal.clearScreen();
+                drawScreen();
+                drawPrompts();
+                return;
+            } else if (command === commands.list) {
+                for (let i = 0; i < fakeFileNames.length; i++) {
+                    this.terminal.stdOut(fakeFileNames[i]);
+                }
+                this.terminal.newLine();
+                drawScreen();
+                drawPrompts();
+                return;
+            } else if (command === commands.cat) {
+                const fileName = input.slice(commands.cat.length + 1);
+                if (fileName === "") {
+                    this.terminal.stdOut("Enter a file name");
+                    this.terminal.newLine();
+                    drawScreen();
+                    drawPrompts();
+                    return;
+                }
+                for (let i = 0; i < fakeFileNames.length; i++) {
+                    if (fileName === fakeFileNames[i]) {
+                        this.terminal.stdOut(fakeFiles[fakeFileNames[i]]);
+                        this.terminal.newLine();
+                        drawScreen();
+                        drawPrompts();
+                        return;
+                    }
+                }
+                this.terminal.stdOut("File \"" + fileName + "\" not found");
+                this.terminal.newLine();
+                drawScreen();
+                drawPrompts();
+                return;
+            } else if (command === commands.search) {
+                searchTerm = input.slice(commands.search.length + 1);
+            } else {
+                this.terminal.stdOut("unknown command \"" + command + "\"");
+                this.terminal.newLine();
+                drawScreen();
+                drawPrompts();
+                return;
+            }
+
+            this.message = [{ line: "-", replace: false, append: false }];
+
+            this.isAcceptingInput = false;
+            terminal.setCursorVisibility(false);
+
+            search(searchTerm).then((function(data) {
+                this.message = [];
+                this.message.push({ line: data.Heading || "No results" });
+                this.message.push({ line: "---" });
+
+                this.appendStringToMessage(data.Answer, "Answer");
+                this.appendArrayToMessage(data.Results, "Results", ["Text", "FirstURL"]);
+                this.appendArrayToMessage(data.RelatedTopics, "Related", ["Text"]);                
+            }).bind(this));
+
+            this.frameCount = 0;
+            this.loadingCount = 0;
+            this.isLastFrame = false;
+            this.isLoading = true;
+            this.then = window.performance.now();
+            this.draw();
+        }
+
+        appendStringToMessage(string, title) {
+            if (typeof string !== "string" || string === "") {
+                return;
+            }
+
+            this.appendTitle(title);
+            this.message.push({ line: string });
+        }
+
+        appendArrayToMessage(array, title, fields, delimiter=" : ") {
+            if (!Array.isArray(array) || array.length === 0) {
+                return;
+            }
+
+            this.appendTitle(title);
+
+            let line;
+            let isFirstValidField;
+
+            const related = array.map(function(result) { 
+                line = "";
+                isFirstValidField = true;
+
+                for (let i = 0; i < fields.length; i++) {
+                    if (Boolean(result[fields[i]])) {
+                        if (isFirstValidField) {
+                            isFirstValidField = false;
+                            line += "- ";
+                        } else {
+                            line += delimiter;
+                        }
+
+                        line += result[fields[i]];
+                    }
+                }
+
+                if (Boolean(line)) {
+                    return { line: line };
+                }
+            })
+            this.message = this.message.concat(related.filter(function(e) { return Boolean(e) }));
+        }
+
+        appendTitle(title) {
+            if (typeof title !== "string" || title === "") {
+                return;
+            }
+
+            this.message.push({ line: "# " + title });
+        }
+
+        autoComplete(line) {
+        }
+
+*/
+
+        getCurrentOutputLine() {
+            return this.currentProgram + " : " + Math.random().toString(32).slice(2);
+        }
+
+        begin(input) {
+            input = input.replace(/&nbsp;/g, " ").trim();
+            this.currentInput = input;
+            const command = input.split(" ")[0];
+
+            switch (command) {
+            case commands.clear:
+                this.currentProgram = command;
+                this.terminal.clearScreen();
+                this.terminal.prompt({ append: true });
+                drawScreen();
+                return;
+            
+            case commands.search:
+                this.currentProgram = command;
+                this.frameCount = 0;
+                this.isLastFrame = false;
+                this.isLoading = false;
+                this.isAwaitingInput = true;
+                this.initializeDraw();
+                return;
+        
+            default:
+                if (command !== "") {
+                    this.terminal.stdOut("Unknown command \"" + command + "\"");
+                }
+                this.terminal.prompt();
+                drawScreen();
+                break;
+            }
+        }
+
+        checkIfStillLoading() {
+            if (this.frameCount >= 20) {
+                this.isLoading = false;
+            }
+        }
+
+        beginAwaitingInput() {
+            this.isAcceptingInput = true;
+            this.terminal.setCursorVisibility(true);
+            this.terminal.stdOut("\t[ ");
+            this.terminal.preventDeletingBeforeColumn = 6;
+            drawScreen();
+            window.cancelAnimationFrame(this.animationFrameId);
+        }
+
+        continue(input) {
+            this.currentInput = input;
+
+            this.isAwaitingInput = false;
+            this.isAcceptingInput = false;
+            this.terminal.setCursorVisibility(false);
+            this.terminal.preventDeletingBeforeColumn = 1;
+            this.initializeDraw();
+
+            this.isLoading = true;
+            window.setTimeout((function() {
+                console.log("in setTimeout callback", this);
+                console.log(search(input));
+                search(input).then(function(data) {
+                    console.log("then", data);
+                })
+                this.isLoading = false;
+                // search(input).then((function(data) {
+                //     console.log("got data", data);
+                //     this.isLoading = false;
+                // }).bind(this));
+            }).bind(this), 0);
+        }
+
+        finish() {
+            this.currentProgram = null;
+            this.currentInput = null;
+
+            this.isAcceptingInput = true;
+            this.terminal.setCursorVisibility(true);
+
+            this.terminal.prompt();
+            drawScreen();
+
+            window.cancelAnimationFrame(this.animationFrameId);
+        }
+
+        initializeDraw() {
+            this.then = window.performance.now();
+            this.draw();
+        }
+
+        draw() {
+            this.animationFrameId = window.requestAnimationFrame(this.draw.bind(this));
+
+            this.now = window.performance.now();
+            this.elapsed = this.now - this.then;
+
+            if (this.elapsed > this.frameDuration) {
+                if (this.isLoading) {
+                    if (this.loadingCount === 0) {
+                        this.terminal.stdOut(".");
+                    } else {
+                        this.terminal.stdOut(" .", { append: true });
+                    }
+                    drawScreen();
+                    this.loadingCount++;
+                } else {
+                    if (this.isAwaitingInput) {
+                        this.beginAwaitingInput();
+                    } else if (!this.isLastFrame) {
+
+                        this.terminal.stdOut(this.getCurrentOutputLine());
+
+                        drawScreen();
+                    }
+
+                    this.frameCount++;
+                }
+
+                this.then = this.now - (this.elapsed % this.frameDuration);
+
+                if (this.isLoading) {
+                    this.checkIfStillLoading();
+                } else if (this.frameCount >= 6) {
+                    if (this.isLastFrame) {
+                        this.finish();
+                    } else {
+                        this.isLastFrame = true;
+                    }
+                }
+            }
+        }
+    }
+
+
+    function search(searchTerms) {
+        console.log("searching");
+        return new Promise(function() {
+            console.log("retruning data");
+            return {
+                isOk: false,
+                data: true,
+            }
+        })
+        // return fetch(
+        //     "https://api.duckduckgo.com/?q=" + window.encodeURI(searchTerms) + "&format=json",
+        //     { method: "GET" }
+        // ).then(function(data) {
+        //     return data.json();
+        // }).catch(function(error) {
+        //     console.error(error);
+        //     return [{ error: "ERROR" }];
+        // });
+    }
+</script>
+<script>
+    const promptsNode = document.querySelector("#prompts");
+    const terminalBodyNode = document.querySelector("#terminal-body");
+    const terminal = new Terminal(20, 10);
+    const shell = new Shell(terminal);
+
+    const KEYS = {
+        ESCAPE: "Escape",
+        ENTER: "Enter",
+        TAB: "Tab",
+        UP: "ArrowUp",
+        DOWN: "ArrowDown",
+        LEFT: "ArrowLeft",
+        RIGHT: "ArrowRight",
+        DELETE: "Backspace",
+        SPACE: " ",
+    }
+
+    window.onkeydown = function(event) {
+        if (!shell.isAcceptingInput) {
+            event.preventDefault();
+            return;
+        }
+
+        switch(event.key) {
+        case KEYS.ESCAPE:
+            terminal.newLine();
+            drawScreen();
+            return;
+        case KEYS.ENTER:
+            const line = terminal.getCurrentLine().slice(2);
+            if (shell.isAwaitingInput) {
+                shell.continue(line);
+            } else {
+                shell.begin(line);
+            }
+
+            drawScreen();
+            return;
+        case KEYS.LEFT:
+            event.preventDefault();
+            terminal.caretLeft();
+            drawScreen();
+            return;
+        case KEYS.RIGHT:
+            event.preventDefault();
+            terminal.caretRight();
+            drawScreen();
+            return;
+        case KEYS.DELETE:
+            terminal.deleteChar();
+            drawScreen();
+            return;
+        case KEYS.TAB:
+            shell.autoComplete(terminal.getCurrentLine());
+            event.preventDefault();
+            return;
+        case KEYS.SPACE:
+            /* slight kludge to prevent scrolling page on space */;
+            terminal.enterChar(" ");
+            drawScreen();
+            event.preventDefault();
+        default:
+            break;
+        }
+    }
+    
+    window.onkeypress = function(event) {
+        if (!shell.isAcceptingInput) {
+            event.preventDefault();
+            return;
+        }
+
+        const char = String.fromCharCode(event.which || event.keyCode);
+        if (/[a-zA-Z0-9_!@#$%^&*()+=\-:;"'?/|\\.,~`{}\[\]<>]/.test(char)) {
+            terminal.enterChar(char);
+            drawScreen();
+        }
+    }
+
+    window.onload = function() {
+        terminal.prompt({ append: true });
+        drawScreen();
+    }
+
+    function drawScreen() {
+        terminalBodyNode.innerHTML = terminal.getScreenHtml();
+    }
+</script>

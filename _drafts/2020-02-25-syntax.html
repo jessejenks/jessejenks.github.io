@@ -1,0 +1,774 @@
+<style>
+    body {
+        background-color: #4e4e4e;
+    }
+    #code-section #code-container {
+        position: relative;
+        display: flex;
+        width: 100%;
+        min-height: 1rem;
+        overflow: scroll;
+        margin-bottom: 1rem;
+    }
+
+    #code-section #code-container #height-controller {
+        padding-top: 0.5rem;
+        padding-left: 0.5rem;
+        font-size: 1rem;
+        font-family: monospace;
+        color: #333;
+    }
+
+    #code-section #code-container #code-input,
+    #code-section #code-container #code-highlighted {
+        position: absolute;
+
+        font-size: 1rem;
+        font-family: monospace;
+
+        width: 100%;
+        padding: 0.5rem 1rem;
+        padding-left: 2rem;
+
+        white-space: pre;
+        word-wrap: normal;
+    }
+
+    #code-section #code-container #code-input {
+        background: transparent;
+        color: transparent;
+        /* color: rgba(255, 0, 0, 0.2); */
+        min-height: 100%;
+        border: none;
+        caret-color: white;
+        outline: none;
+        resize: none;
+        overflow: hidden;
+    }
+
+    #code-section #code-container #code-highlighted {
+        background: #282828;
+        color: #e3e3e3;
+        height: fit-content;
+        border-radius: 0.5rem;
+        z-index: -1;
+    }
+
+    #code-section #code-container #code-highlighted .plus,
+    #code-section #code-container #code-highlighted .minus {
+        color: blue;
+    }
+
+    #code-section #code-container #code-highlighted .times,
+    #code-section #code-container #code-highlighted .divides {
+        color: red;
+    }
+
+    #code-section #code-container #code-highlighted .left-parenthesis,
+    #code-section #code-container #code-highlighted .right-parenthesis {
+        color: gray;
+    }
+
+    #code-section #code-container #code-highlighted .integer {
+        color: orange;
+    }
+
+    #code-section #code-container #code-highlighted .unknown {
+        border-bottom: 1px solid red;
+    }
+</style>
+
+<section id="code-section">
+    <div id="code-container" class="highlight">
+        <span id="height-controller" style="min-height: 10px;"></span>
+        <span id="code-highlighted" contenteditable></span>
+        <textarea
+            id="code-input"
+            rows="1"
+            spellcheck="false"
+            disabled
+        >1 + 2 * 3 + 4 + 5</textarea>
+    </div>
+    <pre id="output"></pre>
+    <pre>
+        <code>
+            Expression
+                -> Expression "+"" Term
+                 | Expression "-"" Term
+                 | Term;
+            
+            Term
+                -> Term "*" Factor
+                 | Term "/" Factor
+                 | Factor;
+            
+            Factor
+                -> Integer
+                -> Float
+                 | "(" Expression ")";
+        </code>
+    </pre>
+</section>
+
+<script>
+    const TOKEN_TYPES = {
+        PLUS: "plus",
+        MINUS: "minus",
+        TIMES: "times",
+        DIVIDES: "divides",
+        LEFT_PAREN: "left-parenthesis",
+        RIGHT_PAREN: "right-parenthesis",
+        INT: "integer",
+        FLOAT: "floating-point",
+        WHITE_SPACE: "white-space",
+        UNKNOWN: "unknown",
+    };
+
+    class Token {
+        constructor(symbol, type) {
+            this.symbol = symbol;
+            this.type = type;
+        }
+    }
+
+    class TokenPlus extends Token {
+        constructor() {
+            super("+", TOKEN_TYPES.PLUS);
+        }
+    }
+
+    class TokenMinus extends Token {
+        constructor() {
+            super("-", TOKEN_TYPES.MINUS);
+        }
+    }
+
+    class TokenTimes extends Token {
+        constructor() {
+            super("*", TOKEN_TYPES.TIMES);
+        }
+    }
+
+    class TokenDivides extends Token {
+        constructor() {
+            super("/", TOKEN_TYPES.DIVIDES);
+        }
+    }
+
+    class TokenLeftParenthesis extends Token {
+        constructor() {
+            super("(", TOKEN_TYPES.LEFT_PAREN);
+        }
+    }
+
+    class TokenRightParenthesis extends Token {
+        constructor() {
+            super(")", TOKEN_TYPES.RIGHT_PAREN);
+        }
+    }
+
+    class TokenInteger extends Token {
+        constructor(int) {
+            super(int, TOKEN_TYPES.INT);
+        }
+    }
+
+    class TokenFloat extends Token {
+        constructor(int) {
+            super(int, TOKEN_TYPES.FLOAT);
+        }
+    }
+
+    class TokenWhiteSpace extends Token {
+        constructor(space) {
+            super(space, TOKEN_TYPES.WHITE_SPACE);
+        }
+    }
+
+    class TokenUnknown extends Token {
+        constructor(symbol) {
+            super(symbol, TOKEN_TYPES.UNKNOWN);
+        }
+    }
+</script>
+<script>
+    /*
+     * Tokens
+     * Int : 0|[1-9][0-9]*
+     * Float : [0-9]*.[0-9]+ | [0-9]+.[0-9]*
+     * Star : "*"
+     * Slash : "/"
+     * Minus : "-"
+     * Plus : "+"
+     */
+
+    const maxLexerLoopCount = 1000;
+    class Lexer {
+        constructor() {
+            this.input = "";
+            this.initialize();
+        }
+
+        setInput(input) {
+            this.input = input;
+        }
+
+        initialize() {
+            this.index = 0;
+            this.line = 1;
+            this.column = 0;
+            this.count = 0;
+            this.currentToken = null;
+        }
+
+        tokenize(input) {
+            this.setInput(input);
+            this.initialize();
+            const tokens = [];
+            let token;
+            let startIndex, endIndex;
+            while (this.count < maxLexerLoopCount && !this.eof()) {
+                this.count++;
+                token = this.nextToken();
+
+                startIndex = this.index;
+                endIndex = this.index;
+                while (token === null && this.count < maxLexerLoopCount && !this.eof()) {
+                    this.count++;
+                    this.advance();
+                    endIndex = this.index;
+                    token = this.nextToken();
+                }
+                if (endIndex > startIndex) {
+                    tokens.push(new TokenUnknown(this.input.substring(startIndex, endIndex)));
+                }
+
+                if (token !== null) {
+                    tokens.push(token);
+                }
+            }
+
+            return tokens;
+        }
+
+        peekToken() {
+            if (this.currentToken === null) {
+                this.currentToken = this.nextToken();
+            }
+
+            return this.currentToken;
+        }
+
+        /*
+         *               DFA
+         *      +--  \s+  -->   ((1)) "white-space"
+         *      |
+         *      +---- "(" -->   ((2)) "left-paren"
+         *      |
+         *      +---- ")" -->   ((3)) "right-paren"
+         *      |
+         *      +---- "*" -->   ((4)) "star"
+         *      |
+         *      +---- "/" -->   ((5)) "slash"
+         *      |
+         *      +---- "+" -->   ((6)) "plus"
+         *      |
+         *      +---- "0" -->   ((7)) "int"
+         *      |
+         *  -->(0) -- "-" -->   ((8)) "minus"
+         *      |                 |
+         *      |               [1-9]
+         *      |                 |
+         *      |                 v
+         *      +-- [1-9] -->   ((9)) <-+ "int"
+         *                        |     |
+         *                        |   [0-9]
+         *                        |     |
+         *                        +-----+
+         */
+
+        nextToken() {
+            this.currentToken = null;
+
+            const whiteSpace = this.readWhiteSpace();
+            if (whiteSpace !== null) {
+                return new TokenWhiteSpace(whiteSpace);
+            }
+
+            let c;
+
+            c = this.readLeftParen();
+            if (c !== null) {
+                return new TokenLeftParenthesis();
+            }
+
+            c = this.readRightParen();
+            if (c !== null) {
+                return new TokenRightParenthesis();
+            }
+            
+            c = this.readStar();
+            if (c !== null) {
+                return new TokenTimes();
+            }
+
+            c = this.readSlash();
+            if (c !== null) {
+                return new TokenDivides();
+            }
+            
+            c = this.readPlus();
+            if (c !== null) {
+                return new TokenPlus();
+            }
+
+            const token = this.readIntOrMinus();
+            if (token !== null) {
+                return token;
+            }
+
+            return null;
+        }
+
+        readWhiteSpace() {
+            let c = this.peekChar();
+            let startIndex = this.index;
+
+            if (!(/\s/.test(c))) {
+                return null;
+            }
+
+            while (/\s/.test(c)) {
+                this.advance();
+                if (c === "\n") {
+                    this.line++;
+                    this.column = 1;
+                } else {
+                    this.column++;
+                }
+
+                c = this.peekChar();
+            }
+
+            if (this.index > startIndex) {
+                return this.input.substring(startIndex, this.index);
+            }
+
+            return null;
+        }
+
+        readLeftParen() {
+            return this.maybeReadChar("(");
+        }
+
+        readRightParen() {
+            return this.maybeReadChar(")");
+        }
+
+        readStar() {
+            return this.maybeReadChar("*");
+        }
+
+        readSlash() {
+            return this.maybeReadChar("/");
+        }
+
+        readPlus() {
+            return this.maybeReadChar("+");
+        }
+
+        maybeReadChar(char) {
+            const c = this.peekChar();
+            if (c === char) {
+                this.advance();
+                return c;
+            }
+
+            return null;
+        }
+
+        readIntOrMinus() {
+            let c = this.peekChar();
+            if (c === "0") {
+                this.advance();
+                return new TokenInteger(c);
+            }
+
+            const startIndex = this.index;
+
+            let foundMinus = false;
+            if (c === "-") {
+                foundMinus = true;
+
+                this.advance();
+                c = this.peekChar();
+            }
+
+            if (!(/[1-9]/.test(c))) {
+                if (foundMinus) {
+                    return new TokenMinus();
+                }
+
+                return null;
+            }
+
+            while (/[0-9]/.test(c)) {
+                this.advance();
+                c = this.peekChar();
+            }
+
+            if (this.index > startIndex) {
+                return new TokenInteger(this.input.substring(startIndex, this.index));
+            }
+
+            return null;
+        }
+
+        nextChar() {
+            const c = this.peekChar();
+            this.advance();
+            return c;
+        }
+
+        peekChar() {
+            return this.input.charAt(this.index);
+        }
+
+        eof() {
+            return this.index >= this.input.length;
+        }
+
+        advance() {
+            this.index++;
+        }
+
+        croak(message) {
+            throw new Error(message + " (line: " + this.line + ", col: " + this.column + ")");
+        }
+    }
+</script>
+<script>
+    class ParseTreeNode {
+        apply() {
+            throw new Error("apply() is not implemented");
+        }
+    }
+
+    class TreeNodeExpression extends ParseTreeNode {
+        constructor(left, operator, right) {
+            super();
+            this.type = "expression";
+            this.left = left;
+            this.operator = operator;
+            this.right = right;
+        }
+
+        apply(visitor) {
+            visitor.caseExpression(this);
+        }
+    }
+
+    class TreeNodeIntegerLiteral extends ParseTreeNode {
+        constructor(token) {
+            super();
+            this.type = "literal";
+            this.token = token;
+        }
+
+        apply(visitor) {
+            visitor.caseIntegerLiteral(this);
+        }
+    }
+</script>
+<script>
+    /*
+     * Productions
+     * E -> E + T
+     *    | E - T
+     *    | T;
+     *
+     * T -> T * F
+     *    | T / F
+     *    | F;
+     *
+     * F -> Int
+     *    | ( E );
+     */
+    class Parser {
+        constructor() {
+            this.index = 0;
+            // this.tokenStream = new Lexer();
+        }
+
+        parse(tokens) {
+            this.index = 0;
+            this.tokens = tokens;
+            // tokenStream.setInput(input);
+
+            const exp = this.expression();
+            if (!this.eof()) {
+                console.log("IGNORED");
+            }
+            return exp;
+        }
+
+        expression() {
+            const left = this.term();
+            const operator = this.peekToken();
+            // this.tokenStream.peekToken();
+
+            if (this.match(operator, TOKEN_TYPES.PLUS, TOKEN_TYPES.MINUS)) {
+                const right = this.expression();
+
+                return new TreeNodeExpression(left, operator, right);
+            }
+
+            return left;
+        }
+
+        term() {
+            const left = this.factor();
+            const operator = this.peekToken();
+
+            if (this.match(operator, TOKEN_TYPES.TIMES, TOKEN_TYPES.DIVIDES)) {
+                const right = this.term();
+
+                return new TreeNodeExpression(left, operator, right);
+            }
+
+            return left;
+        }
+
+        factor() {
+            let lookahead = this.peekToken();
+
+            if (this.match(lookahead, TOKEN_TYPES.LEFT_PAREN)) {
+                const expression = this.expression();
+                lookahead = this.peekToken();
+                if (!this.match(lookahead, TOKEN_TYPES.RIGHT_PAREN)) {
+                    this.croak("Missing right parenthesis");
+                }
+
+                return expression;
+            }
+
+            if (this.match(lookahead, TOKEN_TYPES.INT)) {
+                return new TreeNodeIntegerLiteral(lookahead);
+            }
+
+            // throw new Error("Could not parse factor");
+            this.croak("Could not parse");
+        }
+
+        peekToken() {
+            let currentToken = this.tokens[this.index];
+            // skip whitespace and unknown in parse
+            while (!this.eof() && this.match(currentToken, TOKEN_TYPES.WHITE_SPACE, TOKEN_TYPES.UNKNOWN)) {
+                currentToken = this.tokens[this.index];
+            }
+            return currentToken;
+        }
+
+        match(token, ...tokenTypes) {
+            if (!Boolean(token)) {
+                return false;
+            }
+            for (let i = 0; i < tokenTypes.length; i++) {
+                if (token.type === tokenTypes[i]) {
+                    this.consume();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        consume() {
+            this.index++;
+        }
+
+        croak(message) {
+            throw new Error(message);
+        }
+
+        eof() {
+            return this.index >= this.tokens.length;
+        }
+    }
+</script>
+<script>
+    class Visitor {
+        caseExpression() {}
+        caseIntegerLiteral() {}
+    }
+
+    class PrettyStringVisitor extends Visitor {
+        constructor() {
+            super();
+            this.outputArray = [];
+        }
+
+        prettyString(tree) {
+            this.outputArray = [];
+            tree.apply(this);
+            return this.outputArray.join("");
+        }
+
+        caseExpression(expression) {
+            this.outputArray.push("(");
+            expression.left.apply(this);
+            this.outputArray.push(expression.operator.symbol);
+            expression.right.apply(this);
+            this.outputArray.push(")");
+        }
+
+        caseIntegerLiteral(node) {
+            this.outputArray.push(node.token.symbol);
+        }
+    }
+
+    class PrettyTreeVisitor extends Visitor {
+        constructor() {
+            super();
+            this.outputArray = [];
+        }
+
+        prettyTree(tree) {
+            this.outputArray = [];
+            tree.apply(this);
+            return this.outputArray.join("");
+        }
+
+        caseExpression(expression) {
+            this.outputArray.push("(");
+            expression.left.apply(this);
+            this.outputArray.push(expression.operator.symbol);
+            expression.right.apply(this);
+            this.outputArray.push(")");
+        }
+
+        caseIntegerLiteral(node) {
+            this.outputArray.push(node.token.symbol);
+        }
+    }
+
+    class InterpretVisitor extends Visitor {
+        constructor() {
+            super();
+            this.value = 0;
+        }
+
+        interpret(tree) {
+            tree.apply(this);
+            return this.value;
+        }
+
+        caseExpression(expression) {
+            expression.left.apply(this);
+            const l = this.value;
+            expression.right.apply(this);
+            const r = this.value;
+            
+            switch (expression.operator.type) {
+            case TOKEN_TYPES.PLUS:
+                this.value = l + r;
+                break;
+            case TOKEN_TYPES.MINUS:
+                this.value = l - r;
+                break;
+            case TOKEN_TYPES.TIMES:
+                this.value = l * r;
+                break;
+            case TOKEN_TYPES.DIVIDES:
+                if (r === 0) {
+                    throw new Error("divide by 0 error");
+                }
+                this.value = l / r;
+                break;
+            default:
+                throw new Error("UNKNOWN OPERATOR TYPE", expression.operator);
+            }
+        }
+
+        caseIntegerLiteral(node) {
+            this.value = Number.parseInt(node.token.symbol);
+        }
+    }
+</script>
+<script>
+    const lexer = new Lexer();
+    const parser = new Parser();
+    const prettyStringVisitor = new PrettyStringVisitor();
+    const prettyTreeVisitor = new PrettyTreeVisitor();
+    const interpretVisitor = new InterpretVisitor();
+</script>
+
+<script>
+    let currentHeight = 10;
+    const heightControllerNode = document.querySelector("#height-controller");
+    const codeHighlightedNode = document.querySelector("#code-highlighted");
+    const codeInputNode = document.querySelector("#code-input");
+    const outputNode = document.querySelector("#output");
+
+    codeInputNode.onkeydown = checkForTabs;
+    codeInputNode.onkeyup = highlightCode;
+
+    const TAB = "Tab";
+    function checkForTabs(event) {
+        let startPosition = this.selectionStart;
+        if (event.key === TAB) {
+            event.preventDefault();
+            this.value = this.value.substring(0, startPosition) + "    " + this.value.substring(startPosition);
+            this.selectionEnd = startPosition + 4;
+            return false;
+        }
+    }
+
+    function highlightCode() {
+        const tokens = lexer.tokenize(codeInputNode.value);
+        codeHighlightedNode.innerHTML = tokensToSpans(tokens) + "<span> </span>";
+        setLineNumbers(lexer.line);
+
+        try {
+            const parseTree = parser.parse(tokens);
+            outputNode.innerText = prettyStringVisitor.prettyString(parseTree);
+            outputNode.innerText += "\n\n\n";
+            outputNode.innerText = prettyTreeVisitor.prettyTree(parseTree);
+            outputNode.innerText += "\n\n\n";
+            outputNode.innerText += interpretVisitor.interpret(parseTree);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    function tokensToSpans(arrOfTokens) {
+        return arrOfTokens.map(function(token) {
+            return "<span class=\"" + token.type + "\">" + token.symbol + "</span>";
+        }).join("");
+    }
+
+    function setLineNumbers(numLines) {
+        let h = codeHighlightedNode.getBoundingClientRect().height;
+        heightControllerNode.innerHTML = getLineNumbers(numLines);
+
+        if (h !== currentHeight) {
+            currentHeight = h;
+            heightControllerNode.style = `height: ${currentHeight}px;`
+        }
+    }
+
+    function getLineNumbers(n) {
+        let output = "";
+        for (let i = 0; i < n; i++) {
+            if (i > 0) {
+                output += "<br>";
+            }
+            output += (i+1);
+        }
+        return output;
+    }
+
+    window.onload = function() {
+        highlightCode();
+        codeInputNode.disabled = false;
+    }
+</script>

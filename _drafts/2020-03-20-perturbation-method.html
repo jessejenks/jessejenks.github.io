@@ -1,0 +1,284 @@
+<!-- ---
+layout: post
+title: ""
+date: 2020-02-12
+tags: [math, fractals]
+--- -->
+<style>
+    canvas {
+        image-rendering: pixelated;
+    }
+</style>
+<!-- <section>
+    <p>Pick a \(c\), and precompute the following sequence: \[
+        \begin{align}
+        z &= 0 \\
+        z_{n+1} &= z_n^2 + c.
+        \end{align}
+    \] Now imagine we want to compute for \(c + \Delta c\). \[
+        \begin{align}
+        z_{n+1} + \Delta z_{n+1} &= (z_{n} + \Delta z_{n})^2 + (c + \Delta c) \\
+        &= z_{n}^2 + (\Delta z_{n})^2 + 2z_{n+1}\Delta z_{n+1} + c + \Delta c \\
+        &= (z_{n}^2 + c) + 2z_{n}\Delta z_{n} + (\Delta z_{n})^2 + \Delta c \\
+        &= z_{n+1} + 2z_{n}\Delta z_{n} + (\Delta z_{n})^2 + \Delta c.
+        \end{align}
+    \] Not sure how to make this more intuitive/rigorous...
+    But notice that we can compute this "offset" point in terms of the offset \(\Delta c\) and the original sequence
+    for \(z_n\).
+</p>
+</section> -->
+<figure>
+    <canvas id="standard-method"></canvas>
+    <canvas id="perturbation-method"></canvas>
+</figure>
+<script src="/js/utils.js"></script>
+
+<script>
+class Mandelbrot {
+    constructor(maxIterations, centerReal, centerImag, zoom) {
+        this.maxIterations = maxIterations;
+        this.centerReal = centerReal;
+        this.centerImag = centerImag;
+        this.zoom = zoom;
+
+        this.preComputed = new Array(maxIterations+1);
+    }
+
+    drawImage(context, usePerturbationMethod) {
+        this.context = context;
+        this.width = this.context.canvas.width;
+        this.height = this.context.canvas.height;
+        this.imageData = context.getImageData(0, 0, this.width, this.height);
+
+        let iterations;
+        let deltaReal = 0;
+        let deltaImag = 0;
+
+        let pixelIndex, pixelX, pixelY;
+        const colors = new Uint8Array(3);
+        for (let p = 0; p < this.imageData.data.length; p += 4) {
+            pixelIndex = p/4;
+
+            pixelX = pixelIndex % this.width;
+            pixelY = Math.floor(pixelIndex / this.width);
+
+            deltaReal = this.getDeltaReal(pixelX);
+            deltaImag = this.getDelatImag(pixelY);
+
+            if (usePerturbationMethod) {
+                iterations = this.iteratePerturbation(deltaReal, deltaImag);
+            } else {
+                iterations = this.iterate(this.centerReal + deltaReal, this.centerImag + deltaImag);
+            }
+
+            this.iterationsToColors(iterations, colors);
+            this.imageData.data[p + 0] = colors[0];
+            this.imageData.data[p + 1] = colors[1];
+            this.imageData.data[p + 2] = colors[2];
+            this.imageData.data[p + 3] = 255;
+
+            //*
+            if (deltaReal === 0 && deltaImag === 0) {
+                this.imageData.data[p + 0] = 255;
+                this.imageData.data[p + 1] = 0;
+                this.imageData.data[p + 2] = 0;
+                this.imageData.data[p + 3] = 255;
+            }
+            // */
+        }
+
+        //*
+        // "crosshairs"
+        for (let y = 0; y < this.height; y++) {
+            if (y >= this.height/2 - 5 && y <= this.height/2 + 5) {
+                continue;
+            }
+            pixelIndex = y*this.height + Math.floor(this.width/2);
+
+            this.imageData.data[4*pixelIndex + 0] = 0;
+            this.imageData.data[4*pixelIndex + 1] = 0;
+            this.imageData.data[4*pixelIndex + 2] = 0;
+            this.imageData.data[4*pixelIndex + 3] = 255;
+
+            pixelIndex = Math.floor(this.width/2)*this.height + y;
+
+            this.imageData.data[4*pixelIndex + 0] = 0;
+            this.imageData.data[4*pixelIndex + 1] = 0;
+            this.imageData.data[4*pixelIndex + 2] = 0;
+            this.imageData.data[4*pixelIndex + 3] = 255;
+        }
+        // */
+
+        this.context.putImageData(this.imageData, 0, 0);
+    }
+
+    getDeltaReal(x) {
+        return this.zoom*(2*(x/this.width) - 1);
+    }
+
+    getDelatImag(y) {
+        return -this.zoom*(2*(y/this.height) - 1);
+    }
+    
+    iterate(cReal, cImag) {
+        let zReal = 0;
+        let zImag = 0;
+        let zNextReal, zNextImag;
+        for (let i = 0; i <= this.maxIterations; i++) {
+            zNextReal = zReal*zReal - zImag*zImag + cReal;
+            zNextImag = 2*zReal*zImag + cImag;
+
+            if (zNextReal*zNextReal + zNextImag*zNextImag >= 4) {
+                return i;
+            }
+
+            zReal = zNextReal;
+            zImag = zNextImag;
+        }
+
+        return this.maxIterations;
+    }
+
+    preComputeSequence() {
+        let firstDivergence = true;
+        let zReal = 0;
+        let zImag = 0;
+        let zNextReal, zNextImag;
+        for (let i = 0; i <= this.maxIterations; i++) {
+            zNextReal = zReal*zReal - zImag*zImag + this.centerReal;
+            zNextImag = 2*zReal*zImag + this.centerImag;
+
+            if (zNextReal*zNextReal + zNextImag*zNextImag >= 4 && firstDivergence) {
+                console.error("diverges at " + i);
+                firstDivergence = false;
+            }
+
+            zReal = zNextReal;
+            zImag = zNextImag;
+
+            this.preComputed[i] = [zReal, zImag];
+        }
+    }
+
+    iteratePerturbation(deltaCReal, deltaCImag) {
+        let referenceZ;
+
+        let deltaZReal = 0;
+        let deltaZImag = 0;
+        
+        let zNextReal, zNextImag, deltaZNextReal, deltaZNextImage;
+        for (let i = 0; i <= this.maxIterations; i++) {
+            referenceZ = this.preComputed[i];
+
+            deltaZNextReal =
+                2*referenceZ[0]*deltaZReal
+                - 2*referenceZ[1]*deltaZImag
+                + deltaZReal*deltaZReal
+                - deltaZImag*deltaZImag
+                + deltaCReal;
+            deltaZNextImage =
+                2*referenceZ[0]*deltaZImag
+                + 2*referenceZ[1]*deltaZReal
+                + 2*deltaZReal*deltaZImag
+                + deltaCImag;
+
+            //*
+            if ((referenceZ[0] + deltaZNextReal)*(referenceZ[0] + deltaZNextReal) + (referenceZ[1] + deltaZNextImage)*(referenceZ[1] + deltaZNextImage) >= 4) {
+                return i;
+            }
+            //*/
+
+            /*
+            if (deltaZNextReal*deltaZNextReal + deltaZNextImage*deltaZNextImage >= 4) {
+                return i;
+            }
+             //*/
+
+            deltaZReal = deltaZNextReal;
+            deltaZImag = deltaZNextImage;
+        }
+
+        return this.maxIterations;
+    }
+
+    iterationsToColors(iterations, colorArray) {
+        // const u = iterations/this.maxIterations;
+
+        // const t = Math.PI*(1 - (( u/2 + 0.5) % 1));
+        // const r = Math.sin(t);
+        // const g = Math.sin(t + Math.PI/3);
+        // const b = Math.sin(t + 2*Math.PI/3);
+
+        // colorArray[0] = 255*(r*r);
+        // colorArray[1] = 255*(g*g);
+        // colorArray[2] = 255*(b*b);
+
+        // const r = clamp(Math.floor(255*Math.pow(iterations/this.maxIterations, 4)), 0, 255);
+        const r = clamp(Math.floor(255*Math.pow(iterations/this.maxIterations, 2)), 0, 255);
+        colorArray[0] = r;
+        colorArray[1] = r;
+        colorArray[2] = r;
+    }
+}
+
+function clamp(x, min, max) {
+    return Math.min(Math.max(x, min), max);
+}
+</script>
+<script>
+const height = 200;
+const width = height;
+const scale = 3;
+const numIterations = 989;
+const centerReal =
+    // -0.74542543;
+    -0.7756837680090538;
+    // -0.743644;
+const centerImag =
+    // -0.08353111;
+    0.1364673682946900;
+    // 0.1318253;
+const zoom = 
+    // 1E-6;
+    2E-15;
+
+// -0.7436441,  0.1318255,  1E-7
+// -0.74364085, 0.13182733, 1E-9
+// -1.29636,    0.44185,    1E-6
+
+// const theta = 2*Math.PI*(32/33);
+// const r = (1 - Math.cos(theta))/2;
+// const x = r*Math.cos(theta)+0.25;
+// const y = r*Math.sin(theta);
+// const mandelBoi = new Mandelbrot(ctx, 255, x, y, 1E-4);
+
+// const mandelBoi = new Mandelbrot(ctx, 300, -1.54368901269109, 0, 1E-14);
+
+function getContext(canvasId) {
+    const cv = document.querySelector("canvas#" + canvasId);
+    cv.style.setProperty("height", height + "px");
+    cv.style.setProperty("width", width + "px");
+    const ctx = initializeCanvas(cv);
+    ctx.imageSmoothingEnabled = false;
+    return ctx;
+}
+
+function scaleUp(context) {
+    context.canvas.style.setProperty("height", scale*height + "px");
+    context.canvas.style.setProperty("width", scale*width + "px");
+}
+
+(function() {
+    const ctx1 = getContext("standard-method");
+    const ctx2 = getContext("perturbation-method");
+
+    const mandelBrotDrawer = new Mandelbrot(numIterations, centerReal, centerImag, zoom);
+    mandelBrotDrawer.drawImage(ctx1);
+
+    mandelBrotDrawer.preComputeSequence();
+    mandelBrotDrawer.drawImage(ctx2, true);
+
+    scaleUp(ctx1);
+    scaleUp(ctx2);
+})()
+</script>

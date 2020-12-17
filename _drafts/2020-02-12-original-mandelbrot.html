@@ -1,0 +1,230 @@
+---
+layout: post
+title: "The Original Mandelbrot Set"
+date: 2020-02-12
+tags: [math, fractals]
+---
+<!-- "The Original Mandelbrot Set" -->
+<script src="/js/utils.js"></script>
+<section>
+<!--     <h2>The <em>Original</em> Mandelbrot Set</h2>
+    <hr>
+    <p>We have all seen the Mandelbrot set. It's a beautiful fractal etc... But where does it come from? What does it mean?</p> -->
+
+    <figure>
+        <canvas id="standard-mandelbrot"></canvas>
+        <figcaption>The standard Mandelbrot Set</figcaption>
+    </figure>
+
+    <figure>
+        <canvas id="logistic-mandelbrot"></canvas>
+        <figcaption>The "original" Mandelbrot Set</figcaption>
+    </figure>
+
+        <script type="text/javascript">
+            const width = 800;
+            const height = 400;
+            const aspectRatio = height/width;
+
+            const maxIterations = 64;
+            const cReal = 1;
+            const cImag = 0;
+            const realRange = 6;
+            const imagRange = realRange * aspectRatio;
+
+            function draw(cv, ctx, imageData, iterator) {
+                let pixelIndex;
+                let x, y;
+                let zReal, zImag, zNewReal, zNewImag;
+                
+                let iterations;
+                let colors;
+
+                for (let p = 0; p < imageData.data.length; p += 4) {
+                    pixelIndex = p/4;
+
+                    x = pixelIndex % cv.width;
+                    y = Math.floor(pixelIndex / cv.width);
+
+                    x = cReal - realRange/2 + realRange*(x / cv.width);
+                    y = cImag - imagRange/2 + imagRange*((cv.height - y) / cv.height);
+
+                    iterations = iterator(x, y);
+
+                    colors = iterationsToColors(iterations);
+                    imageData.data[p + 0] = colors[0];
+                    imageData.data[p + 1] = colors[1];
+                    imageData.data[p + 2] = colors[2];
+                    imageData.data[p + 3] = 255;
+                }
+
+                ctx.putImageData(imageData, 0, 0);
+            }
+
+            function iterationsToColors(iterations) {
+                const u = iterations/(maxIterations - 1);
+
+                const t = Math.PI*(1 - (( u/2 + 0.5) % 1));
+                let r = Math.sin(t);
+                let g = Math.sin(t + Math.PI/3);
+                let b = Math.sin(t + 2*Math.PI/3);
+
+                return [
+                    255*(r*r),
+                    255*(g*g),
+                    255*(b*b),
+                ];
+            }
+
+            // z^2 + c
+            function standardMandelbrot(real, imag) {
+                zReal = 0;
+                zImag = 0;
+
+                for (let i = 0; i < maxIterations; i++) {
+                    zNewReal = zReal * zReal - zImag * zImag + real;
+                    zNewImag = 2*zReal * zImag + imag;
+
+                    if (zNewReal*zNewReal + zNewImag*zNewImag >= 4) {
+                        return i;
+                    }
+
+                    zReal = zNewReal;
+                    zImag = zNewImag;
+                }
+
+                return maxIterations;
+            }
+
+            // lambda*z*(1 - z)
+            // lambda*(z - z^2)
+            // lambda*(a + i*b - (a*a - b*b + i*2*a*b))
+            // lambda*(a + i*b - a*a + b*b - i*2*a*b)
+            // lambda*(a - a*a + b*b + i*(b - 2*a*b))
+            // (x + i*y)*(a - a*a + b*b + i*(b - 2*a*b))
+            // x*(a - a*a + b*b + i*(b - 2*a*b)) + i*y*(a - a*a + b*b + i*(b - 2*a*b))
+            // x*a - x*a*a + x*b*b - y*(b - 2*a*b) + i*y*a - i*y*a*a + i*y*b*b + i*x*(b - 2*a*b)
+            // x*a - x*a*a + x*b*b - y*(b - 2*a*b) + i*(y*a - y*a*a + y*b*b + x*(b - 2*a*b))
+            function logisticMandelbrot(real, imag) {
+                zReal = 0.5;
+                zImag = 0;
+
+                for (let i = 0; i < maxIterations; i++) {
+                    // x*a - x*a*a + x*b*b - y*(b - 2*a*b) + i*(y*a - y*a*a + y*b*b + x*(b - 2*a*b))
+                    zNewReal = real*zReal - real*zReal*zReal + real*zImag*zImag - imag*(zImag - 2*zReal*zImag);
+                    zNewImag = imag*zReal - imag*zReal*zReal + imag*zImag*zImag + real*(zImag - 2*zReal*zImag);
+
+                    if (zNewReal*zNewReal + zNewImag*zNewImag >= 4) {
+                        return i;
+                    }
+
+                    zReal = zNewReal;
+                    zImag = zNewImag;
+                }
+
+                return maxIterations;
+            }
+
+            (function() {
+                const cv = document.querySelector("canvas#logistic-mandelbrot");
+                cv.style.setProperty("width", width + "px");
+                cv.style.setProperty("height", height + "px");
+                const ctx = initializeCanvas(cv);
+                const imageData = ctx.getImageData(0, 0, cv.width, cv.height);
+
+                draw(cv, ctx, imageData, logisticMandelbrot)
+            })();
+
+            (function() {
+                const cv = document.querySelector("canvas#standard-mandelbrot");
+                cv.style.setProperty("width", width + "px");
+                cv.style.setProperty("height", height + "px");
+                const ctx = initializeCanvas(cv);
+                const imageData = ctx.getImageData(0, 0, cv.width, cv.height);
+
+                draw(cv, ctx, imageData, standardMandelbrot)
+            })();
+        </script>
+</section>
+<!-- 
+<section>
+    <h2>History repeats itself</h2>
+    <hr>
+    <p>Back in the 1920s, ? Julia and ? Fatou investigated what happens to polynomials under iteration. In other words, they investigated what happens when you take a formula like \[
+        p(x) = x^2 + x - 4,
+    \] and plug its output back into itself {% include footnote-link id="iteration-theme" content="over and over again" %}. There are several things that can happen. For example, let's start with \(0\). \[
+        \begin{align*}
+            p(0)             &= 0^2 + 0 - 4                   &&= -4\\
+            p(p(0))          &= (-4)^2 + (-4) - 4             &&= 8\\
+            p(p(p(0)))       &= 8^2 + 8 - 4                   &&= 68\\
+            p(p(p(0)))       &= 68^2 + 68 - 4                 &&= 4,688\\
+            p(p(p(p(0))))    &= 4,688^2 + 4,688 - 4           &&= 21,982,028\\
+            p(p(p(p(p(0))))) &= 21,982,028^2 + 21,982,028 - 4 &&= 483,209,576,974,808\\
+            &\vdots
+        \end{align*}
+    \] So \(0\) blows up. Or to put it more positively, \(0\) is very "attracted" to infinity. We say \(0\) is <em>in the basin of attraction of infinity</em>.</p>
+
+    <p>Now consider what happens with \(2\). \[
+        \begin{align*}
+            p(2)       &= 2^2 + 2 - 4 &&= 2\\
+            p(p(2))    &= 2^2 + 2 - 4 &&= 2\\
+            p(p(p(2))) &= 2^2 + 2 - 4 &&= 2\\
+            &\vdots
+        \end{align*}
+    \] In this case, we get a completely different behaviour! Since plugging in \(2\) gets you back \(2\), we call \(2\) a <em><strong>fixed point for \(p\)</strong></em>. \[
+        \begin{align*}
+            p(\sqrt{3} - 1)          &= (\sqrt{3} - 1)^2 + (\sqrt{3} - 1) - 4   &&= -\sqrt{3} - 1\\
+            p(p(\sqrt{3} - 1))       &= (-\sqrt{3} - 1)^2 + (-\sqrt{3} - 1) - 4 &&=  \sqrt{3} - 1\\
+            p(p(p(\sqrt{3} - 1)))    &= (\sqrt{3} - 1)^2 + (\sqrt{3} - 1) - 4   &&= -\sqrt{3} - 1\\
+            p(p(p(p(\sqrt{3} - 1)))) &= (-\sqrt{3} - 1)^2 + (-\sqrt{3} - 1) - 4 &&=  \sqrt{3} - 1\\
+            &\vdots
+        \end{align*}
+    \] \(\sqrt{3} - 1\) and \(-\sqrt{3} - 1\) hop back and forth.
+
+    What about \(-3\)? \[
+            \begin{align*}
+                p(-3)       &= (-3)^2 + (-3) - 4 &&= 2\\
+                p(p(-3))    &= 2^2 + 2 - 4       &&= 2\\
+                p(p(p(-3))) &= 2^2 + 2 - 4       &&= 2\\
+                &\vdots
+            \end{align*}
+        \] In this case, \(-3\) is not a fixed point, but it turns into one.
+    Similarly for \(\sqrt{3}\), \[
+        \begin{align*}
+            p(\sqrt{3})       &= (\sqrt{3})^2 + (\sqrt{3}) - 4 &&= \sqrt{3} - 1\\
+            p(p(\sqrt{3}))    &= (\sqrt{3} - 1)^2 + (\sqrt{3} - 1) - 4   &&= -\sqrt{3} - 1\\
+            p(p(p(\sqrt{3}))) &= (-\sqrt{3} - 1)^2 + (-\sqrt{3} - 1) - 4 &&=  \sqrt{3} - 1\\
+            &\vdots
+        \end{align*}
+    .\]
+    </p>
+</section>
+
+<section>
+    <h2>Mandelbrot</h2>
+    <hr>
+    <p>The guy was a jerk, apparently.</p>
+</section>
+
+
+
+<section>
+    <footer class="footnotes">
+        <h3>Footnotes</h3>
+        <hr>
+        <ol>
+            {% include footnote
+                id="iteration-theme"
+                content="This is turning out to be a major theme in my blog..."
+            %}
+        </ol>
+    </footer>
+
+    <footer class="references">
+        <h3>References</h3>
+        <hr>
+        <ol>
+            
+        </ol>
+    </footer>
+</section> -->
