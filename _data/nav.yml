@@ -7,8 +7,6 @@
   children:
     - label: Blog posts
       path: /blog/
-    - label: Gallery
-      path: /blog/gallery/
     - label: Writing
       path: /blog/writings/
 - label: Resume

@@ -1,5 +1,6 @@
 figure.highlight {
-  display: table;
+  display: flex;
+  flex-flow: row;
 }
 
 figure.highlight pre {

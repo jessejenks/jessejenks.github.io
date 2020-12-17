@@ -488,6 +488,7 @@ tags: [computer science, interactive, turing machines, esolang]
     function loadExample(event) {
         codeInputNode.value = event.target.nextElementSibling.querySelector("pre").innerText.trim();
         highlightCode();
+        window.scrollTo(0, 0);
     }
 
     function highlightCode() {

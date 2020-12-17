@@ -1,13 +1,12 @@
 <footer>
     <ul>
         <li>
-            <a
+            {% include link
                 id="email-link"
                 href="mailto:jesseendojenks@gmail.com"
                 title="Email"
-            >
-                <i class="far fa-envelope"></i>
-            </a>
+                content='<i class="far fa-envelope"></i>'
+            %}
         </li>
 
         <li>
@@ -52,9 +51,6 @@
                 title="Fun Number"
             %}
         </li>
-
-        <!-- For tracking visits -->
-        <!-- <div style="display:none;"><script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0hbv4cjt8yu&amp;m=7&amp;c=5ba1b2&amp;cr1=ffffff&amp;sx=0&amp;dds=0&amp;ds=20" async="async"></script></div> -->
     </ul>
     <script>
         const whichFunNumber = Math.floor(Math.random()*funNumbers.length);

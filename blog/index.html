@@ -168,6 +168,9 @@ title: Blog posts
             title="{{ post.title }}"
         >
             {{ post.title }}
+            {% if post.draft %}
+                (draft)
+            {% endif %}
             {% if post.tags[0] %}
                 {% assign joined_tags = post.tags | join: ', ' %}
 

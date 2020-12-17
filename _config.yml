@@ -13,9 +13,6 @@ markdown: kramdown
 collections:
   posts:
     permalink: /blog/:title
-  works:
-    output: true
-    permalink: /blog/gallery/:title
   writings:
     output: true
     permalink: /blog/writings/:title

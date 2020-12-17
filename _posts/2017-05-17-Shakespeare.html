@@ -20,7 +20,7 @@ tags: [computer science, NLP]
 <section>
     <p>Suppose we are given the task of deciding how "similar" or "dissimilar" two poems are. For us humans, it is relatively easy to just read two poems and decide that yes, these two poems are similar, perhaps based on style or subject. But if we are given dozens of poems this becomes more difficult. On top of that, two people may disagree wildly even when you choose the same judging criteria. In the field of Natural Language Processing there are a few simple tools that can give us a more precise definition of how 'similar' two pieces of text are. I just took a course called "Intro to A.I." where my final project touched on this, and one day I had a 23 hour train ride ahead of me, so {% include footnote-link id="why-not" content="I decided to analyze all of Shakespeare's sonnets" %}.</p>
 
-    <p>How do we decide which words are the most <em>important</em> words in a piece of text? Well, it's not really possible to give an objective measure of importance to words. But what we can do is to measure the importance of a word in a piece of text (called a document) <em>relative</em> to a set of documents.</p>
+    <p>How do we decide which words are the most <em>important</em> words in a piece of text? Well, it's not clear how you would give an objective measure of importance to words. But what we can do is to measure the importance of a word in a piece of text (called a document) <em>relative</em> to a set of documents.</p>
 
     <p>Let's say we are given, oh I don't know 154 poems and we want to measure the relative importance of the words in each poem. One way to do this is called <em>Text Frequency Inverse Document Frequency</em> or tfidf for short. This has a long scary sounding name, but is quite straighforward.
 
@@ -97,7 +97,7 @@ tfidf("Beauty","Sonnet 127") = text_frequency("Beauty", "Sonnet 127")/document_f
     <p>In other words</p>
 {% highlight python linenos %}
 inverse_document_frequency("Beauty")  = log(1/document_frequency("Beauty"))
-                                = -log(document_frequency("Beauty"))
+                                      = -log(document_frequency("Beauty"))
 {% endhighlight %}
 
     <p>So words like "the", which appear in every sonnet will have an IDF score of 0, while less common words will have a higher score.</p>
@@ -154,40 +154,40 @@ tfidf("Beauty", "Sonnet 127") = text_frequency("Beauty", "Sonnet 127") * inverse
 
 {% highlight python linenos %}
 def cosineSimilarity(a, b):
-return np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b))
+    return np.dot(a,b)/(np.linalg.norm(a)*np.linalg.norm(b))
 {% endhighlight %}
 
     Or if you want some more details,
 {% highlight python linenos %}
 def cosineSimilarity(a, b):
-dot_product = 0
-norm_a = 0
-norm_b = 0
-for index, component in enumerate(a):
-dot_product += a[index]*b[index]
-norm_a += a[index]*a[index]
-norm_b += b[index]*b[index]
-norm_a = math.sqrt(norm_a)
-norm_b = math.sqrt(norm_b)
-return dot_product / (norm_a * norm_b)
+    dot_product = 0
+    norm_a = 0
+    norm_b = 0
+    for index, component in enumerate(a):
+        dot_product += a[index] * b[index]
+        norm_a += a[index] * a[index]
+        norm_b += b[index] * b[index]
+        norm_a = math.sqrt(norm_a)
+        norm_b = math.sqrt(norm_b)
+    return dot_product / (norm_a * norm_b)
 {% endhighlight %}
 
     Anyway, now we have a nice measure of similarity. It satisfies some of the properties that our intuition about the meaning of "similarity". For example, if
 
 {% highlight python linenos %}
-def cosineSimilarity(word_counts_1, word_counts_2) = 0.75
+cosineSimilarity(word_counts_1, word_counts_2) = 0.75
 {% endhighlight %}
 
     then
 
 {% highlight python linenos %}
-def cosineSimilarity(word_counts_2, word_counts_1) = 0.75
+cosineSimilarity(word_counts_2, word_counts_1) = 0.75
 {% endhighlight %}
 
     And of course, a document is perfectly similar to itself.
 
 {% highlight python linenos %}
-def cosineSimilarity(word_counts, word_counts) = 1
+cosineSimilarity(word_counts, word_counts) = 1
 {% endhighlight %}
 
     If document 1 and document 2 are similar, and document 2 and document 3 are similar, it {% include footnote-link id="not-a-metric" content="doesn't guarantee a whole lot" %} about the similarity of document 1 and document 3.</p>

@@ -1,82 +1,137 @@
 ---
 layout: default
-title: About me
+title: About
 ---
 <link rel="stylesheet" type="text/css" href="./about.css">
 <h1>About</h1>
 
 <section>
     <h2>About me</h2>
+
     <p>
-        Hi! My name is Jesse Endo Jenks and I am a full-stack software engineer at <a target="_blank" rel="noopener" href="http://www.hexinsights.com">Hex Insights</a> in Seattle Washington.
+        Hi! My name is Jesse Endo Jenks and I am currently a masters student at the {% include link
+            href="https://msclogic.illc.uva.nl/"
+            content="Institute for Logic, Language, and Computation"
+        %}. I also work as a full-stack software engineer at {% include link
+            href="http://www.hexinsights.com"
+            content='Hex Insights'
+        %}.
     </p>
+
     <p>
-        You can contact me at <a href="mailto:jesseendojenks@gmail.com?Subject=Hello%20There!">JesseEndoJenks@gmail.com</a>
+        You can contact me at <a href="mailto:jesseendojenks@gmail.com?Subject=Hello%20There!">
+            JesseEndoJenks@gmail.com
+        </a>
     </p>
 </section>
 
 <section>
     <h2>About the homepage</h2>
+
     <p>
-        My homepage shows various examples of what are known as 2D cellular automata. You can interact with the simulations with your keyboard. Press 'p' to pause, and 'r' to reset. Use your left and right arrows to move between rules, and 's' to stay on the current rule. If you would like to learn more about cellular automata, here are some online resources.
+        My homepage shows various examples of what are known as 2D cellular automata. You can interact with the
+        simulations with your keyboard. Press 'p' to pause, and 'r' to reset. Use your left and right arrows to move
+        between rules, and 's' to stay on the current rule. If you would like to learn more about cellular automata,
+        here are some online resources.
     </p>
+
     <ul id="cellular-automata-resources">
         <li>
-            <a
-                target="_blank"
-                rel="noopener"
+            {% include link
                 href="https://en.wikipedia.org/wiki/Cellular_automata"
-            >
-                The Wikipedia entry for cellular automata
-            </a>
+                content='The Wikipedia entry for cellular automata'
+            %}
         </li>
+
         <li>
-            <a
-                target="_blank"
-                rel="noopener"
+            {% include link
                 href="http://mathworld.wolfram.com/CellularAutomaton.html"
-            >
-                This Mathworld article gives a brief technical overview
-            </a>
+                content="This Mathworld article gives a brief technical overview"
+            %}
         </li>
+
         <li>
-            <a
-                target="_blank"
-                rel="noopener"
+            {% include link
                 href="https://plato.stanford.edu/entries/cellular-automata/"
-            >This entry in the Stanford Encyclopedia of Philosophy</a> gives a much longer overview from a philosophy of science point of view
+                content="This entry in the Stanford Encyclopedia of Philosophy"
+            %} gives a much longer overview from a philosophy of science point of view
         </li>
+
         <li>
-            <a
-                target="_blank"
-                rel="noopener"
+            {% include link
                 href="http://www.mirekw.com/ca/rullex_life.html"
-            >
-                This page explains the rule encoding displayed on the home page
-            </a>
+                content="This page explains the rule encoding displayed on the home page."
+            %}
         </li>
+
         <li>
-            <a
-                target="_blank"
-                rel="noopener"
-                href="http://www.stephenwolfram.com/publications/academic/computation-theory-cellular-automata.pdf"
-            >This pdf is a technical paper by Stephen Wolfram</a> who has investigated cellular automata for many years
-        </li>
-        <li>
-            <a
-                target="_blank"
-                rel="noopener"
+            {% include link
                 href="https://www.wolframscience.com/nks/"
-            >This enormous and free online book</a>, also by Stephen Wolfram
+                content="This enormous and free online book"
+            %}
         </li>
     </ul>
 </section>
 
 <section>
-    <h2>Where are people visiting from?</h2>
-    <div>
-        <script type="text/javascript" src="//ra.revolvermaps.com/0/0/7.js?i=0hbv4cjt8yu&amp;m=7&amp;c=5ba1b2&amp;cr1=ffffff&amp;sx=0&amp;dds=0&amp;ds=20" async="async"></script>
-    </div>
+    <h2>PGP public key</h2>
+
+    <pre>
+        <code style="font-size: 0.75rem; display: flex; justify-content: center;">
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
+Q1g=
+=2PYS
+-----END PGP PUBLIC KEY BLOCK-----
+        </code>
+    </pre>
 </section>
 
 <script src="/js/utils.js"></script>
