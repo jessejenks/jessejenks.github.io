@@ -21,7 +21,7 @@ function transformPositions(scrollPosition, isScrollingUP) {
 
         if (noPrefix && noPrefix !== 'none') {
             
-            child.style['transform'] = getNewMatrix(noPrefix, ...args);
+            child.style.transform = getNewMatrix(noPrefix, ...args);
 
         } else if (webkit && webkit !== 'none') {
 
@@ -34,7 +34,7 @@ function transformPositions(scrollPosition, isScrollingUP) {
         } else {
 
             let newMatrix = identityMatrix;
-            child.style['transform'] = newMatrix;
+            child.style.transform = newMatrix;
             child.style['-webkit-transform'] = newMatrix;
             child.style['-ms-transform'] = newMatrix;
 

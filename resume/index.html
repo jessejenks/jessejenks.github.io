@@ -2,404 +2,433 @@
 layout: default
 title: Resume
 ---
-<link href="https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed:100|Montserrat|Nunito:200,600" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="./resume.css">
 
-<div id="resume-container">
-	<div id="current-page-info">
-		<h2>CV</h2>
-		<a id="link-to-resume" href="/resume/Jesse-Jenks-Resume.pdf">See resume instead</a>
-	</div>
-	<div id="name">
-		<div>Jesse</div>
-		<div>Endo</div>
-		<div>Jenks</div>
-	</div>
-	
-	<ul id="contact-info" class="normal-text">
-		<li>(510) 508-9512</li>
-		<li>
-			<a href="mailto:jesseendojenks@gmail.com?Subject=Saw%20Your%20Resume">
-				JesseEndoJenks@gmail.com
-			</a>
-		</li>
-		<li>Seattle, WA</li>
-	</ul>
+<link
+    href="https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed:100|Montserrat:600|Nunito:200,400,600,700"
+    rel="stylesheet"
+/>
+<link rel="stylesheet" type="text/css" href="./resume.css" />
 
-	<section>
-		<h2 class="section-header">Education</h2>
-		<div class="section-container">
-			<div class="section-row">
-				<div class="bold-text">University of Puget Sound</div>
-				<div class="normal-text small right">Tacoma, WA</div>
-			</div>
-			<div class="section-row">
-				<div class="bold-text">
-					B.S. in Mathematics and Computer Science
-				</div>
-				<span class="dash extra-space">-</span>
-				<div class="normal-text">double major</div>
-				<div class="normal-text small right">
-					May 2018
-				</div>
-			</div>
-			<div class="section-row">
-				<div class="bold-text align-on-right">Honors</div>
-				<div class="normal-text"><i>magna cum laude</i></div>
-			</div>
-			<div class="section-row">
-				<div class="bold-text align-on-right">Relevant Courses</div>
-				<div class="bold-text">University of Puget Sound / Budapest Semesters in Mathematics</div>
-			</div>
-			<ul class="subsection-list no-bullets normal-text">
-				<li>Algorithms, Artificial Intelligence, Optimization, Software Engineering, Theory of Computing</li>
-				<li>Abstract Algebra&nbsp;I & II, Linear Algebra, Real Analysis&nbsp;I & II, Set Theory, Topology, Mathematical Logic</li>
-			</ul>
-		</div>
-	</section>
-
-
-	<section>
-		<h2 class="section-header">Skills</h2>
-		<div class="section-container">
-			<div class="align-top">
-				<div class="bold-text align-on-right">Languages &amp; Libraries</div>
-
-				<div class="normal-text" id="language-table-container">
-					{% assign table-names = "mobile-table, desktop-table" | split: ", " %}
-					{% for table-name in table-names %}
-						<table id="{{ table-name }}">
-							{% assign num-columns = forloop.index | plus: 1 %}
-							{% assign rows = site.data.languages.size | divided_by: num-columns | ceil %}
-							{% for i in (1..rows) %}
-								{% assign offset = forloop.index0 | times: num-columns %}
-								<tr>
-									{% for language in site.data.languages limit:num-columns offset:offset %}
-									<td class="language-icon">
-										{% if language.type == "icon" %}
-											<i class="{{ language.iconlink }}"></i>
-										{% elsif language.type == "image" %}
-											<img
-												align="bottom"
-												title="{{ language.name }}"
-												alt="{{ language.name }}"
-												src="{{ language.iconlink }}"
-												{% if language.style %}
-													style="{{ language.style }}"
-												{% endif %}
-											>
-										{% endif %}
-									</td>
-									<td>
-										{% capture language-link %}
-											{{ language.link }}
-										{% endcapture %}
-										{% capture language-name %}
-											{{ language.name }}
-										{% endcapture %}
-										{% include link href=language-link content=language-name %}
-									</td>
-									{% endfor %}
-								</tr>
-							{% endfor %}
-						</table>
-					{% endfor %}
-				</div>
-			</div>
-			<div class="section-row">
-				<div class="bold-text align-on-right">Digital Media</div>
-				<div class="normal-text">Adobe After Effects, Photoshop, Lightroom</div>
-			</div>
-			<div class="section-row">
-				<div class="bold-text align-on-right">Foreign Language</div>
-				<div class="normal-text">Fluent in Japanese</div>
-			</div>
-		</div>
-	</section>
-
-
-	<section>
-		<h2 class="section-header">Experience</h2>
-		<div class="section-container normal-text">
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">
-					Software Engineer
-				</div>
-				<span class="dash">-</span>
-				<div class="normal-text">
-					Hex Insights, Seattle, WA
-				</div>
-				<div class="normal-text small right">
-					September 2018 - Present
-				</div>
-			</div>
-			<div class="subsection-container">
-				<div class="bold-text default-color indent">
-					{% include link href="https://hexinsights.com" content="Hex Insights" %}
-				</div>
-				<ul class="subsection-list">
-					<li>Working on a small team building single-page applications with React, Express, Django, and Postgres</li>
-					<li>Conduct unit and integration tests using the Jest framework</li>
-					<li>Implemented custom API query system that dropped page load times from 30 seconds to 150 milliseconds</li>
-					<li>Designing RESTful APIs to interface with custom databases</li>
-				</ul>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">
-					Makerspace Assistant
-				</div>
-				<span class="dash">-</span>
-				<div class="normal-text">
-					University of Puget Sound, Tacoma, WA
-				</div>
-				<div class="normal-text small right">
-					Spring 2018
-				</div>
-			</div>
-			<div class="subsection-container">
-				<div class="bold-text default-color indent">
-					{% include link href="http://research.pugetsound.edu/makerspace" content="Collins Library" %}
-				</div>
-				<ul class="subsection-list">
-					<li>Assisted students and faculty in using 3D printers, Arduino boards, Raspberry Pis, a laser cutter, a silhouette cutter, button makers, and other equipment</li>
-				</ul>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">
-					Teaching Assistant
-				</div>
-				<span class="dash">-</span>
-				<div class="normal-text">
-					University of Puget Sound, Tacoma, WA
-				</div>
-				<div class="normal-text small right">
-					Spring 2017
-				</div>
-			</div>
-			<div class="subsection-container">
-				<div class="bold-text default-color indent">
-					{% include link href="https://www.pugetsound.edu/academics/departments-and-programs/undergraduate/philosophy/" content="Philosophy Department" %}
-				</div>
-				<ul class="subsection-list">
-					<li>Assisted professor in administration for class of 19 students on Formal Logic</li>
-					<li>Graded homework assignments and provided weekly tutoring sessions for class</li>
-				</ul>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">
-					Department Tutor
-				</div>
-				<span class="dash">-</span>
-				<div class="normal-text">
-					University of Puget Sound, Tacoma, WA
-				</div>
-				<div class="normal-text small right">
-					Spring 2016 - Spring 2017, 2018
-				</div>
-			</div>
-			<div class="subsection-container">
-				<div class="bold-text default-color indent">
-					{% include link href="https://mathcs.pugetsound.edu" content="Computer Science Department" %}
-				</div>
-				<ul class="subsection-list">
-					<li>Provided weekly peer tutoring for all class levels</li>
-				</ul>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">
-					Media Services Staff
-				</div>
-				<span class="dash">-</span>
-				<div class="normal-text">
-					University of Puget Sound, Tacoma, WA
-				</div>
-				<div class="normal-text small right">
-					Fall 2014 - Fall 2016
-				</div>
-			</div>
-			<div class="subsection-container">
-				<div class="bold-text default-color indent">
-					{% include link href="https://www.pugetsound.edu/about/offices-services/technology-services/media-services/" content="Technology Services" %}
-				</div>
-				<ul class="subsection-list">
-					<li>Performed troubleshooting for staff and faculty on campus</li>
-					<li>Handled media requests for classes, events, and presentations</li>
-				</ul>
-			</div>
-		</div>
-	</section>
-
-
-	<section>
-		<h2 class="section-header">Projects</h2>
-		<div class="section-container">
-			<div class="subsection-header">
-				<a href="/" id="animated-code-container" class="bold-text" style="background-color: #343d46;">
-					<code style="display: flex;">
-						<span style="color: #ec5f66;"><i>this</i></span>
-						<span style="color: #a6acb9;">.</span>
-						<span style="color: #d8dee9;">site</span>
-						<span>&nbsp;</span>
-						<span style="color: #f97b58;">=</span>
-						<span>&nbsp;</span>
-						<span id="animated-code" style="color: #99c794; display: flex;">
-							<span style="color: #5fb4b4;">"</span>
-							<span>https:</span>
-							<span>//</span>
-							<span>www</span>
-							<span>.</span>
-							<span>very</span>
-							<span>chill</span>
-							<span>.</span>
-							<span>biz</span>
-							<span style="color: #5fb4b4;">"</span>
-						</span>
-						<span style="color: #a6acb9;">;</span>
-					</code>
-				</a>
-				<div id="alternate-website-display" class="bold-text subsection-title">jessejenks.github.io</div>
-				<div class="normal-text small right">Fall 2016 - Present</div>
-			</div>
-			<div class="subsection-container normal-text">
-				<ul class="subsection-list">
-					<li>Personal website showcasing various interactive Javascript projects</li>
-					<li><a href="/blog">Blog</a> contains over 20 interactive pages on topics ranging from fractals, cellular automata, markov chains, neural nets, and many others</li>
-				</ul>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">Neural Net javascript library</div>
-				<div class="normal-text small right">Fall 2017</div>
-			</div>
-			<div class="subsection-container normal-text">
-				<ul class="subsection-list">
-					<li>Wrote a neural net library from scratch in javascript to visualize in <a href="/blog/NeuralNetjs">this&nbsp;blog&nbsp;post</a></li>
-					<li>Implements backpropagation Includes a variety of activation and cost functions</li>
-				</ul>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">COMAP Mathematical Contest in Modeling Finalist</div>
-				<div class="normal-text small right">Spring 2017</div>
-			</div>
-			<div class="subsection-container normal-text">
-				<ul class="subsection-list">
-					<li>Finished in top 11 out of 1,527 teams from around the world with 2 other teammates.</li>
-                    <li>Created cellular automaton based model to study influence self-driving cars may have on traffic flow.</li>
-                    <li>{% include link
-                        href="https://www.seattletimes.com/education-lab/local-university-team-is-top-scorer-in-math-competition-on-self-driving-cars/"
-                        content="In the news!"
-                    %}</li>
-				</ul>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">Blog Post Filter</div>
-				<div class="normal-text small right">Fall 2019</div>
-			</div>
-			<div class="subsection-container normal-text">
-				<ul class="subsection-list">
-					<li>Created a custom language for filtering blog posts, and implemented a parser and interpreter.</li>
-					<li>Built a {% include link href="https://github.com/jessejenks/filter-parser" content="demo page" %} with a syntax highlighted input box.</li>
-				</ul>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">Raspberry Pi Slackbot</div>
-				<div class="normal-text small right">Spring 2017</div>
-			</div>
-			<div class="subsection-container normal-text">
-				<ul class="subsection-list">
-					<li>Created a chatbot trained on text messages, YouTube comments, and Shakespeare</li>
-					<li>Loaded onto a Raspberry Pi so that members could chat with it through a Slack channel</li>
-				</ul>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">Summer Research Paper</div>
-				<div class="normal-text small right">Summer 2016</div>
-			</div>
-			<div class="subsection-container normal-text">
-				<div class="normal-text indent">
-					{% include link href="https://soundideas.pugetsound.edu/summer_research/276/" content="<em>What Do We Mean by Logical Consequence?</em>" %}
-				</div>
-				<ul class="subsection-list">
-					<li>Conducted independent research on differing views within a main subfield of mathematical logic</li>
-					<li>Wrote a 20 page research paper on John Etchemendy’s criticism of Tarskian model theory</li>
-				</ul>
-			</div>
-		</div>
-	</section>
-
-	<section>
-		<h2 class="section-header">School Activities</h2>
-		<div class="section-container">
-			<div class="subsection-header">
-				<div class="bold-text subsection-title align-on-right small">ACM</div>
-				<div class="bold-text default-color">President<div class="normal-text">,&nbsp;</div></div>
-				<div class="normal-text">Computer Science club</div>
-				<div class="normal-text small right">2016 - 2017</div>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title align-on-right small">PMU</div>
-				<div class="normal-text">Mathematics Honor Society</div>
-				<div class="normal-text small right">Inducted Spring 2017</div>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title align-on-right small">UPE</div>
-				<div class="normal-text">Computer Science Honor Society</div>
-				<div class="normal-text small right">Inducted Spring 2016</div>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title align-on-right small">PES</div>
-				<div class="normal-text">Honor Society</div>
-				<div class="normal-text small right">Inducted Spring 2015</div>
-			</div>
-		</div>
-	</section>
-
-
-	<section>
-		<h2 class="section-header">Academic and Other Awards</h2>
-		<div class="section-container">
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">School of Music Scholarship</div>
-				<div class="normal-text small right">2014 - 2018</div>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">Edward Goman Math Scholarship</div>
-				<div class="normal-text small right">2016 - 2018</div>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text subsection-title">Graduated with Honors from Budapest Semesters in Mathematics</div>
-				<div class="normal-text small right">Fall 2017</div>
-			</div>
-
-			<div class="subsection-header">
-				<div class="bold-text">Collier Interdisciplinary Scholarship</div>
-				<div class="normal-text small right">Fall 2016</div>
-			</div>
-		</div>
-	</section>
-
-
-	<section>
-		<h2 class="section-header">Other Interests</h2>
-		<div class="section-container">
-			<div class="section-row">
-				<div class="bold-text align-on-right">Interests, Skills</div>
-				<div class="normal-text">Cello, Philosophy of Math, Recreational Math, Data Visualization</div>
-			</div>
-		</div>
-	</section>
+<div id="page-info">
+    <h1>CV</h1>
+    <a id="link-to-resume" href="/resume/Jesse-Jenks-Resume.pdf">See resume instead</a>
 </div>
+
+<header>
+    <div id="name">
+        <span>Jesse</span>
+        <span>Endo</span>
+        <span>Jenks</span>
+    </div>
+
+    <address>
+        <ul>
+            <li>
+                <a title="email" href="mailto:jesseendojenks@gmail.com?Subject=Saw%20Your%20Resume">
+                    JesseEndoJenks@gmail.com
+                </a>
+            </li>
+            <li>
+                {% include link title="linkedin" href="http://www.linkedin.com/in/jesse-endo-jenks"
+                content="linkedin.com/in/jesse-endo-jenks" %}
+            </li>
+            <li>Tacoma, WA</li>
+        </ul>
+    </address>
+</header>
+
+<hr />
+
+<section>
+    <h2>Education</h2>
+    <div class="section-body">
+        <div class="section-row section-row-title with-middle with-end">
+            <h3>University of Puget Sound</h3>
+            <div><b>B.S. in Mathematics and Computer Science</b><span class="light"> - double major</span></div>
+            <div>Tacoma, WA</div>
+        </div>
+        <div class="section-row section-row-title with-middle with-end">
+            <h4>Honors</h4>
+            <div><i class="light">magna cum laude</i></div>
+            <div>May 2018</div>
+        </div>
+        <div class="section-row">
+            <div class="section-row-title with-left-aligned-middle">
+                <h4>Relevant Courses</h4>
+                <div>University of Puget Sound / Budapest Semesters in Mathematics, Study Abroad</div>
+            </div>
+            <ul class="no-bullets">
+                <li>Algorithms, A. I., Software Engineering, Compilers, Optimization, Theory of Computing</li>
+                <li>
+                    Abstract Algebra&nbsp;I & II, Linear Algebra, Real Analysis&nbsp;I & II, Set Theory, Topology,
+                    Mathematical Logic
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Skills</h2>
+    <div class="section-body">
+        <div class="section-row section-row-title">
+            <h3>Languages &amp; Libraries</h3>
+        </div>
+        <div id="language-table-container">
+            {% assign table-names = "mobile-table, desktop-table" | split: ", " %} {% for table-name in table-names %}
+            <table id="{{ table-name }}">
+                <tbody>
+                    {% assign num-columns = forloop.index | plus: 1 %} {% assign rows = site.data.languages.size |
+                    divided_by: num-columns | ceil %} {% for i in (1..rows) %} {% assign offset = forloop.index0 |
+                    times: num-columns %}
+                    <tr>
+                        {% for language in site.data.languages limit:num-columns offset:offset %}
+                        <td>
+                            {% if language.type == "icon" %}
+                            <i class="{{ language.iconlink }}"></i>
+                            {% elsif language.type == "image" %}
+                            <img
+                                align="bottom"
+                                title="{{ language.name }}"
+                                alt="{{ language.name }}"
+                                src="{{ language.iconlink }}"
+                                {% if language.style %}
+                                style="{{ language.style }}"
+                                {% endif %}
+                            />
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% capture language-link %} {{ language.link }} {% endcapture %} {% capture language-name %}
+                            {{ language.name }} {% endcapture %} {% include link href=language-link
+                            content=language-name %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endfor %}
+        </div>
+
+        <div class="section-row section-row-title with-middle">
+            <h3>Tools &amp; Environments</h3>
+            <div>VS Code, Git, Github</div>
+        </div>
+        <div class="section-row section-row-title with-middle">
+            <h3>Digital Media</h3>
+            <div>Adobe After Effects, Photoshop, Lightroom</div>
+        </div>
+        <div class="section-row section-row-title with-middle">
+            <h3>Foreign Language</h3>
+            <div>Fluent in Japanese</div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Experience</h2>
+    <div class="section-body with-row-spacing">
+        <div class="section-row">
+            <div class="section-row-title with-middle with-end">
+                <h3>Full-stack Software Engineer</h3>
+                <div>Hex Insights, Seattle, WA</div>
+                <div>September 2018 - Present</div>
+            </div>
+            <div>
+                <div class="section-row-subtitle">
+                    {% include link title="Hex Insights" href="https://hexinsights.com" content="Hex Insights" %}
+                </div>
+                <ul>
+                    <li>
+                        Working on a small team building single-page applications with React, Go, Express, Django, and
+                        Postgres
+                    </li>
+                    <li>Conduct unit and integration tests using the Jest framework</li>
+                    <li>Implemented custom API query system that significantly dropped page load times</li>
+                    <li>Created custom loading animations with React and HTML5 canvas</li>
+                    <li>Designing RESTful APIs to interface with custom databases</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-middle with-end">
+                <h3>Makerspace Assistant</h3>
+                <div>University of Puget Sound, Tacoma, WA</div>
+                <div>Spring 2018</div>
+            </div>
+            <div>
+                <div class="section-row-subtitle">
+                    {% include link title="UPS Makerspace" href="http://research.pugetsound.edu/makerspace"
+                    content="Collins Library" %}
+                </div>
+                <ul>
+                    <li>
+                        Assisted students and faculty in using 3D printers, Arduino boards, Raspberry Pis, a laser
+                        cutter, a silhouette cutter, button makers, and other equipment
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-middle with-end">
+                <h3>Teaching Assistant</h3>
+                <div>University of Puget Sound, Tacoma, WA</div>
+                <div>Spring 2017</div>
+            </div>
+            <div>
+                <div class="section-row-subtitle">
+                    {% include link title="UPS Philosophy Department"
+                    href="https://www.pugetsound.edu/academics/departments-and-programs/undergraduate/philosophy/"
+                    content="Philosophy Department" %}
+                </div>
+                <ul>
+                    <li>
+                        Graded assignments and assisted professor in administration for a class of 19 students on Formal
+                        Logic
+                    </li>
+                    <li>Provided twice-weekly dedicated tutoring sessions throughout the semester</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-middle with-end">
+                <h3>Department Tutor</h3>
+                <div>University of Puget Sound, Tacoma, WA</div>
+                <div>Spring 2016 - Spring 2017, 2018</div>
+            </div>
+            <div>
+                <div class="section-row-subtitle">
+                    {% include link title="UPS Math and Computer Science Department"
+                    href="https://mathcs.pugetsound.edu" content="Computer Science Department" %}
+                </div>
+                <ul>
+                    <li>Provided weekly peer tutoring for all class levels</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-middle with-end">
+                <h3>Media Services Staff</h3>
+                <div>University of Puget Sound, Tacoma, WA</div>
+                <div>Fall 2014 - Fall 2016</div>
+            </div>
+            <div>
+                <div class="section-row-subtitle">
+                    {% include link title="UPS Technology Services"
+                    href="https://www.pugetsound.edu/about/offices-services/technology-services/media-services/"
+                    content="Technology Services" %}
+                </div>
+                <ul>
+                    <li>Performed troubleshooting for staff and faculty on campus</li>
+                    <li>Handled media requests for classes, events, and presentations</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Projects</h2>
+    <div class="section-body with-row-spacing">
+        <div class="section-row">
+            <div class="section-row-title with-middle with-end">
+                <h3>
+                    <a href="/" id="animated-code-container">
+                        <code>
+                            <span id="animated-code-assignment">
+                                <span style="color: #ec5f66"><i>this</i></span>
+                                <span style="color: #a6acb9">.</span>
+                                <span style="color: #d8dee9">site</span>
+                                <span>&nbsp;</span>
+                                <span style="color: #f97b58">=</span>
+                                <span>&nbsp;</span>
+                            </span>
+                            <span id="animated-code" style="color: #99c794">
+                                <span style="color: #5fb4b4">"</span>
+                                <span>https:</span>
+                                <span>//</span>
+                                <span>www</span>
+                                <span>.</span>
+                                <span>very</span>
+                                <span>chill</span>
+                                <span>.</span>
+                                <span>biz</span>
+                                <span style="color: #5fb4b4">"</span>
+                            </span>
+                            <span style="color: #a6acb9">;</span>
+                        </code>
+                    </a>
+                </h3>
+                <div>Fall 2016 - Present</div>
+            </div>
+            <div class="section-row-subtitle">jessejenks.github.io</div>
+            <div>
+                <ul>
+                    <li>Personal website showcasing various interactive Javascript projects</li>
+                    <li>
+                        <a href="/blog">Blog</a> section contains over 20 interactive projects on topics ranging from
+                        fractals, cellular automata, Markov chains, neural nets, and many others
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-end">
+                <h3>Neural Net javascript library</h3>
+                <div>Fall 2017</div>
+            </div>
+            <div>
+                <ul>
+                    <li>
+                        Wrote a neural net library from scratch in javascript to visualize in
+                        <a href="/blog/NeuralNetjs">this&nbsp;blog&nbsp;post</a>
+                    </li>
+                    <li>Implements backpropagation Includes a variety of activation and cost functions</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-end">
+                <h3>COMAP Mathematical Contest in Modeling Finalist</h3>
+                <div>Spring 2017</div>
+            </div>
+            <div>
+                <ul>
+                    <li>Finished in top 11 out of 1,527 teams from around the world with 2 other teammates</li>
+                    <li>
+                        Created cellular automata-based model to study the influence self-driving cars may have on
+                        traffic flow
+                    </li>
+                    <li>
+                        {% include link
+                        href="https://www.seattletimes.com/education-lab/local-university-team-is-top-scorer-in-math-competition-on-self-driving-cars/"
+                        content="In the news!" %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-end">
+                <h3>Blog Post Filter Language</h3>
+                <div>Fall 2019</div>
+            </div>
+            <div>
+                <ul>
+                    <li>
+                        Created a simple language for filtering blog posts, and implemented a parser and interpreter
+                    </li>
+                    <li>
+                        Built a {% include link href="https://github.com/jessejenks/filter-parser" content="demo page"
+                        %} with a custom syntax highlighted editor
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-end">
+                <h3>Raspberry Pi Slackbot</h3>
+                <div>Spring 2017</div>
+            </div>
+            <div>
+                <ul>
+                    <li>Created a chatbot trained on text messages, YouTube comments, and Shakespeare</li>
+                    <li>Loaded onto a Raspberry Pi so that members could chat with it through a Slack channel</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-end">
+                <h3>Summer Research Paper</h3>
+                <div>Summer 2016</div>
+            </div>
+            <div>
+                <div class="section-row-subtitle">
+                    <em
+                        >{% include link href="https://soundideas.pugetsound.edu/summer_research/276/" content="What Do
+                        We Mean by Logical Consequence?" %}</em
+                    >
+                </div>
+                <ul>
+                    <li>Conducted independent research on differing views on the foundations of mathematics</li>
+                    <li>Wrote a 20 page research paper on John Etchemendy’s criticism of Tarskian model theory</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>School Activities</h2>
+    <div class="section-body">
+        <div class="section-row section-row-title with-left-aligned-middle with-end">
+            <h3>ACM</h3>
+            <div><b>President</b>, Computer Science club</div>
+            <div>2016 - 2017</div>
+        </div>
+
+        <div class="section-row section-row-title with-left-aligned-middle with-end">
+            <h3>PMU</h3>
+            <div>Mathematics Honor Society</div>
+            <div>Inducted Spring 2017</div>
+        </div>
+
+        <div class="section-row section-row-title with-left-aligned-middle with-end">
+            <h3>UPE</h3>
+            <div>Computer Science Honor Society</div>
+            <div>Inducted Spring 2016</div>
+        </div>
+
+        <div class="section-row section-row-title with-left-aligned-middle with-end">
+            <h3>PES</h3>
+            <div>Honor Society</div>
+            <div>Inducted Spring 2015</div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Academic and Other Awards</h2>
+    <div class="section-body">
+        <div class="section-row section-row-title with-end">
+            <h3>School of Music Scholarship</h3>
+            <div>2014 - 2018</div>
+        </div>
+
+        <div class="section-row section-row-title with-end">
+            <h3>Edward Goman Math Scholarship</h3>
+            <div>2016 - 2018</div>
+        </div>
+
+        <div class="section-row section-row-title with-end">
+            <h3>Graduated with Honors from Budapest Semesters in Mathematics</h3>
+            <div>Fall 2017</div>
+        </div>
+
+        <div class="section-row section-row-title with-end">
+            <h3>Collier Interdisciplinary Scholarship</h3>
+            <div>Fall 2016</div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Other Interests</h2>
+    <div class="section-body">
+        <div class="section-row section-row-title with-middle">
+            <h3>Interests, Skills</h3>
+            <div>Cello, Logic, Philosophy of Mathematics</div>
+        </div>
+    </div>
+</section>
+
 <script src="./resume.js"></script>
