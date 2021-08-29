@@ -40,12 +40,12 @@
 }
 
 #tags-list-container  #filter-options input[type="radio"]:checked + label {
-    background-color: var(--palette-blue-1);
+    background-color: var(--palette-blue-2);
     cursor: default;
 }
 
 #tags-list-container  #filter-options input[type="radio"]:not(:checked) + label:hover {
-    background-color: var(--palette-blue-5);
+    background-color: var(--palette-blue-3);
 }
 
 #tags-list-container  #filter-options input[type="radio"] {
@@ -67,7 +67,7 @@
 }
 
 #tags-list-container #filter-options #filter-message .search-tag-delimiter {
-    color: var(--palette-blue-3);
+    color: var(--palette-blue-6);
     margin: 0 0.5rem;
 }
 
@@ -101,7 +101,7 @@
 }
 
 #tags-list .filter.selected {
-    background-color: var(--palette-blue-1);
+    background-color: var(--palette-blue-2);
     /*border-color: var(--palette-light-blue);
     background-color: var(--palette-light-blue-transparent);*/
 }
@@ -164,7 +164,7 @@
 
 
 .posts > .link-to-post-container > .link-to-post:hover {
-    background-color: var(--palette-blue-1);
+    background-color: var(--palette-blue-2);
     color: var(--palette-pink-1);
 }
 

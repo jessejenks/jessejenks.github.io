@@ -1,15 +1,15 @@
 :root {
-    --palette-blue-1: #3e5265;
-    --palette-blue-2: #48808e;
-    --palette-blue-3: #bdd9e0;
-    --palette-blue-4: #5ba1b2;
-    --palette-blue-5: #5a7790;
-    --palette-blue-6: #1b2732;
+    --palette-blue-0: #1b2732;
+    --palette-blue-1: #2b3945;
+    --palette-blue-2: #3e5265;
+    --palette-blue-3: #5a7790;
+    --palette-blue-4: #48808e;
+    --palette-blue-5: #5ba1b2;
+    --palette-blue-6: #bdd9e0;
 
-    --palette-blue-1-slightly-transparent: rgba(62, 82, 101, 0.8);
-    --palette-blue-5-very-transparent: rgba(90, 119, 144, 0.2);
-    --palette-blue-5-semi-transparent: rgba(90, 119, 144, 0.5);
-    --palette-blue-5-slightly-transparent: rgba(90, 119, 144, 0.8);
+    --palette-blue-2-slightly-transparent: rgba(62, 82, 101, 0.8);
+    --palette-blue-3-very-transparent: rgba(90, 119, 144, 0.2);
+    --palette-blue-3-semi-transparent: rgba(90, 119, 144, 0.5);
 
     --palette-gold: #eccd8f;
 
@@ -23,9 +23,10 @@
     --palette-gray-1: #ddd;
     --palette-gray-2: #a4a4a4;
 
+    --palette-white-1: #e8e8e8;
 
 
-    --nav-background-color: var(--palette-blue-1);
+    --nav-background-color: var(--palette-blue-2);
     --nav-link-color: var(--palette-gold);
     --nav-link-hover-background-color: var(--palette-pink-1);
     --nav-link-hover-color: var(--palette-sangria);
@@ -38,10 +39,10 @@
     --subnav-border-radius: .5rem;
 
     --footer-background-color: var(--nav-background-color);
-    --footer-link-color: var(--palette-blue-3);
+    --footer-link-color: var(--palette-blue-6);
 
-    --main-bg-color: #2b3945;
-    --text-color: #e8e8e8;
+    --main-bg-color: var(--palette-blue-1);
+    --text-color: var(--palette-white-1);
 
     --header-height: 4rem;
     --footer-height: 3rem;
@@ -62,14 +63,14 @@
         5px 5px var(--text-shadow-color),
         6px 6px var(--text-shadow-color);
 
-    --section-background-color: var(--palette-blue-1-slightly-transparent);
-    --section-hovered-background-color: var(--palette-blue-1);
-    --section-border-color: var(--palette-blue-5);
+    --section-background-color: var(--palette-blue-2-slightly-transparent);
+    --section-hovered-background-color: var(--palette-blue-2);
+    --section-border-color: var(--palette-blue-3);
 
     --footnote-number-color: var(--palette-sangria);
-    --reference-number-color: var(--palette-blue-3);
+    --reference-number-color: var(--palette-blue-6);
 
-    --footer-target-background-color: var(--palette-blue-5-semi-transparent);
+    --footer-target-background-color: var(--palette-blue-3-semi-transparent);
 
     --terminal-green: #36d600;
     --terminal-background: #1f1f1f;
@@ -313,7 +314,7 @@ body > main > section:not(:first-of-type) {
 }
 
 body > main a {
-    border: 1px solid var(--palette-blue-1);
+    border: 1px solid var(--palette-blue-2);
     padding: 0 0.25rem;
     border-radius: 0.25rem;
 
@@ -323,14 +324,14 @@ body > main a {
 }
 
 body > main a:hover {
-    background-color: var(--palette-blue-5-very-transparent);
+    background-color: var(--palette-blue-3-very-transparent);
 }
 
 body > main button {
     padding: 0.5rem 0.75rem;
-    background-color: var(--palette-blue-1);
+    background-color: var(--palette-blue-2);
     color: var(--text-color);
-    border: 1px solid var(--palette-blue-5);
+    border: 1px solid var(--palette-blue-3);
     border-radius: 0.25rem;
     cursor: pointer;
     outline: none;

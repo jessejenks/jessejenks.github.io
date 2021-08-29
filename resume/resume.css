@@ -186,7 +186,7 @@ body > main > section #animated-code-container {
 }
 
 body > main > section #animated-code-container:hover {
-    box-shadow: 0 0 8px 2px var(--palette-blue-5);
+    box-shadow: 0 0 8px 2px var(--palette-blue-3);
 }
 
 body > main > section #animated-code-container code,
