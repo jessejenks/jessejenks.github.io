@@ -78,7 +78,7 @@
     --literal-number-integer-long: var(--nord15);
     --literal-number-oct: var(--nord15);
     --literal-number-other: #fff;
-    --operator: var(--nord4);
+    --operator: var(--nord9);
     --operator-word: var(--nord9);
     --punctuation: var(--nord4);
     --punctuation-indicator: #fff;

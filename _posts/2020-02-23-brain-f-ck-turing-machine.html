@@ -35,10 +35,6 @@ tags: [computer science, interactive, turing machines, esolang]
         border-top-left-radius: 0.25rem;
     }
 
-    .highlight {
-        background: none;
-    }
-
     #code-section #code-container {
         position: relative;
         display: flex;
@@ -48,12 +44,18 @@ tags: [computer science, interactive, turing machines, esolang]
         margin-bottom: 1rem;
     }
 
+    #code-section #code-container.highlight {
+        background: none;
+        border: 1px solid var(--palette-blue-3);
+        border-radius: 0.25rem;
+    }
+
     #code-section #code-container #height-controller {
         padding-top: 0.5rem;
         padding-left: 0.5rem;
         font-size: 1rem;
         font-family: monospace;
-        color: var(--blue4);
+        color: var(--nord2);
     }
 
     #code-section #code-container #code-input,
@@ -76,7 +78,7 @@ tags: [computer science, interactive, turing machines, esolang]
         color: transparent;
         min-height: 100%;
         border: none;
-        caret-color: var(--orange);
+        caret-color: var(--nord12);
         outline: none;
         resize: none;
         overflow: hidden;
@@ -84,39 +86,14 @@ tags: [computer science, interactive, turing machines, esolang]
     }
 
     #code-section #code-container #code-highlighted {
-        background: var(--blue3);
-        color: var(--white3);
+        background: var(--nord0);
+        color: var(--nord6);
         height: fit-content;
-        border-radius: 0.5rem;
         z-index: -1;
-    }
-
-    #code-section #code-container #code-highlighted .token-left,
-    #code-section #code-container #code-highlighted .token-right {
-        color: var(--green);
-    }
-
-    #code-section #code-container #code-highlighted .token-increment,
-    #code-section #code-container #code-highlighted .token-decrement {
-        color: var(--red2);
-    }
-
-    #code-section #code-container #code-highlighted .token-bracket-left,
-    #code-section #code-container #code-highlighted .token-bracket-right {
-        color: var(--orange);
-    }
-
-    #code-section #code-container #code-highlighted .token-input,
-    #code-section #code-container #code-highlighted .token-output {
-        color: var(--blue);
-    }
-
-    #code-section #code-container #code-highlighted .token-comment {
-        color: var(--blue6);
     }
     
     #code-section button:disabled {
-        color: var(--palette-blue-4);
+        color: var(--palette-blue-3);
         border-color: var(--palette-blue-2);
         cursor: default;
     }
@@ -325,7 +302,7 @@ tags: [computer science, interactive, turing machines, esolang]
             {% endif %}
             <button type="button" class="load-example" onclick="loadExample(event)">Load This Example</button>
             <figure class="highlight">
-                <pre>{{- snippet.code -}}</pre>
+                <pre><code class="bf-code-snippet">{{- snippet.code -}}</code></pre>
             </figure>
         {% endfor %}
         </span>
@@ -611,6 +588,15 @@ tags: [computer science, interactive, turing machines, esolang]
     function changeAsciiMode(event) {
         controller.interpreter.setAsciiOutputMode(event.target.checked);
     }
+</script>
+<script>
+    function highlightSnippets() {
+        const snippetLexer = new BFLexer();
+        const snippets = document.querySelectorAll(".bf-code-snippet");
+        for (let i = 0; i < snippets.length; i++) {
+            snippets[i].innerHTML = snippetLexer.tokenize(snippets[i].innerText).join("");
+        }
+    }
 
     window.onresize = function() {
         controller.animator.windowChangedSize();
@@ -623,6 +609,7 @@ tags: [computer science, interactive, turing machines, esolang]
     }
 
     window.onload = function() {
+        highlightSnippets();
         highlightCode();
         codeInputNode.disabled = false;
         runButton.disabled = false;
