@@ -160,3 +160,16 @@
 .post ul {
     margin-inline-start: 1rem;
 }
+
+.post p {
+    margin: 1rem 0;
+}
+
+.post blockquote {
+    white-space: pre-line;
+    width: fit-content;
+    padding: 2rem;
+    margin-left: 10%;
+    background-color: var(--palette-blue-2);
+    border-radius: 0.25rem;
+}
