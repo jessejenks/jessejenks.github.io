@@ -259,20 +259,28 @@ body > footer > ul > li > a {
     align-items: center;
 }
 
-body > footer > ul > li > a#email-link:hover {
-    color: var(--text-color);
+body > footer > ul > li > a .feather {
+    fill: none;
+    stroke: var(--footer-link-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-body > footer > ul > li > a#github-link:hover {
-    color: black;
+body > footer > ul > li > a .feather.feather-mail:hover {
+    stroke: var(--text-color);
 }
 
-body > footer > ul > li > a#linkedin-link:hover {
-    color: #0077B5;
+body > footer > ul > li > a .feather.feather-github:hover {
+    stroke: black;
 }
 
-body > footer > ul > li > a#twitter-link:hover {
-    color: #1da1f2;
+body > footer > ul > li > a .feather.feather-linkedin:hover {
+    stroke: #0077B5;
+}
+
+body > footer > ul > li > a .feather.feather-twitter:hover {
+    stroke: #1da1f2;
 }
 
 body > footer > ul > li > a#mathjax-link:hover > img {
