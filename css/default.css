@@ -378,6 +378,7 @@ body > main button {
         border-radius: calc(var(--burger-side-length)/2);
 
         background-color: var(--nav-background-color);
+        color: var(--nav-link-color);
 
         z-index: 11;
     }
@@ -386,8 +387,6 @@ body > main button {
         display: flex;
         justify-content: center;
         align-items: center;
-
-        font-size: 1.5rem;
 
         cursor: pointer;
     }
