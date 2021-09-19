@@ -212,31 +212,8 @@ body > main > section #animated-code > * {
     flex-grow: 1;
 }
 
-#language-table-container .fa-react,
-#language-table-container .fa-java,
-#language-table-container .fa-python,
-#language-table-container .fa-js-square {
-    font-size: 1.5rem;
-}
-
 #language-table-container table img {
     height: 1.5rem;
-}
-
-#language-table-container .fa-react {
-    color: #00d8ff;
-}
-
-#language-table-container .fa-java {
-    color: #ffa518;
-}
-
-#language-table-container .fa-python {
-    color: #306998;
-}
-
-#language-table-container .fa-js-square {
-    color: #f7df1e;
 }
 
 #language-table-container table {

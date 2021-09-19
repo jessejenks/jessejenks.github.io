@@ -84,19 +84,12 @@ title: Resume
                     <tr>
                         {% for language in site.data.languages limit:num-columns offset:offset %}
                         <td>
-                            {% if language.type == "icon" %}
-                            <i class="{{ language.iconlink }}"></i>
-                            {% elsif language.type == "image" %}
                             <img
                                 align="bottom"
                                 title="{{ language.name }}"
                                 alt="{{ language.name }}"
                                 src="{{ language.iconlink }}"
-                                {% if language.style %}
-                                style="{{ language.style }}"
-                                {% endif %}
                             />
-                            {% endif %}
                         </td>
                         <td>
                             {% capture language-link %} {{ language.link }} {% endcapture %} {% capture language-name %}

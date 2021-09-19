@@ -1,91 +1,77 @@
 - name: React
-  type: icon
   link: https://reactjs.org
-  iconlink: "fab fa-react"
+  iconlink: /assets/logos/react.svg
 
-- name: Typescript
-  type: image
+- name: TypeScript
   link: https://www.typescriptlang.org/
-  iconlink: /assets/logos/typescript-logo.png
+  iconlink: /assets/logos/typescript.svg
+
+- name: JavaScript
+  link: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+  iconlink: /assets/logos/javascript.svg
 
 - name: Express
-  type: image
   link: https://expressjs.com/
-  iconlink: /assets/logos/expressjs-logo.svg
-  style: "-webkit-filter: invert(100%); filter: invert(100%);"
+  iconlink: /assets/logos/expressjs.svg
 
 - name: Go
-  type: image
   link: https://golang.org/
-  iconlink: /assets/logos/golang-logo.svg
+  iconlink: /assets/logos/golang.svg
 
 - name: Postgres
-  type: image
   link: https://www.postgresql.org/
-  iconlink: /assets/logos/postgres-logo.svg
-
-- name: Javascript
-  type: icon
-  link: https://developer.mozilla.org/en-US/docs/Web/JavaScript
-  iconlink: "fab fa-js-square"
-
-- name: Java
-  type: icon
-  link: https://java.com
-  iconlink: "fab fa-java"
+  iconlink: /assets/logos/postgres.svg
 
 - name: Python
-  type: icon
   link: https://python.org
-  iconlink: "fab fa-python"
+  iconlink: /assets/logos/python.svg
 
-- name: Haskell
-  type: image
-  link: https://www.haskell.org
-  iconlink: /assets/logos/haskell-logo.png
+- name: Java
+  link: https://java.com
+  iconlink: /assets/logos/java.svg
 
-- name: Prolog
-  type: image
-  link: http://www.swi-prolog.org
-  iconlink: /assets/logos/swipl-logo.png
+- name: Elm
+  link: https://elm-lang.org/
+  iconlink: /assets/logos/elm.svg
 
 - name: \(\LaTeX\)
-  type: image
   link: https://www.latex-project.org/
-  iconlink: /assets/logos/latex-logo.png
+  iconlink: /assets/logos/latex.svg
 
 - name: Processing
   type: image
   link: https://processing.org
-  iconlink: /assets/logos/processing-logo.png
+  iconlink: /assets/logos/processing.svg
 
 - name: P5js
-  type: image
   link: https://p5js.org
-  iconlink: /assets/logos/p5js.png
+  iconlink: /assets/logos/p5js.svg
 
 - name: D3js
-  type: image
   link: https://d3js.org
   iconlink: https://d3js.org/logo.svg
 
-- name: Flask
-  type: image
-  link: http://flask.pocoo.org
-  iconlink: /assets/logos/flask-logo.png
-  style: "-webkit-filter: invert(100%); filter: invert(100%);"
-
 - name: Jekyll
-  type: image
   link: https://jekyllrb.com
-  iconlink: /assets/logos/jekyll-logo.png
+  iconlink: /assets/logos/jekyll.png
+  
+# - name: Prolog
+#   type: image
+#   link: http://www.swi-prolog.org
+#   iconlink: /assets/logos/swipl.png
 
-- name: NumPy
-  type: image
-  link: http://www.numpy.org
-  iconlink: /assets/logos/numpy-logo.png
+# - name: Flask
+#   type: image
+#   link: http://flask.pocoo.org
+#   iconlink: /assets/logos/flask.png
+#   style: "-webkit-filter: invert(100%); filter: invert(100%);"
 
-- name: Seaborn
-  type: image
-  link: https://seaborn.pydata.org
-  iconlink: /assets/logos/seaborn-logo.png
+# - name: NumPy
+#   type: image
+#   link: http://www.numpy.org
+#   iconlink: /assets/logos/numpy.png
+
+# - name: Seaborn
+#   type: image
+#   link: https://seaborn.pydata.org
+#   iconlink: /assets/logos/seaborn.png
