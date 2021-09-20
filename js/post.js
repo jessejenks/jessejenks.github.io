@@ -1,9 +1,5 @@
-const footnoteLabels = document.querySelectorAll("a[aria-describedby=\"footnote-label\"]");
-const referenceLabels = document.querySelectorAll("a[aria-describedby=\"reference-label\"]");
 const backLinks = document.querySelectorAll("a[aria-label=\"Back to content\"]");
 
-addClickListeners(footnoteLabels);
-addClickListeners(referenceLabels);
 addClickListeners(backLinks);
 
 function addClickListeners(anchorNodes) {

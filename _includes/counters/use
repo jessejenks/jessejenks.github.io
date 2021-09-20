@@ -1,0 +1,39 @@
+<style>
+    /* https://www.sitepoint.com/accessible-footnotes-css/ */
+    .post {
+        counter-reset: {{ include.name  }};
+    }
+
+    .post section a[aria-describedby="{{ include.name }}-label"] {
+        counter-increment: {{ include.name }};
+
+        border: none;
+        text-decoration: none;
+        color: inherit;
+        outline: none;
+    }
+
+    .post section a[aria-describedby="{{ include.name }}-label"]::after {
+        content: '[' counter({{ include.name }}) ']';
+        color: {{ include.color }};
+
+        vertical-align: super;
+        font-size: 0.6rem;
+        margin-left: 2px;
+        text-decoration: underline;
+    }
+
+    .post section a[aria-describedby="{{ include.name }}-label"]:focus {
+        outline: thin dashed;
+        color: {{ include.color }};
+    }
+
+    .post section .{{ include.name }}:target {
+        border: 1px dashed {{ include.color }};
+    }
+</style>
+<script>
+window.addEventListener("load", () => {
+    addClickListeners(document.querySelectorAll("a[aria-describedby=\"{{ include.name }}-label\"]"));
+});
+</script>

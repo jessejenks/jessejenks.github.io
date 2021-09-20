@@ -1,0 +1,1 @@
+{% include counters/use name="footnote" color="var(--footnote-number-color)" %}

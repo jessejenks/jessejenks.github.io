@@ -1,0 +1,1 @@
+{% include counters/use name="reference" color="var(--reference-number-color)" %}

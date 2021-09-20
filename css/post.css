@@ -2,86 +2,19 @@
     margin-top: 1rem;
 }
 
-/* https://www.sitepoint.com/accessible-footnotes-css/ */
-.post {
-    counter-reset: footnotes references;
-}
-
-.post section a[aria-describedby="footnote-label"],
-.post section a[aria-describedby="reference-label"],
 .post section a[aria-label="Back to content"] {
     padding: 0;
-}
-
-.post section a[aria-describedby="footnote-label"] {
-    counter-increment: footnotes;
-
-    border: none;
-    text-decoration: none;
-    color: inherit;
-    outline: none;
-}
-
-.post section a[aria-describedby="reference-label"] {
-    counter-increment: references;
-
-    border: none;
-    text-decoration: none;
-    color: inherit;
-    outline: none;
-}
-
-.post section a[aria-describedby="footnote-label"]::after,
-.post section a[aria-describedby="reference-label"]::after {
-    vertical-align: super;
-    font-size: 0.6rem;
-    margin-left: 2px;
-    text-decoration: underline;
-}
-
-.post section a[aria-describedby="footnote-label"]::after {
-    content: '[' counter(footnotes) ']';
-    color: var(--footnote-number-color);
-}
-
-.post section a[aria-describedby="reference-label"]::after {
-    content: '[' counter(references) ']';
-    color: var(--reference-number-color);
-}
-
-.post section a[aria-describedby="footnote-label"]:focus,
-.post section a[aria-describedby="reference-label"]:focus {
-    outline: thin dashed;
-}
-
-.post section a[aria-describedby="footnote-label"]:focus {
-    outline-color: var(--footnote-number-color);
-}
-
-.post section a[aria-describedby="reference-label"]:focus {
-    outline-color: var(--reference-number-color);
-}
-
-.post section .footnotes ol,
-.post section .references ol {
-    margin-top: 0.5rem;
-}
-
-.post section .footnotes :target,
-.post section .references :target {
-    background-color: var(--footer-target-background-color);
-    border-radius: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    margin: 0.5rem 0;
-}
-
-.post section a[aria-label="Back to content"] {
     margin-left: 0.25rem;
 }
 
 .post section a[aria-label="Back to content"]::after {
-    content: '\21A9';
-    font-size: 0.8rem;
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23e8e8e8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 10 4 15 9 20'%3E%3C/polyline%3E%3Cpath d='M20 4v7a4 4 0 0 1-4 4H4'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.post section :target {
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    margin: 0.5rem 0;
 }
 
 .post .overflow-ellipsis {
