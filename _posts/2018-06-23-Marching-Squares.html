@@ -4,6 +4,8 @@ title: "Marching Squares"
 date: 2018-06-23
 tags: [math, animation]
 ---
+{% include references/use %}
+
 <figure>
 <img class="centered-image" src="/assets/marching_gifs/marching_squares_large.gif">
 </figure>
@@ -23,7 +25,7 @@ tags: [math, animation]
             	m &\mapsto m + n\\
             	n &\mapsto 2m + n
             \end{align}
-        \] giving use two sequences, one for {% include reference-link id="numerators" content='\(n\)' %} and one for {% include reference-link id="denominators" content='\(m\)' %}. \[
+        \] giving use two sequences, one for {% include references/link id="numerators" content='\(n\)' %} and one for {% include references/link id="denominators" content='\(m\)' %}. \[
             \begin{align}
             n &= \{1,3,7,17,41,99,239,577,\ldots\}\\
             m &= \{1,2,5,12,29,70,169,408,\ldots\}
@@ -56,12 +58,12 @@ tags: [math, animation]
                 {% capture numerators-link %}
                     {% include link href="https://oeis.org/A001333" content="sequence A001333" %}
                 {% endcapture %}
-                {% include reference id="numerators" content=numerators-link %}
+                {% include references/backlink id="numerators" content=numerators-link %}
 
                 {% capture denominators-link %}
                     {% include link href="https://oeis.org/A000129" content="sequence A000129" %}
                 {% endcapture %}
-                {% include reference id="denominators" content=denominators-link %}
+                {% include references/backlink id="denominators" content=denominators-link %}
             </ol>
         </footer>
     </section>

@@ -67,8 +67,8 @@
     --section-hovered-background-color: var(--palette-blue-2);
     --section-border-color: var(--palette-blue-3);
 
-    --footnote-number-color: var(--palette-sangria);
-    --reference-number-color: var(--palette-blue-6);
+    --footnote-number-color: var(--palette-blue-6);
+    --reference-number-color: var(--palette-pink-2);
 
     --footer-target-background-color: var(--palette-blue-3-semi-transparent);
 

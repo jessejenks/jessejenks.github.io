@@ -4,6 +4,9 @@ title: "Brainf*ck Turing Machine Interpreter"
 date: 2020-02-20
 tags: [computer science, interactive, turing machines, esolang]
 ---
+{% include footnotes/use %}
+{% include references/use %}
+
 <link href="https://fonts.googleapis.com/css?family=VT323&display=swap" rel="stylesheet">
 <style>
     figure#brainf-ck-instructions-container {
@@ -362,14 +365,14 @@ tags: [computer science, interactive, turing machines, esolang]
         </table>
         <caption>
             <p>Brainf*ck Keywords</p>
-            <p>Adapted from {% include reference-link id="esolangs-site" content="esolangs.org" %}</p>
+            <p>Adapted from {% include references/link id="esolangs-site" content="esolangs.org" %}</p>
         </caption>
     </figure>
 
     <p>
         Brainf*ck (or BF) is one of the most famous "esoteric" programming languages. Invented in 1993 by Urban
         M&uuml;ller, it was intentionally designed to be an extremely small language. The language consists of
-        {% include footnote-link
+        {% include footnotes/link
             id="keywords"
             content="only 8 keywords"
         %} meant to correspond to the behavior of a Turing machine. Every program starts on the first cell of an
@@ -377,7 +380,7 @@ tags: [computer science, interactive, turing machines, esolang]
         or right and increment or decrement the values in a cell. The most difficult part to get your head around is
         using the brackets (<code>[</code> and <code>]</code>) to repeat a block of code over and over again. But it is
         this ability to <em>conditionally</em> run a block of code which promotes BF from a language which just puts
-        values in cells to a {% include reference-link
+        values in cells to a {% include references/link
             id="proof-of-turing-completeness"
             content="full-fledged Turing-complete programming language"
         %}.
@@ -410,11 +413,8 @@ tags: [computer science, interactive, turing machines, esolang]
         </li>
 
         <li>
-            In my Recursion Theory class, my teacher {% include link
-                href="http://johannesmarti.com/"
-                content="Johannes Marti"
-            %} showed us a website which lets you play with Turing machines in a similar way. You can check it out at
-            {% include link
+            In my Recursion Theory class, my teacher showed us a website which lets you play with Turing machines in a
+            similar way. You can check it out at {% include link
                 href="https://turingmachinesimulator.com/"
                 content="turingmachinesimulator.com"
             %}.</p>
@@ -425,7 +425,7 @@ tags: [computer science, interactive, turing machines, esolang]
         <h3>Footnotes</h3>
         <hr>
         <ol>
-            {% include footnote
+            {% include footnotes/backlink
                 id="keywords"
                 content="Compare this to languages like Java or C which have dozens of keywords."
             %}
@@ -439,12 +439,12 @@ tags: [computer science, interactive, turing machines, esolang]
             {% capture esolangs-link %}
                 {% include link href="https://esolangs.org/wiki/Brainfuck#Language_overview" content="esolangs.org" %} is a great rabbit hole of bizarre programming languages.
             {% endcapture %}
-            {% include reference id="esolangs-site" content=esolangs-link %}
+            {% include references/backlink id="esolangs-site" content=esolangs-link %}
 
             {% capture proof-of-turing-completeness-link %}
                 Daniel B Cristofani has proven directly that brainf*ck is Turing complete by effectively {% include link href="http://www.hevanet.com/cristofd/brainfuck/utm.b" content="implementing a universal Turing machine in brainf*ck" %}. Based on an {% include link href="https://www.sciencedirect.com/science/article/pii/S0304397596000771" content="article by Yurii Rogozhin" %}.
             {% endcapture %}
-            {% include reference id="proof-of-turing-completeness" content=proof-of-turing-completeness-link %}
+            {% include references/backlink id="proof-of-turing-completeness" content=proof-of-turing-completeness-link %}
         </ol>
     </footer>
 </section>

@@ -4,6 +4,9 @@ title: "Binary Sequences"
 date: 2016-11-22
 tags: [math]
 ---
+{% include footnotes/use %}
+{% include references/use %}
+
 <style type="text/css">
     #input-sequence,
     #generate-sequence-button {
@@ -66,7 +69,7 @@ $(function() {
     <h2>Maximally Unpredictable Sequences</h2>
     <hr>
 
-    <p>Recently, my {% include link href="http://buzzard.pugetsound.edu" content="abstract algebra teacher" %} mentioned a very interesting class of binary sequences called "maximally unpredictable" sequences, so I decided to make a simple generator. Hit <code>Generate Sequence</code> if you want to see the {% include link href="https://oeis.org/A038219" content="original sequence (A038219)" %} described in {% include reference-link id="ehrenfeucht-mycielski-paper" content="Ehrenfeucht and Mycielski's paper" %}, or type in any binary sequence and this will generate the "most unpredictable" sequence based off of your input.</p>
+    <p>Recently, my {% include link href="http://buzzard.pugetsound.edu" content="abstract algebra teacher" %} mentioned a very interesting class of binary sequences called "maximally unpredictable" sequences, so I decided to make a simple generator. Hit <code>Generate Sequence</code> if you want to see the {% include link href="https://oeis.org/A038219" content="original sequence (A038219)" %} described in {% include references/link id="ehrenfeucht-mycielski-paper" content="Ehrenfeucht and Mycielski's paper" %}, or type in any binary sequence and this will generate the "most unpredictable" sequence based off of your input.</p>
 
     <figure>
         <input type="text" id="input-sequence" placeholder="010">
@@ -82,7 +85,7 @@ $(function() {
         <script src="/js/binary-sequences/max-unpredictable.js"></script>
     </figure>
 
-    <p>If you were given the first 10 terms of a sequence of 1s and 0s, how would you try to predict what the 11th term in is? One approach is to try and find the {% include footnote-link id="chunk" content="longest chunk from the end" %} which has appeared before. For example, take these ten terms \[0100110101.\] If we look at the last three terms \(101\), the last time this pattern occurred was in the 6th through 8th positions. This is the longest chunk from the end which has appeared sometime earlier in the sequence so our guess is whatever value is in the 9th position, \(0\). In order to make a sequence which was as hard as possible to guess, we flip that scheme on its head and say the next term in this sequence is the <em>opposite</em> of whatever your guess would have been! Hence this sequence is "maximally unpredictable".</p>
+    <p>If you were given the first 10 terms of a sequence of 1s and 0s, how would you try to predict what the 11th term in is? One approach is to try and find the {% include footnotes/link id="chunk" content="longest chunk from the end" %} which has appeared before. For example, take these ten terms \[0100110101.\] If we look at the last three terms \(101\), the last time this pattern occurred was in the 6th through 8th positions. This is the longest chunk from the end which has appeared sometime earlier in the sequence so our guess is whatever value is in the 9th position, \(0\). In order to make a sequence which was as hard as possible to guess, we flip that scheme on its head and say the next term in this sequence is the <em>opposite</em> of whatever your guess would have been! Hence this sequence is "maximally unpredictable".</p>
 
     <p>It would be interesting to explore different sequences where the next term is defined by flipping various guessing schemes on their heads.</p>
 </section>
@@ -202,7 +205,7 @@ B.show(layout='circular', vertex_size=800, edge_colors=colors)
         <h3>Footnotes</h3>
         <hr>
         <ol>
-            {% include footnote
+            {% include footnotes/backlink
                 id="chunk"
                 content="More technically, the longest suffix which has appeared at least once before."
             %}
@@ -213,7 +216,7 @@ B.show(layout='circular', vertex_size=800, edge_colors=colors)
         <h3>References</h3>
         <hr>
         <ol>
-            {% include reference
+            {% include references/backlink
                 id="ehrenfeucht-mycielski-paper"
                 content="Ehrenfeucht, A., & Mycielski, J. (1992). <em>A Pseudorandom Sequence -- How Random Is It?</em> The American Mathematical Monthly, 99(4), 373-375. doi:10.2307/2324917"
             %}
