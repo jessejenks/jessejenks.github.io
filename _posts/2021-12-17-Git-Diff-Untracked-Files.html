@@ -1,0 +1,357 @@
+---
+layout: post
+title: Git Diffs of Untracked Files
+date: 2021-12-17
+tags:
+  computer science
+  software engineering
+  git
+---
+<style>
+    .hidden {
+        display: none;
+    }
+
+    .copied {
+        color: var(--text-color);
+        animation-name: copied-animation;
+        animation-duration: 0.5s;
+    }
+
+    @keyframes copied-animation {
+        0% {
+            color: green;
+        }
+        100% {
+            color: var(--text-color);
+        }
+    }
+
+    .row { width: 100%; display: table; table-layout: fixed; }
+
+    .col { display: table-cell; }
+
+    .col.left {
+        padding-right: 1rem;
+        text-align: right;
+        width: 30%;
+    }
+
+    .col.left code {
+        white-space: pre;
+    }
+
+    .col.right {
+        width: 70%;
+    }
+
+    .cyan {
+        color: var(--nord8);
+        font-weight: bold;
+    }
+
+    .purple {
+        color: var(--nord15);
+        font-weight: bold;
+    }
+
+    .red {
+        color: var(--nord11);
+        font-weight: bold;
+    }
+
+    .green {
+        color: var(--nord14);
+        font-weight: bold;
+    }
+
+    .grey {
+        color: var(--nord9);
+    }
+</style>
+
+<script>
+    function copy(id) {
+        const btn = document.querySelector("#copy-" + id);
+        btn.classList.add("copied");
+        const elt = document.querySelector("#" + id);
+        if (!Boolean(elt)) {
+            return;
+        }
+        navigator.clipboard.writeText(elt.innerText);
+        new Promise((resolve) => window.setTimeout(resolve, 1000)).then(() => {btn.classList.remove("copied");})
+    }
+</script>
+
+<section>
+    <h2>Diffs</h2>
+
+    <p>
+        TL;DR: I like the nice output from git diff better than the native diff command, but how do I convince git to
+        let me do this for files which aren't source controlled?
+    </p>
+
+    <p>
+        I like to wrap this in a shell function I call <code>fdiff</code>.
+    </p>
+
+<code class="hidden" id="full-command">fdiff () {
+    if (( $# < 2 ))
+    then
+        echo "fdiff usage: pass two Files to see their DIFFerence"
+        echo "\x1b[100m"
+        echo "\t                           "
+        echo "\t  > fdiff old.txt new.txt  "
+        echo "\t  \x1b[1m--- old = old.txt        "
+        echo "\t  \x1b[1m+++ new = new.txt\x1b[0m\x1b[100m        "
+        echo "\t  \x1b[36m@@ -1 +1 @@\x1b[39m              "
+        echo "\t  \x1b[31m-This is the old file    "
+        echo "\t  \x1b[32m+This is the new file    "
+        echo "\t                           "
+        echo "\x1b[0m"
+        echo "accepts all options that git diff does, e.g. --word-diff -U0"
+        echo "\x1b[100m"
+        echo "\t                                           "
+        echo "\t  > fdiff old.txt new.txt --word-diff -U0  "
+        echo "\t  \x1b[1m--- old = old.txt                        "
+        echo "\t  \x1b[1m+++ new = new.txt\x1b[0m\x1b[100m                        "
+        echo "\t  \x1b[36m@@ -1 +1 @@\x1b[39m                              "
+        echo "\t  This is the \x1b[31m[-old-]\x1b[32m{+new+}\x1b[39m file          "
+        echo "\t                                           "
+        echo "\x1b[0m"
+    else
+        git --no-pager diff --no-index --color=always --src-prefix="old = " --dst-prefix="new = " ${@:3} -- $1 $2
+    fi
+}</code>
+
+    <button type="button" id="copy-full-command" onclick="copy('full-command')">Copy</button>
+
+{% highlight bash %}
+fdiff () {
+    if (( $# < 2 ))
+    then
+        echo "fdiff usage: pass two Files to see their DIFFerence"
+        echo "\x1b[100m"
+        echo "\t                           "
+        echo "\t  > fdiff old.txt new.txt  "
+        echo "\t  \x1b[1m--- old = old.txt        "
+        echo "\t  \x1b[1m+++ new = new.txt\x1b[0m\x1b[100m        "
+        echo "\t  \x1b[36m@@ -1 +1 @@\x1b[39m              "
+        echo "\t  \x1b[31m-This is the old file    "
+        echo "\t  \x1b[32m+This is the new file    "
+        echo "\t                           "
+        echo "\x1b[0m"
+        echo "accepts all options that git diff does, e.g. --word-diff -U0"
+        echo "\x1b[100m"
+        echo "\t                                           "
+        echo "\t  > fdiff old.txt new.txt --word-diff -U0  "
+        echo "\t  \x1b[1m--- old = old.txt                        "
+        echo "\t  \x1b[1m+++ new = new.txt\x1b[0m\x1b[100m                        "
+        echo "\t  \x1b[36m@@ -1 +1 @@\x1b[39m                              "
+        echo "\t  This is the \x1b[31m[-old-]\x1b[32m{+new+}\x1b[39m file          "
+        echo "\t                                           "
+        echo "\x1b[0m"
+    else
+        git --no-pager diff --no-index --color=always --src-prefix="old = " --dst-prefix="new = " ${@:3} -- $1 $2
+    fi
+}
+{% endhighlight %}
+
+    <p>
+        Here's a more minimal version
+    </p>
+
+<code class="hidden" id="minimal-command">fdiff () {
+    git --no-pager diff --no-index ${@:3} -- $1 $2
+}</code>
+
+    <button type="button" id="copy-minimal-command" onclick="copy('minimal-command')">Copy</button>
+
+{% highlight bash %}
+fdiff () {
+    git --no-pager diff --no-index ${@:3} -- $1 $2
+}
+{% endhighlight %}
+</section>
+
+<section>
+    <h2>Explanation</h2>
+
+    <p>
+        Breaking this down, the most important pieces are
+    </p>
+
+    <div class="row">
+        <div class="col left"><code>git</code></div>
+        <div class="col right">The <code>git</code> command.</div>
+    </div>
+
+    <div class="row">
+        <div class="col left"><code>diff</code></div>
+        <div class="col right">The <code>diff</code> command for <code>git</code>.</div>
+    </div>
+
+    <div class="row">
+        <div class="col left"><code>--no-index</code></div>
+        <div class="col right">This flag is the magic sauce that lets us use git diff with files that are not source controlled.</div>
+    </div>
+
+    <div class="row">
+        <div class="col left"><code>-- $1 $2</code></div>
+        <div class="col right">These are just passing the filepaths down to git so it knows where to look.</div>
+    </div>
+
+    <p>
+        Nice extra features.
+    </p>
+
+    <div class="row">
+        <div class="col left"><code>--no-pager</code></div>
+        <div class="col right">Tells git to print the output to stdout instead of opening a paging program. Note: this flag must come <em>before</em> diff</div>
+    </div>
+
+    <div class="row">
+        <div class="col left"><code>--color=always</code></div>
+        <div class="col right">Preserves the diff colors when you pipe to other programs, e.g. grep which you may not want!</div>
+    </div>
+
+    <div class="row">
+        <div class="col left"><code>--src-prefix="old = "</code></div>
+        <div class="col right"></div>
+    </div>
+
+    <div class="row">
+        <div class="col left"><code>--dst-prefix="new = "</code></div>
+        <div class="col right">Tells git to display the file names as "old" and "new" instead of "a" and "b". Very much a personal preference.</div>
+    </div>
+
+    <div class="row">
+        <div class="col left"><code>${@:3}</code></div>
+        <div class="col right">Allows you to pass further arguments to git diff. See below for some examples.</div>
+    </div>
+
+
+    <p>
+        You can read about all of the possible flags that can be passed to <code>git diff</code> by consulting <code>git help diff</code>.
+    </p>
+</section>
+
+<section>
+    <h2>Example Usage</h2>
+
+    <p>
+        Here we'll use the following two files, <code>old.txt</code> and <code>new.txt</code>.
+    </p>
+
+<figure class="highlight">
+<pre><code>This is the old text.
+</code></pre>
+</figure>
+
+<figure class="highlight">
+<pre><code>This is the new text.
+</code></pre>
+</figure>
+
+    <h3>Basic Usage</h3>
+
+    <p>
+        Running <code>fdiff</code> on these files produces output like this.
+    </p>
+
+<figure class="highlight"><pre>
+<code> > <span class="grey">fdiff old.txt new.txt</span>
+--- old = old.txt
++++ new = new.txt
+<span class="cyan">@@ -1 +1 @@</span>
+<span class="red">-This is the old text.</span>
+<span class="green">+This is the new text.</span>
+</code></pre></figure>
+
+
+    <h3>Diffs on words</h3>
+
+    <p>
+        For day-to-day usage, I find <code>--word-diff</code> or <code>--color-words</code> the most useful.
+    </p>
+
+
+<figure class="highlight"><pre>
+<code> > <span class="grey">fdiff old.txt new.txt --word-diff</span>
+--- old = old.txt
++++ new = new.txt
+<span class="cyan">@@ -1 +1 @@</span>
+This is the <span class="red">[-old-]</span><span class="green">{+new+}</span> text.
+</code></pre></figure>
+
+<figure class="highlight"><pre>
+<code> > <span class="grey">fdiff old.txt new.txt --color-words</span>
+--- old = old.txt
++++ new = new.txt
+<span class="cyan">@@ -1 +1 @@</span>
+This is the <span class="red">old</span><span class="green">new</span> text.
+</code></pre></figure>
+
+    <h3>Summarizing Diffs</h3>
+
+    <p>
+        If you just want an overview of diffs, you can use flags like <code>--compact-summary</code> or
+        <code>--numstat</code>
+    </p>
+
+<figure class="highlight"><pre>
+<code> > <span class="grey">fdiff old.txt new.txt --compact-summary</span>
+old.txt => new.txt | 2 <span class="green">+</span><span class="red">-</span>
+1 file changed, 1 insertion(+), 1 deletion(-)
+</code></pre></figure>
+
+<figure class="highlight"><pre>
+<code> > <span class="grey">fdiff old.txt new.txt --numstat</span>
+1    1    old.txt => new.txt
+</code></pre></figure>
+
+
+    <h3>Seeing Where Text Moved</h3>
+
+    <p>
+        If you're writing a longer document and you want to see where pieces have moved, you can use
+        <code>--color-moved=plain</code>. Here I'm no longer using our previous example files.
+    </p>
+
+<figure class="highlight"><pre>
+<code> > <span class="grey">fdiff old.txt new.txt --color-moved=plain</span>
+--- old = old.txt
++++ new = new.txt
+<span class="cyan">@@ -1,7 +1,7 @@</span>
+<span class="purple">-Lorem ipsum dolor sit amet, consectetur adipiscing elit,</span>
+sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ac orci phasellus egestas tellus rutrum tellus pellentesque eu tincidunt.
+Eget magna fermentum iaculis eu non diam phasellus.
+<span class="cyan">+Lorem ipsum dolor sit amet, consectetur adipiscing elit,</span>
+Feugiat nibh sed pulvinar proin gravida hendrerit lectus a.
+Vulputate eu scelerisque felis imperdiet.
+Amet volutpat consequat mauris nunc congue.
+</code></pre></figure>
+
+    <h3>Context</h3>
+
+    <p>
+        You can specify the number of lines of context (lines before and after) you want with the <code>-U</code> flag.
+        So for 0 lines of context, use <code>-U0</code>. For 10 lines, <code>-U10</code>, etc. I often use this in
+        combination with <code>--word-diff</code>.
+    </p>
+
+<figure class="highlight"><pre>
+<code> > <span class="grey">fdiff old.txt new.txt --word-diff -U1</span>
+--- old = old.txt
++++ new = new.txt
+<span class="cyan">@@ -1,3 +1,3 @@</span>
+Lorem
+<span class="red">[-ipsum-]</span><span class="green">{+magna+}</span>
+dolor
+<span class="cyan">@@ -6,3 +6,3 @@</span> amet,
+consectetur
+<span class="red">[-adipiscing-]</span><span class="green">{+magna+}</span>
+elit,
+</code></pre></figure>
+</section>

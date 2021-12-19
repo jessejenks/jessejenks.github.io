@@ -79,7 +79,8 @@
     padding: 0.5rem;
     border: 1px solid var(--palette-blue-3);
     border-radius: 0.25rem;
-    overflow: scroll;
+    overflow-x: scroll;
+    overflow-y: hidden;
 }
 
 .post figcaption {
