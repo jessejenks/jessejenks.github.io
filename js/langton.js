@@ -28,6 +28,7 @@ function setup() {
 	grid = new Uint8Array(grid_size*grid_size);
 	// left = true
 	rule_map = {
+		'LR':[true, false],
 		'RLL':[false,true,true],
 		'RL':[false,true],
 		'LRL':[true,false,true],
