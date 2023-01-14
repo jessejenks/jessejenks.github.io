@@ -76,6 +76,11 @@
     --terminal-background: #1f1f1f;
 }
 
+@font-face {
+    font-family: "Quicksand";
+    src: url("/fonts/Quicksand-VariableFont_wght.ttf")format("truetype");
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -101,9 +106,9 @@ body {
     font-size: 16px;
     color: var(--text-color);
 }
-body button {
+/* body button {
     font-family: 'Quicksand', sans-serif;
-}
+} */
 
 body > header {
     background-color: var(--nav-background-color);
