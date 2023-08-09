@@ -10,6 +10,10 @@
   link: https://developer.mozilla.org/en-US/docs/Web/JavaScript
   iconlink: /assets/logos/javascript.svg
 
+- name: Elm
+  link: https://elm-lang.org/
+  iconlink: /assets/logos/elm.svg
+
 - name: Express
   link: https://expressjs.com/
   iconlink: /assets/logos/expressjs.svg
@@ -29,10 +33,6 @@
 - name: Java
   link: https://java.com
   iconlink: /assets/logos/java.svg
-
-- name: Elm
-  link: https://elm-lang.org/
-  iconlink: /assets/logos/elm.svg
 
 - name: \(\LaTeX\)
   link: https://www.latex-project.org/
