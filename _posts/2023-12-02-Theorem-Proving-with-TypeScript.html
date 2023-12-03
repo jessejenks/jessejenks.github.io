@@ -115,7 +115,7 @@ const examples19_7 =
     <h2>The Details of the Translation</h2>
 
     <p>
-        There are a couple of ways of defining True and False and I did not follow Dapper Mink/Quentin Januel's approach, of defining false and chose the builtin type <code>never</code>, but the effect is the same, it is a type which has no associated terms. Sometimes called an "empty" type. But Dapper Mink's definition shows that there are many equivalent ways of producing types with no terms. In their case, they used a recursive type, but you can also do this by intersecting non-overlapping types, like <code>number & string</code>.
+        There are a couple of ways of defining <code>True</code> and <code>False</code>, so I did not follow Dapper Mink/Quentin Januel's approach  exactly. I used the built-in type <code>never</code> for <code>False</code>, but the effect is the same, it is a type which has no associated terms, sometimes called an "empty" type. But Dapper Mink's definition shows that there are many equivalent ways of producing types with no terms. In their case, they used a recursive type, but you can also do this by intersecting non-overlapping types, like <code>number & string</code>.
     </p>
 
     <p>
