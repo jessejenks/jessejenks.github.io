@@ -105,10 +105,8 @@
 }
 
 .post blockquote {
-    white-space: pre-line;
-    width: fit-content;
-    padding: 2rem;
-    margin-left: 10%;
+    padding: 1rem;
+    margin: 0 5rem;
     background-color: var(--palette-blue-2);
     border-radius: 0.25rem;
 }

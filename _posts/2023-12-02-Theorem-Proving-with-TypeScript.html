@@ -1,0 +1,138 @@
+---
+layout: post
+title: Theorem Proving with TypeScript
+date: 2023-12-02
+tags:
+  computer science
+  proof theory
+  logic
+  typescript
+---
+<style>
+    .keyword {color: var(--keyword);}
+    .typeVar {color: var(--name-attribute);}
+    .op {color: var(--operator);}
+    .punc {color: var(--punctuation);}
+</style>
+
+<section>
+    <h2>Inspiration</h2>
+
+    <p>
+        I was recently {% include link href="https://xkcd.com/356" content="nerd sniped" %} by this video, {% include link href="https://www.youtube.com/watch?v=i-hRpYiNwBw" content='<em>The Proof Assistant You Already Know</em>' %} on using TypeScript's type system as a theorem prover. After seeing it, I of course wanted to take this to the next level, and implement a theorem proving language that transforms your proofs into TypeScript, and then compiles that to check the correctness of your proof.
+    </p>
+
+    <p>
+        You can check out the code {% include link href="https://github.com/jessejenks/proof-assistant-you-know/" content="here" %}. Eventually I'll host an interactive version on this site and you'll be able to play with it online.
+    </p>
+</section>
+
+<section>
+    <h2>Basics of Curry-Howard-Lambek</h2>
+    <p>
+        How could a type system be used in this way? This is one example of the Curry-Howard-Lambek (CHL) correspondence. Originally, this was a theorem which said that the simply typed lambda calculus corresponds precisely to intuitionistic propositional logic which in turn corresponds to cartesian closed categories.
+    </p>
+
+    <p>
+        Or put another way,
+    </p>
+
+    <blockquote cite="https://types.pl/@amy/111343305432126791">
+        lambda calculus is when your category is cartesian closed and the more cartesian closed there are, the more lambda calculus it is
+        <br/>
+        - {% include link href="https://types.pl/@amy/111343305432126791" content="<em>Amélia Liao, 2022</em>" %}
+    </blockquote>
+
+    <p>
+        The CHL correspondence is now treated as a more general concept about how to interpret different logics as type systems and categories. This turns out to be powerful because sometimes you can translate a problem that might be difficult to solve in one context, and turn it into an easy in another.
+    </p>
+
+    <p>
+        A phrase that is often associated with Curry-Howard-Lambek is "Propositions as Types". There is {% include link href="https://www.youtube.com/watch?v=IOiZatlZtGU" content="a great talk by Philip Wadler by the same name" %}. For our purposes, the most interesting consequence of this correspondence is that we can translate proofs into (a restricted portion of) TypeScript programs!
+    </p>
+</section>
+
+<section>
+    <h2>Examples</h2>
+
+    <p>
+        My goal was to model intuitionistic propositional logic. Here is a proof of \(\lnot\lnot(P \lor \lnot P)\) from example 19.7 from pg. 238 of the open logic project's {% include link href="https://builds.openlogicproject.org/courses/what-if/" content='"what if" revision 8be15d6 (2021-07-11)' %}</p>
+<figure class="highlight"><pre><code><span class="keyword">theorem</span> examples19_7 <span class="punc">:</span> <span class="op">~</span><span class="op">~</span><span class="punc">(</span><span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span><span class="punc">)</span>
+    <span class="keyword">assume</span> g <span class="punc">:</span> <span class="op">~</span><span class="punc">(</span><span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span><span class="punc">)</span> <span class="punc">{</span>
+        <span class="keyword">have</span> h1 <span class="punc">:</span> <span class="typeVar">P</span> <span class="op">=></span> <span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span> <span class="keyword">by</span> <span class="keyword">assume</span> <span class="typeVar">P</span> { <span class="keyword">by</span> orIntroRight <span class="typeVar">P</span> <span class="punc">}</span>
+        <span class="keyword">have</span> h2 <span class="punc">:</span> <span class="op">~</span><span class="typeVar">P</span> <span class="op">=></span> <span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span> <span class="keyword">by</span> <span class="keyword">assume</span> <span class="op">~</span><span class="typeVar">P</span> { <span class="keyword">by</span> orIntroLeft <span class="op">~</span><span class="typeVar">P</span> <span class="punc">}</span>
+        <span class="keyword">have</span> k <span class="punc">:</span> <span class="op">~</span><span class="typeVar">P</span> <span class="keyword">by</span> <span class="keyword">assume</span> <span class="typeVar">P</span> {
+            <span class="keyword">have</span> c <span class="punc">:</span> <span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span> <span class="keyword">by</span> h1 <span class="typeVar">P</span>
+            <span class="keyword">by</span> g c
+        <span class="punc">}</span>
+        <span class="keyword">have</span> l <span class="punc">:</span> <span class="op">~</span><span class="op">~</span><span class="typeVar">P</span> <span class="keyword">by</span> <span class="keyword">assume</span> <span class="op">~</span><span class="typeVar">P</span> {
+            <span class="keyword">have</span> c <span class="punc">:</span> <span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span> <span class="keyword">by</span> h2 <span class="op">~</span><span class="typeVar">P</span>
+            <span class="keyword">by</span> g c
+        <span class="punc">}</span>
+        <span class="keyword">by</span> l k
+    }</code></pre></figure>
+
+    <p>
+        Here's what that gets translated into
+    </p>
+
+{% highlight typescript %}
+const examples19_7 =
+    <P>(): Not<Not<Or<P, Not<P>>>> =>
+    (g: Not<Or<P, Not<P>>>) => {
+        const h1: Impl<P, Or<P, Not<P>>> = (p0: P) => orIntroRight(p0);
+        const h2: Impl<Not<P>, Or<P, Not<P>>> = (Not_p0_: Not<P>) => orIntroLeft(Not_p0_);
+        const k: Not<P> = (p0: P) => {
+            const c: Or<P, Not<P>> = h1(p0);
+            return g(c);
+        };
+        const l: Not<Not<P>> = (Not_p0_: Not<P>) => {
+            const c: Or<P, Not<P>> = h2(Not_p0_);
+            return g(c);
+        };
+        return l(k);
+    };
+{% endhighlight %}
+    <p>
+        Not very easy to read, but a pretty direct translation of the original proof. (I matched indentation to make this clearer.)
+    </p>
+
+    <p>
+        One interesting thing you'll notice is that we can <em>generate</em> parameter names from the propositions themselves. This is taking advantage the fact that in a propositional logic we have no variables, while in say first-order logic, we would need to be careful to make sure \(\forall x\, P(x)\) and \(\forall y\, P(y)\) are treated as equivalent. This is usually called \(\alpha\)-equivalence.
+    </p>
+
+    <p>
+        This might also remind you of \(P\lor\lnot P\). If you know something about intuitionistic logic, you'll know that this is not an axiom, while in classical logic it is. In fact, it is <em>impossible</em> to prove \(P\lor\lnot P\) in the intuitionistic propositional logic.
+    </p>
+
+    <p>
+        Since intuitionistic propositional logic is often presented as classical logic minus some axioms, it can be easy to think that intuitionistic logic is "weaker", in the sense that there are "fewer" theorems you can prove. But since there are infinitely many theorems, this is not so straightforward. In fact, If a formula \(\varphi\) is provable in classical logic, then \(\lnot\lnot\varphi\) is provable in intuitionistic logic. There are many more interesting connections to explore, but this post will get too long if I spend much more time on this.
+    </p>
+</section>
+
+
+<section>
+    <h2>The Details of the Translation</h2>
+
+    <p>
+        There are a couple of ways of defining True and False and I did not follow Dapper Mink/Quentin Januel's approach, of defining false and chose the builtin type <code>never</code>, but the effect is the same, it is a type which has no associated terms. Sometimes called an "empty" type. But Dapper Mink's definition shows that there are many equivalent ways of producing types with no terms. In their case, they used a recursive type, but you can also do this by intersecting non-overlapping types, like <code>number & string</code>.
+    </p>
+
+    <p>
+        To see the full list of the available rules of inference and example theorems, see the {% include link href="https://github.com/jessejenks/proof-assistant-you-know/blob/main/examples/basic.tsp" content="basic examples files" %}.
+    </p>
+
+    <h3>Future Work</h3>
+    <p>
+        I would like to add the ability to explicitly switch to using classical reasoning, similar to using <code>open classical</code> in {% include link href="https://lean-lang.org/" content="Lean" %}.
+    </p>
+
+    <p>
+        One thing I could never quite get to work was being able to reference one theorem in another theorem. I won't go into all the different approaches I tried, but basically the issue is that TypeScript's type inference is not amazing, so you need to provide explicit type paramers, and this gets quite complicated. It's possible that if I targeted {% include link href="https://flow.org" content="Flow" %} instead, I might be able to get this to work. But playing around with this idea for a little bit, it doesn't appear I would get this for free.
+    </p>
+
+    <h3>What About Other Languages?</h3>
+    <p>
+        A more obvious choice of language to target would be a functional one, like Elm or Haskell. While it is slightly easier to implement things this way, I wanted a more portable compiler. TypeScript is written in TypeScript, while Elm is written in Haskell, and I assume at this point GHC is also written in Haskell. Plus I wanted to keep it in the spirit of the original video.
+    </p>
+</section>
