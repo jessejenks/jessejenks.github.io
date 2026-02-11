@@ -19,7 +19,7 @@ tags:
     <h2>Inspiration</h2>
 
     <p>
-        I was recently {% include link href="https://xkcd.com/356" content="nerd sniped" %} by this video, {% include link href="https://www.youtube.com/watch?v=i-hRpYiNwBw" content='<em>The Proof Assistant You Already Know</em>' %} on using TypeScript's type system as a theorem prover. After seeing it, I of course wanted to take this to the next level, and implement a theorem proving language that transforms your proofs into TypeScript, and then compiles that to check the correctness of your proof.
+        I was recently {% include link href="https://xkcd.com/356" content="nerd sniped" %} by this video, {% include link href="https://www.youtube.com/watch?v=i-hRpYiNwBw" content='<em>The Proof Assistant You Already Know</em>' %} by Quentin Januel on using TypeScript's type system as a theorem prover. After seeing it, I of course wanted to take this to the next level, and implement a theorem proving language that transforms your proofs into TypeScript, and then compiles that to check the correctness of your proof.
     </p>
 
     <p>
@@ -57,7 +57,7 @@ tags:
 
     <p>
         My goal was to model intuitionistic propositional logic. Here is a proof of \(\lnot\lnot(P \lor \lnot P)\) from example 19.7 from pg. 238 of the open logic project's {% include link href="https://builds.openlogicproject.org/courses/what-if/" content='"what if" revision 8be15d6 (2021-07-11)' %}</p>
-<figure class="highlight"><pre><code><span class="keyword">theorem</span> examples19_7 <span class="punc">:</span> <span class="op">~</span><span class="op">~</span><span class="punc">(</span><span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span><span class="punc">)</span>
+<figure class="highlight"><pre><code><span class="keyword">theorem</span> example19_7 <span class="punc">:</span> <span class="op">~</span><span class="op">~</span><span class="punc">(</span><span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span><span class="punc">)</span>
     <span class="keyword">assume</span> g <span class="punc">:</span> <span class="op">~</span><span class="punc">(</span><span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span><span class="punc">)</span> <span class="punc">{</span>
         <span class="keyword">have</span> h1 <span class="punc">:</span> <span class="typeVar">P</span> <span class="op">=></span> <span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span> <span class="keyword">by</span> <span class="keyword">assume</span> <span class="typeVar">P</span> { <span class="keyword">by</span> orIntroRight <span class="typeVar">P</span> <span class="punc">}</span>
         <span class="keyword">have</span> h2 <span class="punc">:</span> <span class="op">~</span><span class="typeVar">P</span> <span class="op">=></span> <span class="typeVar">P</span> <span class="op">|</span> <span class="op">~</span><span class="typeVar">P</span> <span class="keyword">by</span> <span class="keyword">assume</span> <span class="op">~</span><span class="typeVar">P</span> { <span class="keyword">by</span> orIntroLeft <span class="op">~</span><span class="typeVar">P</span> <span class="punc">}</span>
@@ -77,17 +77,16 @@ tags:
     </p>
 
 {% highlight typescript %}
-const examples19_7 =
-    <P>(): Not<Not<Or<P, Not<P>>>> =>
+const example19_7 = <P>(): Not<Not<Or<P, Not<P>>>> =>
     (g: Not<Or<P, Not<P>>>) => {
         const h1: Impl<P, Or<P, Not<P>>> = (p0: P) => orIntroRight(p0);
-        const h2: Impl<Not<P>, Or<P, Not<P>>> = (Not_p0_: Not<P>) => orIntroLeft(Not_p0_);
+        const h2: Impl<Not<P>, Or<P, Not<P>>> = (not_p0_: Not<P>) => orIntroLeft(not_p0_);
         const k: Not<P> = (p0: P) => {
             const c: Or<P, Not<P>> = h1(p0);
             return g(c);
         };
-        const l: Not<Not<P>> = (Not_p0_: Not<P>) => {
-            const c: Or<P, Not<P>> = h2(Not_p0_);
+        const l: Not<Not<P>> = (not_p0_: Not<P>) => {
+            const c: Or<P, Not<P>> = h2(not_p0_);
             return g(c);
         };
         return l(k);
@@ -102,7 +101,7 @@ const examples19_7 =
     </p>
 
     <p>
-        This might also remind you of \(P\lor\lnot P\). If you know something about intuitionistic logic, you'll know that this is not an axiom, while in classical logic it is. In fact, it is <em>impossible</em> to prove \(P\lor\lnot P\) in the intuitionistic propositional logic.
+        This might also remind you of the so-called <strong>Law of Excluded Middle</strong> \(P\lor\lnot P\). If you know something about intuitionistic logic, you'll know that this is not an axiom, while in classical logic it is. In fact, it is <em>impossible</em> to prove \(P\lor\lnot P\) in the intuitionistic propositional logic.
     </p>
 
     <p>
@@ -115,16 +114,20 @@ const examples19_7 =
     <h2>The Details of the Translation</h2>
 
     <p>
-        There are a couple of ways of defining <code>True</code> and <code>False</code>, so I did not follow Dapper Mink/Quentin Januel's approach  exactly. I used the built-in type <code>never</code> for <code>False</code>, but the effect is the same, it is a type which has no associated terms, sometimes called an "empty" type. But Dapper Mink's definition shows that there are many equivalent ways of producing types with no terms. In their case, they used a recursive type, but you can also do this by intersecting non-overlapping types, like <code>number & string</code>.
+        There are a couple of ways of defining <code>True</code> and <code>False</code>, so I did not follow Quentin Januel's approach  exactly. I used the built-in type <code>never</code> for <code>False</code>, but the effect is the same, it is a type which has no associated terms, sometimes called an "empty" type. But Dapper Mink's definition shows that there are many equivalent ways of producing types with no terms. In their case, they used a recursive type, but you can also do this by intersecting non-overlapping types, like <code>number & string</code>.
     </p>
 
     <p>
-        To see the full list of the available rules of inference and example theorems, see the {% include link href="https://github.com/jessejenks/proof-assistant-you-know/blob/main/examples/basic.tsp" content="basic examples files" %}.
+        To see the full list of the available rules of inference and example theorems, see the {% include link href="https://github.com/jessejenks/proof-assistant-you-know/blob/main/examples/basic.tsp" content="basic examples file" %}.
     </p>
 
     <h3>Future Work</h3>
     <p>
         I would like to add the ability to explicitly switch to using classical reasoning, similar to using <code>open classical</code> in {% include link href="https://lean-lang.org/" content="Lean" %}.
+    </p>
+
+    <p>
+        UPDATE: This is now partially implemented. See the {% include link href="https://github.com/jessejenks/proof-assistant-you-know/blob/main/examples/classical.tsp" content="classical examples file" %}.
     </p>
 
     <p>
