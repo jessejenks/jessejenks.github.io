@@ -32,7 +32,6 @@ title: Resume
                 {% include link title="linkedin" href="http://www.linkedin.com/in/jesse-endo-jenks"
                 content="linkedin.com/in/jesse-endo-jenks" %}
             </li>
-            <li>Tacoma, WA</li>
         </ul>
     </address>
 </header>
@@ -105,12 +104,8 @@ title: Resume
         </div>
 
         <div class="section-row section-row-title with-middle">
-            <h3>Tools &amp; Environments</h3>
-            <div>VS Code, Git, Github</div>
-        </div>
-        <div class="section-row section-row-title with-middle">
-            <h3>Digital Media</h3>
-            <div>Adobe After Effects, Photoshop, Lightroom</div>
+            <h3>Technical Interests</h3>
+            <div>Type Theory, Compilers, Static Analysis, Formal Logic</div>
         </div>
         <div class="section-row section-row-title with-middle">
             <h3>Foreign Language</h3>
@@ -124,9 +119,34 @@ title: Resume
     <div class="section-body with-row-spacing">
         <div class="section-row">
             <div class="section-row-title with-middle with-end">
+                <h3>Lead Developer</h3>
+                <div>London, England (Remote)</div>
+                <div>March 2024 - December 2025</div>
+            </div>
+            <div>
+                <div class="section-row-subtitle">
+                    {% include link title="SiSi" href="https://www.sisi.org.uk/"
+                    content="SiSi" %}
+                </div>
+                <ul>
+                    <li>
+                        Worked on a school administration portal system that included admissions, financials, messaging, and other complex full-stack features using TypeScript, React, GraphQL, Go, and Postgres.
+                    </li>
+                    <li>
+                        Developed complex schema-driven tools such as a custom form builder and a dynamic data export interface.
+                    </li>
+                    <li>
+                        Improved previously developed custom schema DSL implementation and extended tooling.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-middle with-end">
                 <h3>Software Engineer</h3>
-                <div>Relyance AI, Mountain View, CA</div>
-                <div>October 2021 - Present</div>
+                <div>Mountain View, CA (Remote)</div>
+                <div>October 2021 - February 2024</div>
             </div>
             <div>
                 <div class="section-row-subtitle">
@@ -135,13 +155,13 @@ title: Resume
                 </div>
                 <ul>
                     <li>
-                        Working on semantic code analysis to detect data flows of personal information
+                        Worked on semantic static analysis engine to trace flows of personal information using compiler-inspired techniques, including lattice-based dataflow analysis.
                     </li>
                     <li>
-                        Migrated to open source tree-sitter parsers for language frontends
+                        Led migration of language frontends to tree-sitter parsers, improving parsing accuracy and multi-language support.
                     </li>
                     <li>
-                        Designed and implemented a new Python backend pipeline for analysis, containerized with Docker and deployed to Kubernetes
+                        Designed and implemented a new Python backend pipeline for analysis, containerized with Docker and deployed to Kubernetes.
                     </li>
                 </ul>
             </div>
@@ -150,7 +170,7 @@ title: Resume
         <div class="section-row">
             <div class="section-row-title with-middle with-end">
                 <h3>Full-stack Software Engineer</h3>
-                <div>Hex Insights, Seattle, WA</div>
+                <div>Seattle, WA (Hybrid)</div>
                 <div>September 2018 - October 2021</div>
             </div>
             <div>
@@ -160,12 +180,12 @@ title: Resume
                 <ul>
                     <li>
                         Worked on a small team building single-page applications with React, Go, Express, Django, and
-                        Postgres
+                        Postgres.
                     </li>
-                    <li>Conducted unit and integration tests using the Jest framework</li>
-                    <li>Implemented custom API query system that significantly dropped page load times</li>
-                    <li>Created custom loading animations with React and HTML5 canvas</li>
-                    <li>Designed RESTful APIs to interface with custom databases</li>
+                    <li>Conducted unit and integration tests using the Jest framework.</li>
+                    <li>Implemented custom API query system that significantly dropped page load times.</li>
+                    <li>Created custom loading animations with React and HTML5 canvas.</li>
+                    <li>Designed RESTful APIs to interface with custom databases.</li>
                 </ul>
             </div>
         </div>
@@ -254,6 +274,46 @@ title: Resume
     <h2>Projects</h2>
     <div class="section-body with-row-spacing">
         <div class="section-row">
+            <div class="section-row-title with-end">
+                <h3>Proof Assistant You Know</h3>
+                <div>November 2023</div>
+            </div>
+            <div>
+                <ul>
+                    <li>
+                        Developed a simple proof DSL that compiles to TypeScript, demonstrating how its type system can be used as a proof checker for both intuitionistic and classical propositional logic.
+                    </li>
+                    <li>
+                        Read more about it in <a href="/blog/Theorem-Proving-with-TypeScript">this&nbsp;blog&nbsp;post</a>.
+                    </li>
+                    <li>
+                        Based on an idea from {%include link href="https://www.youtube.com/watch?v=i-hRpYiNwBw" content="a SoME video by Quentin Januel" %}.
+                    </li>
+                    <li>
+                        Available on {%include link href="https://github.com/jessejenks/proof-assistant-you-know" content="GitHub" %}.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-row">
+            <div class="section-row-title with-end">
+                <h3>Typescript Parser Combinator Library</h3>
+                <div>March 2021 - Present</div>
+            </div>
+            <div>
+                <ul>
+                    <li>
+                        A parser combinator library, written in pure TypeScript.
+                    </li>
+                    <li>
+                        Available on {%include link href="https://github.com/jessejenks/ts-combinator" content="GitHub" %}.
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section-row">
             <div class="section-row-title with-middle with-end">
                 <h3>
                     <a href="/" id="animated-code-container">
@@ -291,41 +351,6 @@ title: Resume
                     <li>
                         <a href="/blog">Blog</a> section contains over 20 interactive projects on topics ranging from
                         fractals, cellular automata, Markov chains, neural nets, and many others
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="section-row">
-            <div class="section-row-title with-end">
-                <h3>Typescript Parser Combinator Library</h3>
-                <div>March 2021 - Present</div>
-            </div>
-            <div>
-                <ul>
-                    <li>
-                        Created a parser combinator library, written in TypeScript.
-                    </li>
-                    <li>
-                        Available on {%include link href="https://github.com/jessejenks/ts-combinator" content="GitHub" %}.
-                    </li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="section-row">
-            <div class="section-row-title with-end">
-                <h3>Blog Post Filter Language</h3>
-                <div>Fall 2019</div>
-            </div>
-            <div>
-                <ul>
-                    <li>
-                        Created a simple language for filtering blog posts, and implemented a parser and interpreter
-                    </li>
-                    <li>
-                        Built a {% include link href="https://github.com/jessejenks/filter-parser" content="demo page"
-                        %} with a custom syntax highlighted editor
                     </li>
                 </ul>
             </div>
