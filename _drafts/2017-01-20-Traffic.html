@@ -8,10 +8,12 @@ tags: [cellular automata]
 <script src="/js/libraries/p5.dom.js" type="text/javascript"></script>
 <script src="/js/discrete_car_copy.js" type="text/javascript"></script>
 
+{% include footnotes/use %}
+
 <div id="cars" style="display: flex;justify-content: center;"></div><br><br>
 
 <section>
-    <p>Simulating traffic! Cars drive from left to right, while time flows from top to bottom. Each car traces out a diagonal path from top left to bottom right. When they reach the bottom, everything starts over, but each iteration is more crowded and you can even see traffic jams as lines going from the top right to bottom left. In fact, even though it looks kind of random, traffic flow follows a very clear pattern. This is based on code I wrote for the {% include footnote-link id="mcm" content="COMAP MCM" %}.</p>
+    <p>Simulating traffic! Cars drive from left to right, while time flows from top to bottom. Each car traces out a diagonal path from top left to bottom right. When they reach the bottom, everything starts over, but each iteration is more crowded and you can even see traffic jams as lines going from the top right to bottom left. In fact, even though it looks kind of random, traffic flow follows a very clear pattern. This is based on code I wrote for the {% include footnotes/link id="mcm" content="COMAP MCM" %}.</p>
 </section>
 
 <section>
@@ -25,7 +27,7 @@ tags: [cellular automata]
                     content="the news!"
                 %}
             {% endcapture %}
-            {% include footnote id="mcm" content=link-to-article %}
+            {% include footnotes/backlink id="mcm" content=link-to-article %}
         </ol>
     </footer>
 </section>
