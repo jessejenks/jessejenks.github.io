@@ -11,10 +11,5 @@
       path: /blog/writings/
 - label: Resume
   path: /resume/
-  children:
-    - label: Online CV
-      path: /resume/
-    - label: One page PDF
-      path: /resume/Jesse-Jenks-Resume.pdf
 - label: Links
   path: /links/

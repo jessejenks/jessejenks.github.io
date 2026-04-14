@@ -6,6 +6,24 @@ let currentPermutation = getRandomPermutation(animatedChildren.length);
 
 const identityMatrix = "matrix(1,0,0,1,0,0)";
 
+document.addEventListener("DOMContentLoaded", () => {
+    const container = document.querySelector("#animated-code")
+    const startQuote = document.createElement("span")
+    startQuote.style.setProperty("color", "#5fb4b4")
+    startQuote.append('"')
+    container.appendChild(startQuote)
+    const words = window.location.origin.split(/\b/)
+    for (let i = 0; i < words.length; i++) {
+        const span = document.createElement("span")
+        span.append(words[i])
+        container.appendChild(span)
+    }
+    const endQuote = document.createElement("span")
+    endQuote.style.setProperty("color", "#5fb4b4")
+    endQuote.append('"')
+    container.appendChild(endQuote)
+})
+
 function transformPositions(scrollPosition, isScrollingUP) {
     let child, styles;
     const direction = isScrollingUP ? -1 : 1;

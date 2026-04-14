@@ -9,11 +9,6 @@ title: Resume
 />
 <link rel="stylesheet" type="text/css" href="./resume.css" />
 
-<div id="page-info">
-    <h1>CV</h1>
-    <a id="link-to-resume" href="/resume/Jesse-Jenks-Resume.pdf">See resume instead</a>
-</div>
-
 <header>
     <div id="name">
         <span>Jesse</span>
@@ -41,6 +36,25 @@ title: Resume
 <section>
     <h2>Education</h2>
     <div class="section-body">
+        <div class="section-row section-row-title with-middle with-end">
+            <h3>ILLC, University of Amsterdam</h3>
+            <div><b>Master of Logic program</b></div>
+            <div>Amsterdam, Netherlands</div>
+        </div>
+        <div class="section-row section-row-title with-middle with-end">
+            <span></span>
+            <div>Graduate course work</div>
+            <div>Fall 2020</div>
+        </div>
+        <div class="section-row">
+            <div class="section-row-title">
+                <h4>Relevant Courses</h4>
+            </div>
+            <ul class="no-bullets">
+                <li>Category Theory, Set Theory, Modal Logic, &ldquo;Meaning Reference and Modality&rdquo;</li>
+                <li>Philosophical Logic, Lambda Calculus, Recursion Theory</li>
+            </ul>
+        </div>
         <div class="section-row section-row-title with-middle with-end">
             <h3>University of Puget Sound</h3>
             <div><b>B.S. in Mathematics and Computer Science</b><span class="light"> - double major</span></div>
@@ -71,7 +85,7 @@ title: Resume
     <h2>Skills</h2>
     <div class="section-body">
         <div class="section-row section-row-title">
-            <h3>Languages &amp; Libraries</h3>
+            <h3>Languages and Libraries</h3>
         </div>
         <div id="language-table-container">
             {% assign table-names = "mobile-table, desktop-table" | split: ", " %} {% for table-name in table-names %}
@@ -130,13 +144,13 @@ title: Resume
                 </div>
                 <ul>
                     <li>
-                        Worked on a school administration portal system that included admissions, financials, messaging, and other complex full-stack features using TypeScript, React, GraphQL, Go, and Postgres.
+                        Developed and maintained a full-stack school administration portal spanning admissions, financials, and messaging using TypeScript, React, GraphQL, Go, and Postgres.
                     </li>
                     <li>
-                        Developed complex schema-driven tools such as a custom form builder and a dynamic data export interface.
+                        Built administrator tools such as a custom form builder and a dynamic data export interface using a previously developed custom schema language.
                     </li>
                     <li>
-                        Improved previously developed custom schema DSL implementation and extended tooling.
+                        Designed a self-service templating system enabling schools to create and manage custom emails.
                     </li>
                 </ul>
             </div>
@@ -155,7 +169,7 @@ title: Resume
                 </div>
                 <ul>
                     <li>
-                        Worked on semantic static analysis engine to trace flows of personal information using compiler-inspired techniques, including lattice-based dataflow analysis.
+                        Extended a semantic static analysis engine for tracing flows of personal information through codebases using compiler-inspired techniques, including dataflow analyses.
                     </li>
                     <li>
                         Led migration of language frontends to tree-sitter parsers, improving parsing accuracy and multi-language support.
@@ -179,13 +193,20 @@ title: Resume
                 </div>
                 <ul>
                     <li>
-                        Worked on a small team building single-page applications with React, Go, Express, Django, and
-                        Postgres.
+                        Developed single-page applications in a small team using React, Go, Express, Django, and Postgres.
                     </li>
-                    <li>Conducted unit and integration tests using the Jest framework.</li>
-                    <li>Implemented custom API query system that significantly dropped page load times.</li>
-                    <li>Created custom loading animations with React and HTML5 canvas.</li>
-                    <li>Designed RESTful APIs to interface with custom databases.</li>
+                    <li>
+                        Conducted unit and integration tests using the Jest framework.
+                    </li>
+                    <li>
+                        Implemented custom API query system that significantly dropped page load times.
+                    </li>
+                    <li>
+                        Created custom loading animations with React and HTML5 canvas.
+                    </li>
+                    <li>
+                        Designed RESTful APIs to interface with custom database schemas.
+                    </li>
                 </ul>
             </div>
         </div>
@@ -281,7 +302,7 @@ title: Resume
             <div>
                 <ul>
                     <li>
-                        Developed a simple proof DSL that compiles to TypeScript, demonstrating how its type system can be used as a proof checker for both intuitionistic and classical propositional logic.
+                        Developed a simple theorem proving language that compiles to TypeScript, demonstrating how its type system can be used as a proof checker for both intuitionistic and classical propositional logic.
                     </li>
                     <li>
                         Read more about it in <a href="/blog/Theorem-Proving-with-TypeScript">this&nbsp;blog&nbsp;post</a>.
@@ -304,7 +325,7 @@ title: Resume
             <div>
                 <ul>
                     <li>
-                        A parser combinator library, written in pure TypeScript.
+                        Created a pure TypeScript library for building custom parsers from composable functions with a focus on strong type inference.
                     </li>
                     <li>
                         Available on {%include link href="https://github.com/jessejenks/ts-combinator" content="GitHub" %}.
@@ -327,16 +348,6 @@ title: Resume
                                 <span>&nbsp;</span>
                             </span>
                             <span id="animated-code" style="color: #99c794">
-                                <span style="color: #5fb4b4">"</span>
-                                <span>https:</span>
-                                <span>//</span>
-                                <span>www</span>
-                                <span>.</span>
-                                <span>very</span>
-                                <span>chill</span>
-                                <span>.</span>
-                                <span>biz</span>
-                                <span style="color: #5fb4b4">"</span>
                             </span>
                             <span style="color: #a6acb9">;</span>
                         </code>
