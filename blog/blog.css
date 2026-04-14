@@ -88,6 +88,11 @@
     padding: .25rem;
     margin: 0 .25rem;
     border-radius: 0.25rem;
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    font-size: inherit;
 }
 
 #tags-list li:first-of-type .filter {
