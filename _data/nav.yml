@@ -4,11 +4,6 @@
   path: /about/
 - label: Blog
   path: /blog/
-  children:
-    - label: Blog posts
-      path: /blog/
-    - label: Writing
-      path: /blog/writings/
 - label: Resume
   path: /resume/
 - label: Links

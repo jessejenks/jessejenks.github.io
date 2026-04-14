@@ -93,6 +93,8 @@
     color: inherit;
     font: inherit;
     font-size: inherit;
+
+    will-change: background-color;
 }
 
 #tags-list li:first-of-type .filter {
@@ -107,11 +109,13 @@
 
 #tags-list .filter.selected {
     background-color: var(--palette-blue-2);
-    /*border-color: var(--palette-light-blue);
-    background-color: var(--palette-light-blue-transparent);*/
 }
 
 
+#tags-list .filter:hover,
+#tags-list .filter.selected:hover {
+    background-color: var(--palette-blue-3);
+}
 
 .posts {
     list-style-type: none;

@@ -11,8 +11,6 @@ author:
 markdown: kramdown
 
 collections:
-  posts:
-    permalink: /blog/:title
-  writings:
+  articles:
     output: true
-    permalink: /blog/writings/:title
+    permalink: /blog/:slug
