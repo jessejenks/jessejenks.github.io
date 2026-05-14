@@ -1,0 +1,718 @@
+---
+slug: bidirectional-typechecking-dk
+layout: post
+title: Bidirection Typechecking
+date: 2026-05-04
+tags: [lambda calculus, type theory]
+---
+
+{% include footnotes/use %}
+
+<style>
+    @font-face {
+        font-family: "Fira Code";
+        src: url("/fonts/FiraCode-Regular.ttf")format("truetype");
+    }
+
+    pre, code {
+        font-family: "Fira Code", monospace;
+    }
+
+    code {
+        white-space: nowrap;
+        background-color: var(--palette-blue-0);
+        padding: 0 0.25rem;
+        border-radius: 0.25rem;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .row button {
+        height: 100%;
+    }
+
+    .col {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .panel.show.list-of-examples {
+        display: flex;
+        flex-flow: column;
+        align-items: flex-end;
+        gap: 0.5rem;
+    }
+
+    .panel .row.example {
+        width: 95%;
+        justify-content: space-between;
+        /* flex-wrap: wrap; */
+    }
+
+    .panel .row.example .description {
+        margin: 0;
+        margin-left: 2rem;
+    }
+
+    .expr-input {
+        width: 100%;
+        max-width: 50%;
+        min-width: 20px;
+        padding: 0.5rem;
+    }
+
+    .error-message {
+        color: var(--palette-gold);
+    }
+
+    figure.highlight-container {
+        min-height: 50px;
+        --width: 75vw;
+        width: max(100%, var(--width));
+        max-height: 500px;
+        margin-left: min(0px, calc(50% - var(--width) / 2));
+        align-items: flex-start;
+        overflow-x: auto;
+        overflow-y: auto;
+        background-color: var(--nord0);
+        color: var(--nord6);
+        font-size: 1.25rem;
+    }
+
+    figure.highlight-container pre,
+    #figure-12 figcaption {
+        margin: 0 auto;
+    }
+
+    #figure-12 figcaption {
+        color: var(--nord0);
+    }
+
+    figure.highlight-container pre .subtype,
+    figure.highlight-container pre .instantiate-right,
+    figure.highlight-container pre .instantiate-left {
+        color: var(--nord15);
+    }
+
+    figure.highlight-container pre .vdash,
+    figure.highlight-container pre .dashv,
+    figure.highlight-container pre .left-bracket,
+    figure.highlight-container pre .right-bracket {
+        color: var(--nord9);
+    }
+
+    figure.highlight-container pre .check-arrow {
+        color: var(--nord10);
+    }
+
+    figure.highlight-container pre .synthesize-arrow {
+        color: var(--nord11);
+    }
+
+    figure.highlight-container pre .type-app-arrow {
+        color: var(--nord14);
+    }
+
+    @media screen and (max-width: 900px) {
+        .panel .row.example {
+            flex-direction: column;
+            align-items: start;
+        }
+    }
+</style>
+
+<section>
+    <p>
+        In 2013, Dunfield and Krishnaswami published {% include footnotes/link id="dunfield-krishnaswami-2013" content="&ldquo;<strong>Complete and Easy Bidirectional Typechecking for Higher-Rank Polymorphism</strong>&rdquo;" %}.
+        This past week, I implemented their algorithm twice. The first implementation tried to stay faithful to their paper, while the second tries to use some standard tricks to optimize the implementation.
+    </p>
+
+    <p>
+        The {% include link href="https://github.com/jessejenks/dk-bidirectional-typing" content="code is available on GitHub" %}.
+        I also used {% include link href="https://github.com/jessejenks/ts-combinator" content="my parser combinator library" %}, which made the frontend simple to implement.
+    </p>
+</section>
+
+<section>
+    <h3>DK System Demo</h3>
+
+    <p>
+        This demo allows you to synthesize types from a given expression. (If synthesis fails, you can check the console to see where the derivation failed.)
+    </p>
+
+    <p>
+        The syntax accepted in the demo is fairly standard, but it's probably easier to start by loading examples.
+        The parser handles both unicode symbols like <code>λx:∀α.α → α.x</code> and ascii like <code>\x:forall T. T -> T.x</code>.
+    </p>
+
+    <div class="col dk-demo">
+        <div>
+            <button type="button" class="show-hide-button">Examples</button>
+            <span class="panel list-of-examples">
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>λx.x</code>
+                    </div>
+                    <p class="description">Canonical example of a polymorphic function</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>λf.f (f ())</code>
+                    </div>
+                    <p class="description">Fully constrains the type of <code>f</code></p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>λx.λf.f (f x)</code>
+                    </div>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>λx.λy. fst(&lt;x, y&gt;)</code>
+                    </div>
+                    <p class="description">Pairs and projection</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>(λx.x x) : (∀α.α → α) → (∀β.β → β)</code>
+                    </div>
+                    <p class="description">The "<code>Ω</code>" function</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>let x = 1 in x + 1</code>
+                    </div>
+                    <p class="description">Let syntax is supported, but has no special meaning</p>
+                </span>
+            </span>
+        </div>
+
+        <div class="col">
+            <div>Display and Input options</div>
+            <div class="row">
+                <button type="button" class="insert-lambda-btn">Insert λ</button>
+                <button type="button" class="insert-arrow-btn">Insert →</button>
+                <button type="button" class="insert-forall-btn">Insert ∀</button>
+            </div>
+            <div class="row">
+                <button type="button" class="insert-alpha-btn">Insert α</button>
+                <button type="button" class="insert-beta-btn">Insert β</button>
+                <button type="button" class="insert-gamma-btn">Insert γ</button>
+                <button type="button" class="insert-delta-btn">Insert δ</button>
+                <button type="button" class="insert-epsilon-btn">Insert ε</button>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" class="gentzen-style-input" checked> Gentzen Style</label>
+                <label><input type="checkbox" class="pretty-type-input" checked> Pretty Types</label>
+            </div>
+        </div>
+        <div class="row">
+            <button type="button" onclick="runSynthesis()">Synthesize Type</button>
+        </div>
+        <input class="expr-input" type="text" placeholder="enter expression here" value="λx.x">
+        <pre class="error-message"></pre>
+        <figure class="highlight-container"><pre class="output"></pre></figure>
+    </div>
+</section>
+
+<h2>Background</h2>
+
+<section>
+    <h3>System F</h3>
+
+    <p>
+        In the Simply Typed Lambda Calculus (STLC), you can write expressions like this <code>(λx. x) : Int → Int</code>, which says &ldquo;I have a function that takes in an integer <code>x</code>, and returns an integer.&rdquo;
+        The meaning of &ldquo;simple&rdquo; types will be clearer later, but essentially the only types we have are basic types (say <code>Int</code> and <code>Bool</code>), or functions between those types, like <code>Int → Bool</code> or <code>(Int → Int) → ((Int → Int) → Bool)</code>.
+    </p>
+
+    <p>
+        Something you might notice from the example above is that the type annotation is not unique. I could also have written <code>(λx. x) : Bool → Bool</code> or even <code>(λx. x) : (Int → Bool) → (Int → Bool)</code>. This means that we can't figure out what the type should be, based on the definition <code>λx. x</code> alone.
+    </p>
+
+    <p>
+        This lack of unique types means that we can't &ldquo;reuse&rdquo; our functions. <code>(λx. x) : Int → Int</code> is a function from integers to integers. <code>(λx. x) : Bool → Bool</code> is a function from booleans to booleans. Even though our function definition is <em>exactly the same</em>, our type system restricts us from treating them as the same. In a real programming language, this is a real a problem, and various languages have tricks to overcome them, like overloading.
+    </p>
+
+    <p>
+        In the 1970s, Girard and Reynolds independently defined the System F type system and a second-order intuitionistic propositional logic respectively.
+        (<a href="/blog/theorem-proving-with-typescript">Read more about the equivalence of type theories and logics here</a>).
+        In this type system, we can express much more complex types, like <code>∀α.(α → α)</code>. Types like this are called <strong>quantified</strong> types, and <code>∀</code> is called a <strong>universal</strong> quantifier. This is kind of like a function for types. It says given any type <code>α</code>, we &ldquo;produce&rdquo; a function type <code>α → α</code>. In other words, it's very much like the type equivalent of <code>λx. x</code>. In fact, this <em>is</em> the type of <code>λx. x</code>.
+    </p>
+
+    <p>
+        But doesn't this still have the problem of non-unique types? Isn't it still the case that <code>(λx. x) : Int → Int</code> is a valid typing?
+        Yes, so I was lying a bit when I said it was &ldquo;the&rdquo; type. However, it is something called the <strong>principal</strong>, or &ldquo;most general&rdquo; type.
+        In other words, every possible valid typing of <code>λx. x</code> is an <em>instance</em> of <code>∀α.(α → α)</code>. For example <code>Int → Int</code> is what we get when we substitute <code>α</code> with <code>Int</code>, and <code>(Int → Bool) → (Int → Bool)</code> when <code>α = Int → Bool</code>, etc. So our &ldquo;function but for types&rdquo; analogy is more than an analogy. This is like function application of types. In fact it is referred to as type application.
+    </p>
+
+    <p>
+        In System F, we can even substitute other quantified types.
+        For instance, if <code>α = ∀β.β → (∀γ.β → γ)</code> we get
+        <code>∀β.β → (∀γ.β → γ) → (∀β.β → (∀γ.β → γ))</code>. But we could even substitute in types for <code>β</code> etc. to create increasingly complex types.
+        Allowing type application of quantified types like this is called <strong>impredicativity</strong>, and we call System F an impredicative system.
+    </p>
+
+    <p>
+        This expressivity lets us ask a more precise question.
+        Given just an expression, can we automatically infer the principal type?
+        The answer turns out to still be <strong>no</strong>. But this wasn't fully proven until 1999 by Wells.
+    </p>
+</section>
+
+<section>
+    <h3>Damas, Hindley, and Milner</h3>
+
+    <p>
+        Long before Wells' proof, the Damas-Hindley-Milner (HM) type system was developed and used in languages like ML. The HM system is a restriction of System F which allows for full type inference. Meaning a programmer write no type annotations, and yet the entire program can be completely type checked! So how did they make this practical?
+    </p>
+
+    <p>
+        First, since the programmer does not write annotations, there is much more control over the kinds of types that can be inferred.
+        This also introduced the concept of &ldquo;let polymorphism&rdquo; where quantified types can only be introduced in expressions like
+        <code>let y = λx.x in x</code>.
+    </p>
+
+    <p>
+        The first change is, we do not allow impredicativity. In other words, during inference, a quantified type cannot be instantiated with another quantified type, as full System F would. For this reason we say HM is a predicative system.
+    </p>
+
+    <p>
+        The second is to also require all quantifiers to appear at the outermost level. So for instance, <code>(∀α.α → α) → (∀β.β → β)</code> would not be allowed, but <code>∀α.∀β.(α → α) → (β → β)</code> would.
+    </p>
+
+    <p>
+        In retrospect, the existence of the HM type system is surprising. Slightly weaker type system? No principal types. Slightly stronger type system? Too complex, no decidable typeability.
+    </p>
+</section>
+
+<section>
+    <h3>HM System Demo</h3>
+    <p>
+        This demo allows you to infer types from a given expression within {% include footnotes/link id="damas-hindley-milner-clement" content="the Damas-Hindley-Milner system" %}.
+    </p>
+    <p>
+        The syntax is basically the same, with the main difference that there are no type expressions in the syntax. Everything is inferred.
+        Let expressions are also no longer just syntactic sugar as they are the primary mechanism for polymorphism.
+    </p>
+    <div class="col hm-demo">
+        <div>
+            <button type="button" class="show-hide-button">Examples</button>
+            <span class="panel list-of-examples">
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>λx.x</code>
+                    </div>
+                    <p>Canonical example of a polymorphic function</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>λf.f (f ())</code>
+                    </div>
+                    <p>Fully constrains the type of <code>f</code></p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>λx.λf.f (f x)</code>
+                    </div>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>λx.λy. fst(&lt;x, y&gt;)</code>
+                    </div>
+                    <p class="description">Pairs and projection</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Load</button>
+                        <code>let id = (λx.x) in let y = (id ()) in let z = (id (λu.u)) in z</code>
+                    </div>
+                    <p class="description">Let polymorphism</p>
+                </span>
+            </span>
+        </div>
+
+        <div class="col" style="width: 50%;">
+            <div>Display and Input options</div>
+            <div class="row">
+                <button type="button" class="insert-lambda-btn">Insert λ</button>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" class="gentzen-style-input" checked> Gentzen Style</label>
+            </div>
+        </div>
+        <div class="row">
+            <button type="button" onclick="runInference()">Infer Type</button>
+        </div>
+        <input class="expr-input" type="text" placeholder="enter expression here" value="λx.x">
+        <pre class="error-message"></pre>
+        <figure class="highlight-container"><pre class="output"></pre></figure>
+    </div>
+</section>
+
+<section>
+    <h3>Dunfield and Krishnaswami</h3>
+
+    <p>
+        People were already fairly confident that full type inference for System F was not possible even before 1999. So the question becomes, how and where do we require annotations in a way that isn't intrusive, but still take advantage of the power of System F?
+    </p>
+
+    <p>
+        Since the late 1980s or so, several people had worked on something called bidirectional typechecking. Instead of just an inference algorithm, in which you start with a term and try to derive a type, the process is split into two &ldquo;modes&rdquo; called sythensis and checking. Synthesis is basically inference, when you construct an unknown type from known information. Checking is when you have a term and a type, and want to confirm that the term is compatible with that type.
+    </p>
+
+    <p>
+        HM can also be interpreted in this light. While any type inference system is going to trivially have only synthesis rules. But in practice, the traditional HM implementation is to gather constraints during inference, which are then &ldquo;checked&rdquo; when trying to solve those contraints through unification. A bidirectional system essentially includes this as part of the type theory directly.
+    </p>
+
+    <p>
+        One popular bidirectional type system is Dunfield and Krishnaswami's 2013 system from above. Their innovation was to actually have 3 modes. I won't go into detail, but the third is a kind of inferred type application. This allows the system to avoid requiring explicit type application as a part of the syntax.
+    </p>
+</section>
+
+<section>
+    <h3>Notes and Future Work</h3>
+
+    <p>
+        {% include footnotes/link id="zhao-thesis" content="Jinxu Zhao's 2021 thesis formalizes Dunfield and Krishnaswami's proofs" %}.
+        They note that there were several mistakes in the proofs.
+
+        But I believe I've discovered another mistake, minor or egregious depending on your point of view, but Figure 12 shows an incorrect example derivation.
+        While their conclusion is unchanged, this was quite confusing as you can imagine.
+
+        So here is Figure 12 corrected.
+    </p>
+
+<figure id="figure-12" class="highlight-container">
+<pre>
+Γ′ = Γ[β̂₂, β̂₁, α̂ = (β̂₁ → β̂₂)]
+Δ = Γ[β̂₂, β̂₁ = β̂₂, α̂ = (β̂₁ → β̂₂)]
+
+──────────────────────────────────── InstLReach  ────────────────────────────────────────── InstRReach
+Γ′, ›β̂, β̂ ⊢ β̂₁ :≤ β̂ ⊣ Γ′, ›β̂, β̂ = β̂₁             Γ′, ›β̂, β̂ = β̂₁ ⊢ β̂₁ ≤: β̂₂ ⊣ Δ, ›β̂, β̂ = β̂₁
+─────────────────────────────────────────────────────────────────────────────────────────── InstRArr
+                    Γ[α̂], ›β̂, β̂ ⊢ (β̂ → β̂) ≤: α̂ ⊣ Δ, ›β̂, β̂ = β̂₁
+                    ────────────────────────────────────────── InstRAllL
+                            Γ[α̂] ⊢ ∀β.(β → β) ≤: α̂ ⊣ Δ
+</pre>
+    <figcaption>Figure 12 (corrected)</figcaption>
+</figure>
+
+    <p>
+        Right now, the generated derivations can get very big because it shows the entire context every time.
+        A better way would be to only report changes in context between steps.
+    </p>
+</section>
+
+<section>
+    <h3>Logical interpretation</h3>
+
+    <p>
+        As mentioned earlier, System F is the type theoretic interpretation of second-order intuitionistic predicate logic.
+        So what are HM and DK as fragments of this logic?
+
+        In first-order logic, every formula can be rewritten in prenex form. But this is not the case in intuitionistic logics.
+        This means that the restriction of HM to prenex form is not just for aid of inference, but a genuine restriction of expressivity.
+
+        Not allowing instantiation of quantified types with other quantified types means our types are &ldquo;rank-1&rdquo;.
+        With annotations, DK can allow higher-rank types.
+
+        I'm still trying to understand how to precisely characterize them, but these capture some of the important restrictions.
+    </p>
+</section>
+
+<section>
+    <h3>Technical Details</h3>
+
+    <p>
+        While my first implementation tries to stay as true to the paper as possible, I did allow myself to add a few extra rules to handle type annotations on parameters, product types, pairs and projections. They are just too convenient to not include. As far as I can tell, my rules make sense, but I did not attempt to try to prove anything. But they are just an extension, which means that if your term doesn't contain any of this extra syntax, these extra rules will not make any difference to the derivation.
+    </p>
+
+    <p>
+        The "pretty types" are a composition of generalization and so-called miniscoping.
+
+        Generalization is simple. Find all of the unsolved existential type variables, and add corresponding quantifiers in front.
+
+        Miniscoping is also conceptually simple but trickier than expected. Now that we have a bunch of quantifiers in the front,
+        we can push them in as far as possible using the following transformation
+
+        <code>∀α.(A → T(α))  ⇔  A → (∀α.T(α))</code>
+        if <code>α</code> does not appear free in <code>A</code> and <code>T(α) ≠ α</code>
+
+        This is basically an "un-prenex" form.
+
+        The purpose is mostly to highlight the differences from HM and show higher-rank types.
+    </p>
+</section>
+
+<section>
+    <footer class="footnotes">
+        <h3>References</h3>
+        <hr>
+        <ol>
+            {% capture dk-2013-arxiv %}
+                Available {% include link href="https://arxiv.org/abs/1306.6032" content="on the arXiv" %}.
+            {% endcapture %}
+            {% include footnotes/backlink id="dunfield-krishnaswami-2013" content=dk-2013-arxiv %}
+
+            {% capture zhao-thesis %}
+                {% include link href="https://i.cs.hku.hk/~jxzhao/pdf/itp2018.pdf" content="Jinxu Zhao's Ph.D. thesis" %}.
+            {% endcapture %}
+            {% include footnotes/backlink id="zhao-thesis" content=zhao-thesis %}
+
+            {% capture damas-hindley-milner-clement %}
+                Technically this is {% include link href="https://inria.hal.science/inria-00076025/file/RR-0529.pdf" content="the more popular Clément et. al. formulation" %}
+            {% endcapture %}
+            {% include footnotes/backlink id="damas-hindley-milner-clement" content=damas-hindley-milner-clement %}
+        </ol>
+    </footer>
+</section>
+
+<script src="/js/bidirectional-typechecking-dk/index.js"></script>
+<script>
+    const LEFT_ARROW = 0x21D0;
+    const RIGHT_ARROW = 0x21D2;
+    const LEFT_BRACKET = 0x5B;
+    const RIGHT_BRACKET = 0x5D;
+    const VDASH = 0x22A2;
+    const DASHV = 0x22A3;
+    const LEQ = 0x2264;
+    const LT = 0x3C;
+    const COLON = 0x3A;
+    function createSpan(text, className) {
+        const s = document.createElement("span");
+        if (className) {
+            s.classList.add(className);
+        }
+        s.append(text);
+        return s;
+    }
+    function highlight(input, target) {
+        let start = 0;
+        const chunks = []
+        for (let i = 0; i < input.length; i++) {
+            switch (input.charCodeAt(i)) {
+            case LEFT_ARROW:
+                chunks.push(createSpan(input.slice(start, i)));
+                chunks.push(createSpan(input.slice(i, i+1), "check-arrow"));
+                start = i+1;
+                break;
+            case RIGHT_ARROW:
+                chunks.push(createSpan(input.slice(start, i)));
+                if (input.charCodeAt(i+1) === RIGHT_ARROW) {
+                    chunks.push(createSpan(input.slice(i, i+2), "type-app-arrow"));
+                    i++;
+                } else {
+                    chunks.push(createSpan(input.slice(i, i+1), "synthesize-arrow"));
+                }
+                start = i+1;
+                break;
+            case LEFT_BRACKET:
+                chunks.push(createSpan(input.slice(start, i)));
+                chunks.push(createSpan(input.slice(i, i+1), "left-bracket"));
+                start = i+1;
+                break;
+            case RIGHT_BRACKET:
+                chunks.push(createSpan(input.slice(start, i)));
+                chunks.push(createSpan(input.slice(i, i+1), "right-bracket"));
+                start = i+1;
+                break;
+            case VDASH:
+                chunks.push(createSpan(input.slice(start, i)));
+                chunks.push(createSpan(input.slice(i, i+1), "vdash"));
+                start = i+1;
+                break;
+            case DASHV:
+                chunks.push(createSpan(input.slice(start, i)));
+                chunks.push(createSpan(input.slice(i, i+1), "dashv"));
+                start = i+1;
+                break;
+            case LEQ:
+                if (input.charCodeAt(i + 1) === COLON) {
+                    chunks.push(createSpan(input.slice(start, i)));
+                    chunks.push(createSpan(input.slice(i, i+2), "instantiate-left"));
+                    i++;
+                    start = i+1;
+                    break;
+                }
+            case COLON:
+                if (input.charCodeAt(i+1) === LEQ) {
+                    chunks.push(createSpan(input.slice(start, i)));
+                    chunks.push(createSpan(input.slice(i, i+2), "instantiate-right"));
+                    i++;
+                    start = i+1;
+                    break;
+                }
+            case LT:
+                if (input.charCodeAt(i + 1) === COLON) {
+                    chunks.push(createSpan(input.slice(start, i)));
+                    chunks.push(createSpan(input.slice(i, i+2), "subtype"));
+                    i++;
+                    start = i+1;
+                    break;
+                }
+            }
+        }
+        if (start < input.length) {
+            chunks.push(createSpan(input.slice(start)));
+        }
+        target.innerHTML = ""
+        target.append(...chunks);
+    }
+    {
+        const example = document.querySelector("#figure-12 pre");
+        highlight(example.innerText, example);
+    }
+</script>
+<script>
+    function getInsertHandler(expressionInput, s) {
+        return () => {
+            if (document.activeElement === expressionInput && expressionInput.setRangeText) {
+                expressionInput.setRangeText(s, expressionInput.selectionStart, expressionInput.selectionEnd, "end");
+            } else {
+                expressionInput.value += s;
+            }
+        }
+    }
+
+    function attachInsertHandler(expressionInput, className, s) {
+        const btn = document.querySelector(className);
+        btn.addEventListener("mousedown", e => e.preventDefault());
+        btn.addEventListener("click", getInsertHandler(expressionInput, s));
+    }
+
+    const dkExpressionInput = document.querySelector(".dk-demo .expr-input");
+
+    attachInsertHandler(dkExpressionInput, ".dk-demo .insert-lambda-btn", "λ")
+    attachInsertHandler(dkExpressionInput, ".dk-demo .insert-arrow-btn", "→")
+    attachInsertHandler(dkExpressionInput, ".dk-demo .insert-forall-btn", "∀");
+    attachInsertHandler(dkExpressionInput, ".dk-demo .insert-alpha-btn", "α");
+    attachInsertHandler(dkExpressionInput, ".dk-demo .insert-beta-btn", "β");
+    attachInsertHandler(dkExpressionInput, ".dk-demo .insert-gamma-btn", "γ");
+    attachInsertHandler(dkExpressionInput, ".dk-demo .insert-delta-btn", "δ");
+    attachInsertHandler(dkExpressionInput, ".dk-demo .insert-epsilon-btn", "ε");
+
+    const dkLoadBtns = document.querySelectorAll(".dk-demo .load-example")
+    dkLoadBtns.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            dkExpressionInput.value = e.target.nextElementSibling.innerText.trim();
+        })
+    });
+
+    const dkGentzenStyleInput = document.querySelector(".dk-demo .gentzen-style-input");
+    const dkPrettyTypeInput = document.querySelector(".dk-demo .pretty-type-input");
+    const dkErrorOutput = document.querySelector(".dk-demo .error-message");
+    const dkOutput = document.querySelector(".dk-demo .output");
+
+    const { paper, traces, hm, Result } = BidirectionalTyping;
+
+    function synthesize(input) {
+        const context = new paper.context.Context(true);
+        const { onStartTrace, onEndTrace, onLeafTrace, getTrace } = traces.getTraceHandlers();
+        context.onStartTrace = onStartTrace;
+        context.onEndTrace = onEndTrace;
+        context.onLeafTrace = onLeafTrace;
+        Result.elim(
+            Result.andThen(
+                paper.parser.parse(input),
+                (expr) => {
+                    console.log(paper.ast.expressionToString(expr));
+                    return paper.dk.synthesize(context, expr)
+                }
+            ),
+            ({ type }) => {
+                let typeString;
+                const applied = context.apply(type);
+                if (dkPrettyTypeInput.checked) {
+                    const generalized = paper.ast.generalize(applied);
+                    const miniscoped = paper.ast.miniscope(generalized);
+                    typeString = paper.ast.typeExpressionToString(miniscoped);
+                } else {
+                    typeString = paper.ast.typeExpressionToString(applied);
+                }
+                let traceString;
+                if (dkGentzenStyleInput.checked) {
+                    traceString = traces.traceToProofTree(getTrace());
+                } else {
+                    traceString = traces.traceToSimpleString(getTrace());
+                }
+                highlight("Synthesized type" + "\n" + typeString + "\n\nDerivation\n" + traceString, dkOutput);
+                dkErrorOutput.innerText = "";
+            },
+            (err) => {
+                dkErrorOutput.innerText = err;
+            }
+        )
+    }
+
+    function runSynthesis() {
+        synthesize(dkExpressionInput.value);
+    }
+
+    const hmExpressionInput = document.querySelector(".hm-demo .expr-input");
+    attachInsertHandler(hmExpressionInput, ".hm-demo .insert-lambda-btn", "λ");
+
+    const hmLoadBtns = document.querySelectorAll(".hm-demo .load-example")
+    hmLoadBtns.forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            hmExpressionInput.value = e.target.nextElementSibling.innerText.trim();
+        })
+    });
+
+    const hmGentzenStyleInput = document.querySelector(".hm-demo .gentzen-style-input");
+    const hmErrorOutput = document.querySelector(".hm-demo .error-message");
+    const hmOutput = document.querySelector(".hm-demo .output");
+
+    function infer(input) {
+        const checker = new hm.hm.TypeChecker(true);
+        const { onStartTrace, onEndTrace, onLeafTrace, getTrace } = hm.traces.getTraceHandlers();
+        checker.onStartTrace = onStartTrace;
+        checker.onEndTrace = onEndTrace;
+        checker.onLeafTrace = onLeafTrace;
+        Result.elim(
+            Result.andThen(
+                hm.parser.parse(input),
+                (surfaceExpr) => {
+                    console.log(hm.surface.expressionToString(surfaceExpr));
+                    const expr = hm.elaborator.elaborate(surfaceExpr);
+                    console.log(hm.core.expressionToString(expr));
+                    console.log(hm.surface.expressionToString(hm.elaborator.unelaborate(expr)));
+                    return checker.infer(expr);
+                },
+            ),
+            (scheme) => {
+                const typeString = hm.hm.schemeToString(scheme);
+                let traceString;
+                if (hmGentzenStyleInput.checked) {
+                    traceString = traces.traceToProofTree(getTrace());
+                } else {
+                    traceString = traces.traceToSimpleString(getTrace());
+                }
+                highlight("Inferred type" + "\n" + typeString + "\n\nDerivation\n" + traceString, hmOutput);
+                hmErrorOutput.innerText = "";
+            },
+            (err) => {
+                hmErrorOutput.innerText = err;
+            }
+        )
+    }
+
+    function runInference() {
+        infer(hmExpressionInput.value);
+    }
+</script>

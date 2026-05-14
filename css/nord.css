@@ -1,4 +1,4 @@
-.highlight {
+:root {
     /* Polar Night */
     --nord0: #2e3440;
     --nord1: #3b4252;
@@ -19,7 +19,9 @@
     --nord13: #ebcb8b;
     --nord14: #a3be8c;
     --nord15: #b48ead;
+}
 
+.highlight {
     --text: var(--nord4);
     --text-whitespace: #fff;
     --escape: #fff;
