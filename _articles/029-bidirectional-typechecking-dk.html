@@ -1,7 +1,7 @@
 ---
 slug: bidirectional-typechecking-dk
 layout: post
-title: Bidirection Typechecking
+title: Bidirectional Typechecking
 date: 2026-05-04
 tags: [lambda calculus, type theory]
 ---
@@ -242,7 +242,7 @@ tags: [lambda calculus, type theory]
     </p>
 
     <p>
-        This lack of unique types means that we can't &ldquo;reuse&rdquo; our functions. <code>(λx. x) : Int → Int</code> is a function from integers to integers. <code>(λx. x) : Bool → Bool</code> is a function from booleans to booleans. Even though our function definition is <em>exactly the same</em>, our type system restricts us from treating them as the same. In a real programming language, this is a real a problem, and various languages have tricks to overcome them, like overloading.
+        This lack of unique types means that we can't &ldquo;reuse&rdquo; our functions. <code>(λx. x) : Int → Int</code> is a function from integers to integers. <code>(λx. x) : Bool → Bool</code> is a function from booleans to booleans. Even though our function definition is <em>exactly the same</em>, our type system restricts us from treating them as the same. In a real programming language, this is a significant problem, and various languages have tricks to overcome them, like overloading.
     </p>
 
     <p>
@@ -258,16 +258,12 @@ tags: [lambda calculus, type theory]
     </p>
 
     <p>
-        In System F, we can even substitute other quantified types.
-        For instance, if <code>α = ∀β.β → (∀γ.β → γ)</code> we get
-        <code>∀β.β → (∀γ.β → γ) → (∀β.β → (∀γ.β → γ))</code>. But we could even substitute in types for <code>β</code> etc. to create increasingly complex types.
-        Allowing type application of quantified types like this is called <strong>impredicativity</strong>, and we call System F an impredicative system.
-    </p>
-
-    <p>
         This expressivity lets us ask a more precise question.
         Given just an expression, can we automatically infer the principal type?
-        The answer turns out to still be <strong>no</strong>. But this wasn't fully proven until 1999 by Wells.
+        The answer turns out to still be <strong>no</strong>.
+        While we now have principal types for some terms, not every term in System F has a principal type.
+        So, if a term <em>does</em> have a principal type, can we at least infer those?
+        Still, the answer is <strong>no</strong>! But this wasn't fully proven until 1999 by Wells.
     </p>
 </section>
 
@@ -280,16 +276,9 @@ tags: [lambda calculus, type theory]
 
     <p>
         First, since the programmer does not write annotations, there is much more control over the kinds of types that can be inferred.
-        This also introduced the concept of &ldquo;let polymorphism&rdquo; where quantified types can only be introduced in expressions like
-        <code>let y = λx.x in x</code>.
-    </p>
-
-    <p>
-        The first change is, we do not allow impredicativity. In other words, during inference, a quantified type cannot be instantiated with another quantified type, as full System F would. For this reason we say HM is a predicative system.
-    </p>
-
-    <p>
-        The second is to also require all quantifiers to appear at the outermost level. So for instance, <code>(∀α.α → α) → (∀β.β → β)</code> would not be allowed, but <code>∀α.∀β.(α → α) → (β → β)</code> would.
+        They also introduced the concept of &ldquo;let polymorphism&rdquo; where quantified types can only be introduced in expressions like
+        <code>let y = λx.x in x</code>, where the type of <code>y</code> is inferred as the quantified type <code>∀α.(α → α)</code>.
+        This gives us a precise way to control how and when polymorphic types can appear.
     </p>
 
     <p>
@@ -305,6 +294,7 @@ tags: [lambda calculus, type theory]
     <p>
         The syntax is basically the same, with the main difference that there are no type expressions in the syntax. Everything is inferred.
         Let expressions are also no longer just syntactic sugar as they are the primary mechanism for polymorphism.
+        Note that the the terms are using de Bruijn indices, so <code>λx.x</code> appears as <code>λ.0</code>.
     </p>
     <div class="col hm-demo">
         <div>
@@ -373,15 +363,16 @@ tags: [lambda calculus, type theory]
     </p>
 
     <p>
-        Since the late 1980s or so, several people had worked on something called bidirectional typechecking. Instead of just an inference algorithm, in which you start with a term and try to derive a type, the process is split into two &ldquo;modes&rdquo; called sythensis and checking. Synthesis is basically inference, when you construct an unknown type from known information. Checking is when you have a term and a type, and want to confirm that the term is compatible with that type.
+        Since the late 1980s or so, several people had worked on something called bidirectional typechecking. Instead of just an inference algorithm, in which you start with a term and try to derive a type, the process is split into two &ldquo;modes&rdquo; called synthesis and checking. Synthesis is basically inference, when you construct an unknown type from known information. Checking is when you have a term and a type, and want to confirm that the term is compatible with that type.
     </p>
 
     <p>
-        HM can also be interpreted in this light. While any type inference system is going to trivially have only synthesis rules. But in practice, the traditional HM implementation is to gather constraints during inference, which are then &ldquo;checked&rdquo; when trying to solve those contraints through unification. A bidirectional system essentially includes this as part of the type theory directly.
+        HM can also be interpreted in this light. While any type inference system is going to trivially have only synthesis rules. But in practice, the traditional HM implementation is to gather constraints during inference, which are then &ldquo;checked&rdquo; when trying to solve those constraints through unification. A bidirectional system essentially includes this as part of the type theory directly.
     </p>
 
     <p>
-        One popular bidirectional type system is Dunfield and Krishnaswami's 2013 system from above. Their innovation was to actually have 3 modes. I won't go into detail, but the third is a kind of inferred type application. This allows the system to avoid requiring explicit type application as a part of the syntax.
+        One popular bidirectional type system is Dunfield and Krishnaswami's 2013 system from above. They had several innovations. The first was to add a 3rd mode. I won't go into detail, but it's a kind of inferred type application. This allows the system to avoid requiring explicit type application as a part of the syntax.
+        Another was their algorithmic context management. In other words, how exactly to keep track of where things first appear, their scope, and when they are valid to use.
     </p>
 </section>
 
@@ -389,13 +380,14 @@ tags: [lambda calculus, type theory]
     <h3>Notes and Future Work</h3>
 
     <p>
-        {% include footnotes/link id="zhao-thesis" content="Jinxu Zhao's 2021 thesis formalizes Dunfield and Krishnaswami's proofs" %}.
-        They note that there were several mistakes in the proofs.
+        In {% include footnotes/link id="zhao-thesis" content="Jinxu Zhao's 2021 thesis, they formalize Dunfield and Krishnaswami's proofs" %}.
+        But they also noted that there were several mistakes that had to be repaired.
 
-        But I believe I've discovered another mistake, minor or egregious depending on your point of view, but Figure 12 shows an incorrect example derivation.
-        While their conclusion is unchanged, this was quite confusing as you can imagine.
+        I believe I've discovered another mistake in the DK paper, which is minor or egregious depending on your point of view.
+        In Figure 12, they show an incorrect example derivation.
+        While their conclusion is unchanged, this was quite confusing when I was implementing, as you can imagine.
 
-        So here is Figure 12 corrected.
+        So here is the corrected derivation.
     </p>
 
 <figure id="figure-12" class="highlight-container">
@@ -414,6 +406,7 @@ tags: [lambda calculus, type theory]
 </figure>
 
     <p>
+        Another change I'd like to make is around the presentation of the derivations.
         Right now, the generated derivations can get very big because it shows the entire context every time.
         A better way would be to only report changes in context between steps.
     </p>
@@ -423,16 +416,42 @@ tags: [lambda calculus, type theory]
     <h3>Logical interpretation</h3>
 
     <p>
-        As mentioned earlier, System F is the type theoretic interpretation of second-order intuitionistic predicate logic.
+        As mentioned earlier, System F is the type theoretic interpretation of second-order intuitionistic propositional logic.
         So what are HM and DK as fragments of this logic?
+    </p>
 
-        In first-order logic, every formula can be rewritten in prenex form. But this is not the case in intuitionistic logics.
-        This means that the restriction of HM to prenex form is not just for aid of inference, but a genuine restriction of expressivity.
+    <p>
+        In System F, we allow quantified types to be substituted with any type, including other quantified types.
+        For instance, if we substitute <code>α = ∀β.β → (∀γ.β → γ)</code> in <code>∀α.(α → α)</code>
+        we get <code>(∀β.β → (∀γ.β → γ)) → (∀β.β → (∀γ.β → γ))</code>.
+        But now we can even substitute in types for <code>β</code> etc.
+        We can even substitute in the type itself! So <code>α = ∀α.(α → α)</code> to get <code>(∀α.(α → α)) → (∀α.(α → α))</code>.
+    </p>
 
-        Not allowing instantiation of quantified types with other quantified types means our types are &ldquo;rank-1&rdquo;.
-        With annotations, DK can allow higher-rank types.
+    <p>
+        This ability to substitute any type is called <strong>impredicativity</strong>.
+        The logical interpretation of this is that we allow quantification over arbitrary types, including the type itself.
+        If we restrict what kinds of types can be substituted, we get a <strong>predicative</strong> system.
+        This terminology dates all the way back to Russell's original formulation of a type theory.
+    </p>
 
-        I'm still trying to understand how to precisely characterize them, but these capture some of the important restrictions.
+    <p>
+        Another way to restrict our system is by restricting something called the &ldquo;rank&rdquo;.
+        A rank-0 type is just one in which no quantifiers appear. These are usually called <strong>monotypes</strong>.
+        A rank-1 type is one in which all quantifiers must appear at the very beginning/outermost position. This is usually called <strong>prenex</strong> form.
+    </p>
+
+    <p>
+        In HM, we require both predicativity and prenex form (sometimes called prenex polymorphism).
+        In first-order logic, every formula can be rewritten in prenex form.
+        But this is <em>not</em> always true in an intuitionistic logic, making this a fairly strong restriction on the types which can be inferred.
+        But it still appears to cover a good number of practical cases, since languages like OCaml are still popular.
+    </p>
+
+    <p>
+        In DK, we also require predicativity. But we need to be a bit more careful about distinguishing which part has which restriction.
+        The pure type synthesis mode, we also only infer prenex form.
+        But, the key difference is that we also allow arbitrary type annotations. Because we can annotate with higher-rank types, the type system as a whole can handle arbitrary types. The key restriction is in what kind of types can be substituted in for a quantified type, and what kinds of types are inferred in the absence of annotations.
     </p>
 </section>
 
