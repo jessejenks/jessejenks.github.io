@@ -5,7 +5,7 @@ function NeuralNet(layers) {
 	this.initializeWeights = function() {
 		for (let i = 0; i<L-1; i++) {
 			this.network[i] = new Float32Array(this.layers[i].size+1);
-			for (let j = 0, j < this.network[i].length; j++) {
+			for (let j = 0; j < this.network[i].length; j++) {
 				network[i][j] = gaussRandom();
 			}
 		}
