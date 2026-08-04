@@ -99,7 +99,7 @@
     --generic-heading: var(--nord8);
     --generic-inserted: var(--nord14);
     --generic-output: var(--nord4);
-    --generic-prompt: var(--nord4);
+    --generic-prompt: var(--nord7);
     --generic-strong: var(--nord4);
     --generic-subheading: var(--nord9);
     --generic-traceback: var(--nord13);

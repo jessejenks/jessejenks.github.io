@@ -1,0 +1,351 @@
+---
+slug: elm-outside-of-the-browser
+layout: post
+title: Elm Outside of the Browser
+date: 2026-07-31
+tags: [elm]
+---
+
+<p style="font-style: italic;">
+    This post was originally written in 2021. So to celebrate the release of {% include link content="Elm 0.19.2" href="https://elm-lang.org/news/faster-builds" %} (after a 6.7 year hiatus!), I decided to revisit it, and include an {% include link content="an example project on GitHub" href="https://github.com/jessejenks/elm-cli-example" %}.
+</p>
+
+<section>
+    <p>
+        The {% include link content="Elm language" href="https://elm-lang.org" %} is a nice functional language for frontend development. It compiles to JavaScript and the syntax is what I like to call Haskell-lite. In fact the compiler is written in Haskell. No type classes or any of the other more sophisticated features, but just enough to have a proper FP experience. I recommend it to people wanting to learn functional programming for the first time.
+    </p>
+
+    <p>
+        But can we only use it for frontend development? Can we write a CLI tool in Elm? Turns out you can! With a simple JavaScript wrapper, you can use Node to run Elm programs outside of a browser.
+    </p>
+</section>
+
+<section>
+    <h2>Setup</h2>
+
+    <h3>The Elm Side</h3>
+
+    <p>
+        Start by {% include link content="installing elm" href="https://guide.elm-lang.org/install/elm.html" %} and running the <code>elm init</code> command in the directory you wish to work from. This should create an <code>elm.json</code> file and an empty <code>src</code> directory.
+    </p>
+
+<figure class="highlight"><pre>.
+├── elm.json
+└── src</pre></figure>
+
+    <p>
+        We can now remove some of the default dependencies, since we won't need any browser support. Elm unfortunately doesn't have a built-in nice way to remove dependencies, since they generally assume you need the defaults (browser, html, etc). So just directly edit the <code>elm.json</code> file to look like the snippet below. You can check that things are working by running <code>elm install elm/core</code>, and you should see <code>It is already installed!</code>.
+    </p>
+
+{% highlight json %}
+{
+    "type": "application",
+    "source-directories": [
+        "src"
+    ],
+    "elm-version": "0.19.2",
+    "dependencies": {
+        "direct": {
+            "elm/core": "1.0.5"
+        },
+        "indirect": {
+            "elm/json": "1.1.4"
+        }
+    },
+    "test-dependencies": {
+        "direct": {},
+        "indirect": {}
+    }
+}
+{% endhighlight %}
+
+    </p>
+        For our program to take input and produce outputs without a browser, we'll need a way to communicate with "the outside". In Elm, this is achieved through a feature called ports. We'll need to declare our module as a port module, and declare some port types.
+        For now, our API will be to take in a string and output a string.
+    </p>
+
+    <p>
+        Create a new file at <code>src/Main.elm</code> with the following.
+    </p>
+
+
+{% highlight elm %}
+port module Main exposing (..)
+
+
+port input : (String -> msg) -> Sub msg
+
+
+port output : String -> Cmd msg
+{% endhighlight %}
+
+    <p>
+        Now that we have the ports set up, we can wire up a minimal program.
+        In a standard Elm project, we use the <code>Browser</code> module program. But for this project, we will use the <code>Platform</code> module to create a headless program. <strong>This is the key ingredient</strong>. If you've written standard Elm before, this should look familiar. But notice, we have no <code>view</code>!
+    </p>
+
+{% highlight elm %}
+port module Main exposing (..)
+
+import Platform exposing (Program, worker)
+
+
+
+-- Main
+
+
+main : Program Flags Model Msg
+main =
+    worker
+        { init = init
+        , update = update
+        , subscriptions = subscriptions
+        }
+
+
+
+-- Ports
+
+
+port input : (String -> msg) -> Sub msg
+
+
+port output : String -> Cmd msg
+
+
+
+-- Model
+
+
+type alias Flags =
+    ()
+
+
+type alias Model =
+    ()
+
+
+init : Flags -> ( Model, Cmd Msg )
+init _ =
+    ( (), Cmd.none )
+
+
+
+-- Update
+
+
+type Msg
+    = Input String
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        Input s ->
+            -- immediately output the input string
+            ( model, output s )
+
+
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    input Input
+{% endhighlight %}
+
+    <p>
+        We'll compile our project to a <code>build</code> directory.
+    </p>
+
+<figure class="highlight"><pre>
+<span class="gp">$</span> elm make src/Main.elm --output<span class="o">=</span>build/index.js --optimize
+<span class="go">Success!
+
+    Main ───> build/index.js
+</span></pre></figure>
+
+    <h3>The JavaScript Side</h3>
+
+    <p>
+        The JavaScript side of things is pretty simple. Create a <code>main.js</code> file with the following.
+    </p>
+
+{% highlight javascript %}
+const Elm = require("./build").Elm;
+
+// Initialize Elm program
+const main = Elm.Main.init();
+
+// Handle receiving output
+main.ports.output.subscribe(console.log);
+
+const input = process.argv[2] || "default";
+
+// Send message to Elm
+main.ports.input.send(input);
+{% endhighlight %}
+
+    <p>
+        And that's it! We have basically just built a complicated <code>echo</code> with Elm!
+    </p>
+
+<figure class="highlight"><pre>
+<span class="gp">$</span> node main.js
+default
+<span class="gp">$</span> node main.js hello
+hello
+</pre></figure>
+</section>
+
+<section>
+    <h2>Where to go from here</h2>
+
+    <p>
+        Now that this foundation has been laid, there's all sorts of directions we can go.
+        As an example, let's create a CLI tool that lets us manipulate <code>elm.json</code> files.
+        See {% include link content="the full code on GitHub" href="https://github.com/jessejenks/elm-cli-example" %}.
+    </p>
+
+    <p>
+        Our tool will accept a sequence of operations to manipulate the file, showing the final result at the end. We'll support three commands, <code>remove</code>, <code>demote</code>, and <code>promote</code>. These commands let you remove, demote (move from direct to indirect), or promote (indirect to direct) packages.
+    </p>
+
+    <p>
+        Using our tool, we'll be able to go from a default <code>elm.json</code> file, to one that just uses <code>elm/core</code> and <code>elm/json</code>, as this project does.
+    </p>
+
+<figure class="highlight"><pre>
+<span class="gp">$</span> node main.js \
+    remove elm/browser elm/html elm/time elm/url elm/virtual-dom \
+    promote elm/json \
+    --strict
+</pre></figure>
+
+    <p>
+        Instead of a generic <code>input</code> port, we'll add one input port for each command. We'll also add a <code>finish</code> port, indicating that we're done sending commands, and we want to see the final output. We'll also add an <code>error</code> output port so the JS side can distinguish successful and unsuccessful results.
+    </p>
+
+{% highlight elm %}
+port remove : (String -> msg) -> Sub msg
+
+
+port demote : (String -> msg) -> Sub msg
+
+
+port promote : (String -> msg) -> Sub msg
+
+
+port finish : (() -> msg) -> Sub msg
+
+
+port output : String -> Cmd msg
+
+
+port error : String -> Cmd msg
+{% endhighlight%}
+
+    <p>
+        We'll update our subscriptions and message type accordingly.
+    </p>
+
+{% highlight elm %}
+type Msg
+    = Remove String
+    | Demote String
+    | Promote String
+    | Finish
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.batch
+        [ remove Remove
+        , demote Demote
+        , promote Promote
+        , finish (always Finish)
+        ]
+{% endhighlight %}
+
+    <p>
+        We can pass data in to initialize our model from the JS side through <strong>flags</strong>. We'll update our model to hold a <code>strict</code> flag to determine if passing an unknown package is an error or simply ignored. We'll also need a flag for passing in the initial contents of the <code>elm.json</code> file.
+    </p>
+
+    <p>
+        The actual decoding of the JSON file is a whole other topic, but is one of the primary reasons you might want to go through the trouple of writing an Elm CLI tool. Instead of a generic <code>JSON.parse</code>, we ensure the correctness of our data by {% include link content="parsing into the expected shape" href="https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate" %}.
+    </p>
+
+{% highlight elm %}
+type alias Flags =
+    { elmJson : String, strict : Bool }
+
+
+type alias Model =
+    { elmJson : Result String Application, strict : Bool }
+{% endhighlight %}
+
+    <p>
+        The model will hold our custom type (<code>Application</code>). Since the decoding may fail (that it, the input JSON may not be a valid <code>elm.json</code> file at all), we have to hold a <code>Result</code> type. We initialize our model from the flags in the <code>init</code> function.
+    </p>
+
+{% highlight elm %}
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    case D.decodeString ElmJson.Decode.decoder flags.elmJson of
+        Ok app ->
+            ( { elmJson = Ok app, strict = flags.strict }, Cmd.none )
+        -- ...
+{% endhighlight %}
+
+    <p>
+        And finally, we need to update <code>update</code> to handle our three command types.
+    </p>
+
+{% highlight elm %}
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case model.elmJson of
+        Ok app ->
+            case msg of
+                Remove pkg ->
+                    updateApplication Modify.removePackage pkg app model
+
+                Demote pkg ->
+                    updateApplication Modify.demotePackage pkg app model
+
+                Promote pkg ->
+                    updateApplication Modify.promotePackage pkg app model
+        -- ...
+{% endhighlight %}
+
+
+    <p>
+        On the JS side, we'll update the script to pass in flags, and actually send multiple commands.
+    </p>
+
+{% highlight javascript %}
+// ... argv parsing and file reading
+
+// Initialize Elm program
+const main = Elm.Main.init({
+    flags: {
+        elmJson,
+        strict,
+    },
+});
+
+// Handle receiving output
+main.ports.output.subscribe(console.log);
+
+main.ports.error.subscribe(function (message) {
+    console.error(message);
+    process.exitCode = 1;
+});
+
+// Send messages to Elm
+for (const operation of operations) {
+    main.ports[operation.command].send(operation.package);
+}
+main.ports.finish.send(null);
+{% endhighlight %}
+</section>

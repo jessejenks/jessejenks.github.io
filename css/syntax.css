@@ -16,7 +16,7 @@ figure.highlight pre {
 
 .highlight { background: var(--nord0); }
 .highlight { color: var(--text); }
-.highlight .w { background-color: var(--nord11); }
+.highlight .w { background-color: transparent }
 .highlight .esc { color: var(--escape); }
 .highlight .err { color: var(--error); }
 .highlight .x { color: var(--other); }
