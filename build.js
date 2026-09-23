@@ -9,15 +9,24 @@ const jsFiles = [];
 const tsFiles = [];
 
 function walk(root) {
-    const allFilePaths = readdirSync(root, { recursive: true }).map((path) =>
-        join(root, path),
-    );
-    for (let i = 0; i < allFilePaths.length; i++) {
-        const filePath = allFilePaths[i];
-        if (extname(filePath) === ".ts") {
-            tsFiles.push(filePath);
-        } else if (extname(filePath) === ".js") {
-            jsFiles.push(filePath);
+    const stack = [root];
+    while (stack.length > 0) {
+        const path = stack.pop();
+        if (statSync(path).isDirectory()) {
+            const files = readdirSync(path);
+            files.reverse()
+            if (files.includes("index.ts")) {
+                // only include entrypoint for TS project with index
+                tsFiles.push(join(path, "index.ts"));
+                // copy any JS files (should be uncommon)
+                stack.push(...files.filter(f => extname(f) === ".js").map(f => join(path, f)));
+            } else {
+                stack.push(...files.map(f => join(path, f)));
+            }
+        } else if (extname(path) === ".ts") {
+            tsFiles.push(path);
+        } else if (extname(path) === ".js") {
+            jsFiles.push(path);
         }
     }
 }
@@ -36,7 +45,7 @@ if (tsFiles.length > 0) {
         bundle: true,
         outdir: OUT,
         outbase: SRC,
-        format: "esm",
+        format: "iife",
         target: "es2020",
     }).catch((e) => {
         console.error(e);

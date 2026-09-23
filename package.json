@@ -10,6 +10,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "bidirectional-typechecking-dk": "file:../bidirectional-typechecking-dk"
+  },
   "devDependencies": {
     "esbuild": "^0.28.1",
     "typescript": "^6.0.3"
