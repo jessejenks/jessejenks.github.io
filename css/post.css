@@ -110,3 +110,19 @@
     background-color: var(--palette-blue-2);
     border-radius: 0.25rem;
 }
+
+@font-face {
+    font-family: "Fira Code";
+    src: url("/fonts/FiraCode-Regular.ttf")format("truetype");
+}
+
+.post pre, .post code {
+    font-family: "Fira Code", monospace;
+}
+
+.post code:not(figure.highlight code) {
+    white-space: nowrap;
+    background-color: var(--palette-blue-0);
+    padding: 0 0.25rem;
+    border-radius: 0.25rem;
+}
