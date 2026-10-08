@@ -67,7 +67,12 @@ title: Blog posts
             href="{{ post.url }}"
             title="{{ post.title }}"
         >
-            {{ post.title }}
+            <div class="title">
+                {{ post.title }}
+                {% if post.subtitle %}
+                <span class="subtitle">{{ post.subtitle }}</span>
+                {% endif %}
+            </div>
             {% if post.draft %}
                 (draft)
             {% endif %}

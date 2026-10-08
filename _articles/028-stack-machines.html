@@ -1,0 +1,471 @@
+---
+slug: stack-machines
+layout: post
+title: Stack Machines
+subtitle: mini CAML part 1
+date: 2026-10-02
+tags: [abstract machine, compiler]
+published: true
+---
+
+<style>
+    section .demo {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .post figure {
+        margin: unset;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+    }
+
+    pre.parse-output {
+        padding: 0.5rem;
+        background-color: var(--nord0);
+        border: 1px solid var(--palette-blue-3);
+        border-radius: 0.25rem;
+        min-height: calc(2.5rem + 2px);
+        white-space: pre-wrap;
+    }
+
+    pre.error-message {
+        color: var(--nord11);
+        vertical-align: middle;
+        white-space: pre-wrap;
+    }
+
+    pre span.int { color: var(--nord15); }
+    pre span.paren { color: var(--nord4); }
+    pre span.punc { color: var(--nord9); }
+    pre span.op { color: var(--nord7); }
+    pre span.keyword { color: var(--nord9); }
+    pre span.comment { color: var(--nord3); }
+
+    .machine {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 10rem;
+        column-gap: 0.5rem;
+    }
+
+    .machine .column {
+        display: grid;
+        grid-auto-rows: 2rem;
+        min-width: 0;
+        border: 1px solid var(--nord2);
+        border-radius: 0.25rem;
+        padding: 0 0.5rem;
+    }
+
+    .machine .column .column-header {
+        padding: 0.25rem 0.5rem;
+        align-content: center;
+    }
+
+    .machine .column .row {
+        display: grid;
+        min-width: 0;
+        align-content: center;
+    }
+
+    .machine .column .row.indexed {
+        grid-template-columns: 3ch 1fr;
+        gap: 1ch;
+    }
+
+    .machine .column .row .value {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .machine .column .row.indexed .index {
+        text-align: right;
+        color: var(--nord3);
+    }
+
+    .machine .column .row.highlighted {
+        border-left: 1px solid var(--nord4);
+    }
+
+    .machine .column .row.highlighted .index {
+        color: var(--nord4);
+    }
+
+    .machine .column .row.highlighted .value {
+        font-weight: bold;
+    }
+
+    .machine .column .row.more {
+        color: var(--nord3);
+    }
+</style>
+
+<section>
+    <p>
+        This is the first in a series on implementing a simple CAML language.
+    </p>
+
+    <p>
+        Code for this post is {% include link href="https://github.com/jessejenks/ZINC" content="available on my GitHub"%}.
+    </p>
+</section>
+
+<section>
+    <h2>Introduction</h2>
+
+    <p>
+        In this post, we'll introduce the concept of <strong>stack machines</strong> with two simple examples.
+    </p>
+
+    <p>
+        You can skip straight to the <a href="#first-machine-demo">simple arithmetic demo</a>, or the <a href="#second-machine-demo">arithmetic with variables demo</a>.
+    </p>
+
+    <section>
+        <h2>Stacks</h2>
+
+        <p>
+            A stack is a very simple data structure. Despite their simplicity, they are ubiquitous in computer science. A stack is just a container of data with two operations, <em>push</em> and <em>pop</em>. Pushing adds a value to the stack, and popping removes a value. The key behavior that makes stacks so useful is that the value you get from a pop is always the <em>most recently pushed value</em>. This is sometimes described as last-in, first-out or LIFO. The last pushed value is called the <em>top</em> of the stack.
+        </p>
+
+        <p>
+            For example, let's say I push 1, push 2, then push 3. Now, if I pop, I get 3. If I pop again, I get 2, and if I pop a final time, I get 1. If I try to pop again, I'd be trying to pop from an empty stack, which is considered invalid. In practice, this means our program crashes or some other bad thing happens. Try adding an extra pop to the following example and see what happens.
+        </p>
+
+        <section>
+            <div class="demo">
+                <input id="stack-example__input" type="text" value="push 1; push 2; push 3; pop; pop; pop" />
+                <div>
+                    <button id="stack-example__load-btn" type="button">Load</button>
+                    <button id="stack-example__run-btn" type="button">Run</button>
+                    <button id="stack-example__step-btn" type="button">Step</button>
+                    <button id="stack-example__reset-btn" type="button">Reset</button>
+                </div>
+                <pre id="stack-example__parsed" class="parse-output"></pre>
+                <pre id="stack-example__errors" class="error-message"></pre>
+                <figure>
+                    <div id="stack-example" class="example"></div>
+                </figure>
+            </div>
+        </section>
+    </section>
+</section>
+
+<section>
+    <h2>The First Machine</h2>
+
+    <p>
+        Let's look at a really simple language. The only expressions are integers and (binary) addition. So we have expressions like <code>1</code> and <code>((2 + 3) + 4)</code>.
+    </p>
+
+    <p>
+        Now we'll define a very simple corresponding stack machine. In this case, this means we are defining a set of <em>instructions</em>, and later we'll define how to <em>execute</em> those instructions.
+    </p>
+
+    <p>
+        For now, we have just two instructions <code>Push(n)</code>, where <code>Push</code> takes a single integer argument, and <code>add</code>. All of our &ldquo;programs&rdquo; will just look like sequences of instructions.
+        <code>Push(3); Push(4); add</code>.
+    </p>
+
+    <p>
+        Now we define a compilation scheme. This tells us how to translate expressions into a sequence of instructions.
+    </p>
+
+<figure class="highlight">
+<pre>
+1. [[    n    ]] = Push(n)
+2. [[ E1 + E2 ]] = [[ E1 ]]; [[ E2 ]]; add
+</pre>
+</figure>
+
+    <p>
+        In words, this says
+    </p>
+
+<ol>
+    <li>if we see an integer, add a <code>Push</code> instruction for that number</li>
+    <li>if we see addition, compile the left, then the right, and then an <code>add</code> instruction</li>
+</ol>
+
+    <p>
+        The idea here is to define rules that tell us how to turn an <em>expression</em> on the left, into concrete <em>instructions</em> on the right.
+    </p>
+
+    <p>
+        Now we can define how our machine will actually carry out these instructions. Our machine has a stack of numbers which is initially empty. It then reads through the instructions one at a time, manipulating the stack according to the current instruction. Hopefully the <code>Push</code> instruction is self-explanatory, it just pushes that number onto the stack. The <code>add</code> instruction pops two values from the stack, and pushes their sum. In other words, it's shorthand for <code>pop; pop; push (something + something)</code>.
+    </p>
+
+    <p>
+        With just these two rules, we can already compile simple expressions.
+    </p>
+
+<figure class="highlight">
+<pre>[[ 1 + 2 ]]
+[[ 1 ]]; [[ 2 ]]; add  // rule 2
+Push(1); [[ 2 ]]; add  // rule 1
+Push(1); Push(2); add  // rule 1
+</pre>
+</figure>
+
+
+<figure class="highlight">
+<pre>[[ (1 + 2) + 3 ]]
+[[ (1 + 2) ]];         [[ 3 ]]; add  // rule 2
+[[ 1 ]]; [[ 2 ]]; add; [[ 3 ]]; add  // rule 2
+Push(1); [[ 2 ]]; add; [[ 3 ]]; add  // rule 1
+Push(1); Push(2); add; [[ 3 ]]; add  // rule 1
+Push(1); Push(2); add; Push(3); add  // rule 1
+</pre>
+</figure>
+
+    <p>
+        If we were to use more familiar notation, writing just <code>3</code> instead of <code>Push(3)</code> and <code>+</code> instead of <code>add</code>, we would get <code>1 2 + 3 +</code>. You might be more familiar with this as reverse-Polish notation (RPN).
+    </p>
+
+    <p>
+        If you're familiar with tree traversals or RPN, you might recognize this as a post-order traversal of the expression, and the stack is what lets the machine keep track of the intermediate results along the way.
+    </p>
+
+    <p>
+        Let's add some more rules for subtraction and multiplication. In fact, let's just add a single <code>Prim</code> instruction (short for &ldquo;primitive operation&rdquo;) which takes the specific operation as an argument.
+    </p>
+
+<figure class="highlight">
+<pre>
+2. [[ E1 + E2 ]] = [[ E1 ]]; [[ E2 ]]; Prim(add)
+3. [[ E1 - E2 ]] = [[ E1 ]]; [[ E2 ]]; Prim(sub)
+4. [[ E1 * E2 ]] = [[ E1 ]]; [[ E2 ]]; Prim(mul)
+</pre>
+</figure>
+
+    <p>
+        These instructions are interpreted in straightforward ways as well. <code>Prim(add)</code> still just pops two values from the stack and pushes their sum. Similarly <code>Prim(sub)</code> pops two values from the stack and pushes their difference. However, we have to be careful here. Since subtraction is non-commutative, we need to know which value we are subtracting from. In our case, we read the instructions for the left hand side before the right hand side, which means the right hand value will be the top of the stack, and the left below that. So <code>Push(1); Push(2); Prim(sub)</code> should pop (getting 2), then pop again (getting 1) and then push (1 - 2) instead of (2 - 1).
+    </p>
+
+    <p>
+        Let's also add a unary operator, negation.
+    </p>
+
+<figure class="highlight">
+<pre>
+5. [[ - E ]] = [[ E ]]; Prim(negate)
+</pre>
+</figure>
+
+    <p>
+        Unlike our previous operations, this instruction will pop just a single value, and then push the negation of that value.
+    </p>
+
+    <p>
+        So our final machine still has only two instructions, <code>Push</code> and <code>Prim</code>, each taking a single argument, with behavior defined for each primitive operation.
+    </p>
+
+    <p>
+        Let's walk through a slightly more complex example with this updated set of instructions.
+    </p>
+
+<figure class="highlight">
+<pre>[[ (1 + ((- 2) * 3)) - 4 ]]
+[[ 1 + ((- 2) * 3) ]];                                         [[ 4 ]]; Prim(sub)  // rule 3
+[[ 1 ]]; [[ (- 2) * 3 ]];                           Prim(add); [[ 4 ]]; Prim(sub)  // rule 2
+Push(1); [[ (- 2) * 3 ]];                           Prim(add); [[ 4 ]]; Prim(sub)  // rule 1
+Push(1); [[ - 2 ]];             [[ 3 ]]; Prim(mul); Prim(add); [[ 4 ]]; Prim(sub)  // rule 4
+Push(1); [[ 2 ]]; Prim(negate); [[ 3 ]]; Prim(mul); Prim(add); [[ 4 ]]; Prim(sub)  // rule 5
+Push(1); Push(2); Prim(negate); [[ 3 ]]; Prim(mul); Prim(add); [[ 4 ]]; Prim(sub)  // rule 1
+Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); [[ 4 ]]; Prim(sub)  // rule 1
+Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub)  // rule 1
+</pre>
+</figure>
+
+    <p>
+        Below is a demo which lets you enter an expression and see the stack machine calculate the final answer.
+    </p>
+
+    <section>
+        <h3 id="first-machine-demo">Demo</h3>
+
+        <div class="demo">
+            <input id="example-1__input" type="text" value="1 + - 2 * 3" />
+            <div>
+                <button id="example-1__load-btn" type="button">Load</button>
+                <button id="example-1__run-btn" type="button">Run</button>
+                <button id="example-1__step-btn" type="button">Step</button>
+                <button id="example-1__reset-btn" type="button">Reset</button>
+            </div>
+            <pre id="example-1__parsed" class="parse-output"></pre>
+            <pre id="example-1__errors" class="error-message"></pre>
+            <pre id="example-1__halted" class="parse-output"></pre>
+            <figure>
+                <div id="example-1" class="example"></div>
+            </figure>
+        </div>
+    </section>
+</section>
+
+<section>
+    <h2>The Second Machine</h2>
+
+    <p>
+        Now we'll extend our machine a bit. One issue with our previous calculator machine is that we can't store and reuse intermediate answers. And this is a shame because every intermediate value is computed on the stack, but we lose it once we encounter the next operation.
+    </p>
+
+    <p>
+        For example <code>(1 + 2) * (1 + 2)</code>, we recompute the expression <code>1 + 2</code> twice. It would be nice if we could say &ldquo;compute <code>1 + 2</code>, then reuse that answer twice&rdquo;. To accomplish this, we'll add a new kind of expression to our language called a <strong>let expression</strong>.
+    </p>
+
+<figure class="highlight"><pre><span class="keyword">let</span> <span class="ident">x</span> <span class="punc">=</span> <span class="int">1</span> <span class="op">+</span> <span class="int">2</span> <span class="keyword">in</span>
+    <span class="ident">x</span> <span class="op">*</span> <span class="ident">x</span>
+</pre></figure>
+
+    <p>
+        The <code>let x =</code> part is called a <strong>let binding</strong>, since it binds a value (in this case <code>1 + 2</code>) to a variable (<code>x</code>).
+    </p>
+
+    <p>
+        But how do we actually do this? We're clearly going to need some more instructions, but what exactly?
+    </p>
+
+    <p>
+        As we noted before, intermediate calculations are available on the stack. The problem is that they get lost once we encounter the next operation. So we'll need to be able to copy that value &ldquo;somewhere else&rdquo;, and read it again later.
+    </p>
+
+    <p>
+        But where should we put it?
+    </p>
+
+    <section>
+        <h3>Scope</h3>
+
+        <p>Consider the following examples.</p>
+
+<figure class="highlight"><pre>
+<span class="comment">1.</span> <span class="keyword">let</span> <span class="ident">x</span> <span class="punc">=</span> <span class="int">1</span> <span class="keyword">in</span> <span class="ident">x</span> <span class="op">+</span> <span class="paren">(</span> <span class="keyword">let</span> <span class="ident">y</span> <span class="punc">=</span> <span class="int">2</span> <span class="keyword">in</span> <span class="ident">x</span> <span class="op">+</span> <span class="ident">y</span> <span class="paren">)</span> <span class="op">+</span> <span class="ident">x</span>
+</pre></figure>
+
+        <p>
+            Notice that the scope of <code>y</code>, that is, the region where a reference to <code>y</code> is valid, starts after the scope of <code>x</code>, but also ends before it. This is true in general, the last scope we entered will always be the first one we leave. In other words, scope is always last-in, first-out. Which is exactly how a stack behaves! So, we'll store intermediate values into another stack, called the <strong>environment</strong>. When we enter a <code>let</code>, we push a value onto the environment, and when we leave it, we pop that value off. This means the environment always holds the variables that are currently in scope.
+        </p>
+
+        <p>
+            But how do we actually refer to the values in the environment? We could just associate the name directly to a value somehow. But this doesn't take advantage of the stack-like behavior of scopes, and introduces other complexity, for instance the problem of shadowing. In <code>let x = 1 in (let x = 2 in x)</code>, we have two variables called <code>x</code>, but they are bound to different values in different scopes. Instead we'll use an old trick.
+        </p>
+    </section>
+
+<section>
+    <h3>de Bruijn indices</h3>
+
+    <p>
+        The trick we'll use is called a <strong>de Bruijn index</strong>, named for the Dutch mathematician Nicolaas G. de Bruijn.
+    </p>
+
+    <p>
+        The de Bruijn index of a variable is the number of let bindings we have to move back through to reach the definition of that variable. In other words, how many scopes ago was I introduced? This sounds confusing but is fairly straightforward.
+    </p>
+
+    <p>
+        In <code>let x = 1 in x</code>, the variable <code>x</code> is referenced in the scope it was introduced, So it has an index of 0.
+    </p>
+
+<figure class="highlight">
+<pre>
+    ┌──────────┐
+    │          ┴
+    ▾          <span class="comment">0</span>
+<span class="keyword">let</span> <span class="ident">x</span> <span class="punc">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="ident">x</span>
+</pre></figure>
+
+    <p>
+        Now consider nested <code>let</code> expressions.
+    </p>
+
+<figure class="highlight">
+<pre>
+    ┌──────────┐         ┌──────────┐
+    │          ┴         │          ┴
+    ▾          <span class="comment">0</span>         ▾          <span class="comment">0</span>
+<span class="keyword">let</span> <span class="ident">x</span> <span class="punc">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="ident">x</span> <span class="op">+</span> <span class="paren">(</span> <span class="keyword">let</span> <span class="ident">y</span> <span class="punc">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="ident">y</span> <span class="op">+</span> <span class="ident">x</span> <span class="paren">)</span>
+    ▴                                   <span class="comment">1</span>
+    │                                   ┬
+    └───────────────────────────────────┘
+</pre></figure>
+
+    <p>
+        The first <code>x</code> still has an index of 0, for the same reason as the previous example. As does the use of <code>y</code>. But the second use of <code>x</code> has an index of 1, since it is being referenced inside of the inner scope.
+    </p>
+
+    <p>
+        This also makes references completely unambiguous, since we no longer care about the names of variables at all!
+    </p>
+
+</section>
+
+    <p>
+        Since we push a value onto the environment whenever we enter a new scope, the index of a variable corresponds exactly to the how far the value of that variable is from the top of the environment. An index of 0 means that value is on top, while an index of 1 means 1 below the top, and so on.
+    </p>
+
+    <p>
+        So, we need three new instructions. <code>Bind</code> will mean pop from the stack, and push that value into the environment. This represents entering a new scope. <code>Drop</code> will mean pop from the environment, and representing leaving a scope. And finally <code>Access</code> will take a single argument, an index, and will mean copy a value from the environment and push that onto the stack. This represents reading the value of a variable.
+    </p>
+
+    <p>
+        Despite the increase in expressive power this gives us, we still have a surprisingly simple compilation scheme.
+    </p>
+
+<figure class="highlight"><pre>
+6. [[ x ]]                = Access(i)  // where i is the de Bruijn index of x
+7. [[ let x = E1 in E2 ]] = [[ E1 ]]; Bind; [[ E2 ]]; Drop
+</pre></figure>
+
+    <p>
+        Let's walk through compiling the example from before.
+    </p>
+
+<figure class="highlight">
+<pre>[[ let x = 1 + 2 in (x * x) ]]
+[[ 1 + 2 ]];                 Bind; [[ x * x ]];                     Drop  // rule 7
+[[ 1 ]]; [[ 2 ]]; Prim(add); Bind; [[ x * x ]];                     Drop  // rule 2
+Push(1); [[ 2 ]]; Prim(add); Bind; [[ x * x ]];                     Drop  // rule 1
+Push(1); Push(2); Prim(add); Bind; [[ x * x ]];                     Drop  // rule 1
+Push(1); Push(2); Prim(add); Bind; [[ x * x ]];                     Drop  // rule 4
+Push(1); Push(2); Prim(add); Bind; [[ x ]];   [[ x ]];   Prim(mul); Drop  // rule 4
+Push(1); Push(2); Prim(add); Bind; Access(0); [[ x ]];   Prim(mul); Drop  // rule 6
+Push(1); Push(2); Prim(add); Bind; Access(0); Access(0); Prim(mul); Drop  // rule 6
+</pre>
+</figure>
+
+    <p>
+        Try playing with the demo below, and notice how the second stack lets us reuse calculations.
+    </p>
+
+    <section>
+        <h3 id="second-machine-demo">Demo</h3>
+
+        <div class="demo">
+            <textarea id="example-2__input" rows="4" cols="40">let x = 1 in x + (
+    let y = 2 in
+        x + y
+)</textarea>
+            <div>
+                <button id="example-2__load-btn" type="button">Load</button>
+                <button id="example-2__run-btn" type="button">Run</button>
+                <button id="example-2__step-btn" type="button">Step</button>
+                <button id="example-2__reset-btn" type="button">Reset</button>
+            </div>
+            <pre id="example-2__parsed" class="parse-output"></pre>
+            <pre id="example-2__errors"></pre>
+            <pre id="example-2__halted" class="parse-output"></pre>
+            <figure>
+                <div id="example-2" class="example"></div>
+            </figure>
+        </div>
+    </section>
+</section>
+
+<script src="../js/zinc/entrypoints/arithmetic.js"></script>

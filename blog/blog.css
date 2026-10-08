@@ -141,6 +141,16 @@
     transition: color var(--default-transition-time), background-color var(--default-transition-time);
 }
 
+.posts > .link-to-post-container > .link-to-post > .title {
+    display: flex;
+    flex-direction: column;
+}
+
+.posts > .link-to-post-container > .link-to-post > .title > .subtitle {
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
 .posts > .link-to-post-container > .link-to-post > .post-tags {
     font-size: 0.8rem;
     max-width: 8rem;

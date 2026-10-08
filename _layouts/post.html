@@ -4,9 +4,15 @@ layout: default
 <link rel="stylesheet" type="text/css" href="/css/post.css">
 <link rel="stylesheet" type="text/css" href="/css/nord.css">
 <link rel="stylesheet" type="text/css" href="/css/syntax.css">
-<h1>{{ page.title }}</h1>
+<div class="meta">
+  <div class="title">
+    <h1>{{ page.title }}</h1>
+    {% if page.subtitle %}
+    <span class="subtitle">{{ page.subtitle }}</span>
+    {% endif %}
+  </div>
 {% assign d = page.date | date: "%-d"  %}
-<p class="meta">
+<span class="date">
 {{ page.date | date: "%B" }}
 {% case d %}
   {% when '1' or '21' or '31' %}{{ d }}st,
@@ -15,7 +21,8 @@ layout: default
   {% else %}{{ d }}th,
   {% endcase %}
 {{ page.date | date: "%Y" }}
-</p>
+</span>
+</div>
 
 <div class="post">
   {{ content }}
