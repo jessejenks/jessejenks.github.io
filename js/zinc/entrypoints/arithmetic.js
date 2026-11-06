@@ -51,19 +51,19 @@
     return s;
   }
   function int(n) {
-    return span(n.toString(), "int");
+    return span(n.toString(), "literal-int");
   }
   function ident(c) {
-    return span(c, "ident");
+    return span(c, "variable");
   }
   function paren(c) {
     return span(c, "paren");
   }
   function op(c) {
-    return span(c, "op");
+    return span(c, "operator");
   }
   function punc(c) {
-    return span(c, "punc");
+    return span(c, "punctuation");
   }
   function keyword(c) {
     return span(c, "keyword");

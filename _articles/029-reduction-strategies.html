@@ -3,95 +3,13 @@ slug: reduction-strategies
 layout: post
 title: Reduction Strategies
 subtitle: mini CAML part 2
+series: mini-caml
 date: 2026-11-05
 tags: [lambda calculus]
 published: true
 ---
 
 {% include footnotes/use %}
-
-<style>
-    .post figure.center {
-        min-height: 50px;
-        max-height: 500px;
-        align-items: start;
-        overflow-x: auto;
-        overflow-y: auto;
-        background-color: var(--nord0);
-        color: var(--nord6);
-        font-size: 1.25rem;
-
-        display: flex;
-        flex-direction: row;
-        justify-content: space-evenly;
-        flex-wrap: wrap;
-        gap: 2rem;
-    }
-
-    .post figure.center.wide {
-        --width: 75vw;
-        width: max(100%, var(--width));
-        margin-left: min(0px, calc(50% - max(100%, var(--width)) / 2));
-    }
-
-    .post figure.center pre {
-        line-height: 1;
-    }
-
-    .row {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .col {
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .panel.show.list-of-examples {
-        display: flex;
-        flex-flow: column;
-        align-items: flex-end;
-        gap: 0.5rem;
-    }
-
-    .panel .row.example {
-        width: 95%;
-        justify-content: space-between;
-        /* flex-wrap: wrap; */
-    }
-
-    .panel .row.example .description {
-        margin: 0;
-        margin-left: 2rem;
-    }
-
-    input.expr-input {
-        width: 100%;
-        max-width: 50%;
-        min-width: 20px;
-        padding: 0.5rem;
-    }
-
-    pre.error-message {
-        color: var(--nord11);
-        vertical-align: middle;
-        white-space: pre-wrap;
-    }
-
-    pre span.literal-unit { color: var(--nord4); }
-    pre span.literal-int { color: var(--nord15); }
-    pre span.paren { color: var(--nord7); }
-    pre span.punctuation { color: var(--nord9); }
-    pre span.operator { color: var(--nord7); }
-    pre span.keyword { color: var(--nord9); }
-    pre span.label { color: var(--nord3); }
-    pre span.connector { color: var(--nord3); }
-    pre span.comment { color: var(--nord3); }
-</style>
 
 <section>
     <p>

@@ -4,6 +4,9 @@ layout: default
 <link rel="stylesheet" type="text/css" href="/css/post.css">
 <link rel="stylesheet" type="text/css" href="/css/nord.css">
 <link rel="stylesheet" type="text/css" href="/css/syntax.css">
+{% if page.series %}
+<link rel="stylesheet" type="text/css" href="/css/series/{{ page.series }}.css">
+{% endif %}
 <div class="meta">
   <div class="title">
     <h1>{{ page.title }}</h1>

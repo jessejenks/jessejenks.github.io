@@ -16,15 +16,19 @@ export function span(txt: string, className?: string) {
 }
 
 export function unit() {
-    return span("()", "unit");
+    return span("()", "literal-unit");
+}
+
+export function bool(b: boolean) {
+    return span(b.toString(), "literal-bool");
 }
 
 export function int(n: number) {
-    return span(n.toString(), "int");
+    return span(n.toString(), "literal-int");
 }
 
 export function ident(c: string) {
-    return span(c, "ident");
+    return span(c, "variable");
 }
 
 export function paren(c: string) {
@@ -32,11 +36,11 @@ export function paren(c: string) {
 }
 
 export function op(c: string) {
-    return span(c, "op");
+    return span(c, "operator");
 }
 
 export function punc(c: string) {
-    return span(c, "punc");
+    return span(c, "punctuation");
 }
 
 export function keyword(c: string) {

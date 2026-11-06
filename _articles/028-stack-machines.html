@@ -3,109 +3,11 @@ slug: stack-machines
 layout: post
 title: Stack Machines
 subtitle: mini CAML part 1
+series: mini-caml
 date: 2026-10-02
 tags: [abstract machine, compiler]
 published: true
 ---
-
-<style>
-    section .demo {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .post figure {
-        margin: unset;
-    }
-
-    input {
-        width: 100%;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-    }
-
-    pre.parse-output {
-        padding: 0.5rem;
-        background-color: var(--nord0);
-        border: 1px solid var(--palette-blue-3);
-        border-radius: 0.25rem;
-        min-height: calc(2.5rem + 2px);
-        white-space: pre-wrap;
-    }
-
-    pre.error-message {
-        color: var(--nord11);
-        vertical-align: middle;
-        white-space: pre-wrap;
-    }
-
-    pre span.int { color: var(--nord15); }
-    pre span.paren { color: var(--nord4); }
-    pre span.punc { color: var(--nord9); }
-    pre span.op { color: var(--nord7); }
-    pre span.keyword { color: var(--nord9); }
-    pre span.comment { color: var(--nord3); }
-
-    .machine {
-        display: grid;
-        grid-auto-flow: column;
-        grid-auto-columns: 10rem;
-        column-gap: 0.5rem;
-    }
-
-    .machine .column {
-        display: grid;
-        grid-auto-rows: 2rem;
-        min-width: 0;
-        border: 1px solid var(--nord2);
-        border-radius: 0.25rem;
-        padding: 0 0.5rem;
-    }
-
-    .machine .column .column-header {
-        padding: 0.25rem 0.5rem;
-        align-content: center;
-    }
-
-    .machine .column .row {
-        display: grid;
-        min-width: 0;
-        align-content: center;
-    }
-
-    .machine .column .row.indexed {
-        grid-template-columns: 3ch 1fr;
-        gap: 1ch;
-    }
-
-    .machine .column .row .value {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .machine .column .row.indexed .index {
-        text-align: right;
-        color: var(--nord3);
-    }
-
-    .machine .column .row.highlighted {
-        border-left: 1px solid var(--nord4);
-    }
-
-    .machine .column .row.highlighted .index {
-        color: var(--nord4);
-    }
-
-    .machine .column .row.highlighted .value {
-        font-weight: bold;
-    }
-
-    .machine .column .row.more {
-        color: var(--nord3);
-    }
-</style>
 
 <section>
     <p>
@@ -320,8 +222,8 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
         For example <code>(1 + 2) * (1 + 2)</code>, we recompute the expression <code>1 + 2</code> twice. It would be nice if we could say &ldquo;compute <code>1 + 2</code>, then reuse that answer twice&rdquo;. To accomplish this, we'll add a new kind of expression to our language called a <strong>let expression</strong>.
     </p>
 
-<figure class="highlight"><pre><span class="keyword">let</span> <span class="ident">x</span> <span class="punc">=</span> <span class="int">1</span> <span class="op">+</span> <span class="int">2</span> <span class="keyword">in</span>
-    <span class="ident">x</span> <span class="op">*</span> <span class="ident">x</span>
+<figure class="highlight"><pre><span class="keyword">let</span> <span class="variable">x</span> <span class="punctuation">=</span> <span class="literal-int">1</span> <span class="operator">+</span> <span class="literal-int">2</span> <span class="keyword">in</span>
+    <span class="variable">x</span> <span class="operator">*</span> <span class="variable">x</span>
 </pre></figure>
 
     <p>
@@ -346,7 +248,7 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
         <p>Consider the following examples.</p>
 
 <figure class="highlight"><pre>
-<span class="comment">1.</span> <span class="keyword">let</span> <span class="ident">x</span> <span class="punc">=</span> <span class="int">1</span> <span class="keyword">in</span> <span class="ident">x</span> <span class="op">+</span> <span class="paren">(</span> <span class="keyword">let</span> <span class="ident">y</span> <span class="punc">=</span> <span class="int">2</span> <span class="keyword">in</span> <span class="ident">x</span> <span class="op">+</span> <span class="ident">y</span> <span class="paren">)</span> <span class="op">+</span> <span class="ident">x</span>
+<span class="comment">1.</span> <span class="keyword">let</span> <span class="variable">x</span> <span class="punctuation">=</span> <span class="literal-int">1</span> <span class="keyword">in</span> <span class="variable">x</span> <span class="operator">+</span> <span class="paren">(</span> <span class="keyword">let</span> <span class="variable">y</span> <span class="punctuation">=</span> <span class="literal-int">2</span> <span class="keyword">in</span> <span class="variable">x</span> <span class="operator">+</span> <span class="variable">y</span> <span class="paren">)</span> <span class="operator">+</span> <span class="variable">x</span>
 </pre></figure>
 
         <p>
@@ -373,26 +275,27 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
         In <code>let x = 1 in x</code>, the variable <code>x</code> is referenced in the scope it was introduced, So it has an index of 0.
     </p>
 
-<figure class="highlight">
+<figure class="highlight center">
 <pre>
     ┌──────────┐
-    │          ┴
+    │         ─┴
     ▾         <span class="comment">#0</span>
-<span class="keyword">let</span> <span class="ident">x</span> <span class="punc">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="ident">x</span>
+<span class="keyword">let</span> <span class="variable">x</span> <span class="punctuation">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="variable">x</span>
+
 </pre></figure>
 
     <p>
         Now consider nested <code>let</code> expressions.
     </p>
 
-<figure class="highlight">
+<figure class="highlight center">
 <pre>
     ┌──────────┐         ┌──────────┐
-    │          ┴         │          ┴
+    │         ─┴         │         ─┴
     ▾         <span class="comment">#0</span>         ▾         <span class="comment">#0</span>
-<span class="keyword">let</span> <span class="ident">x</span> <span class="punc">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="ident">x</span> <span class="op">+</span> <span class="paren">(</span> <span class="keyword">let</span> <span class="ident">y</span> <span class="punc">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="ident">y</span> <span class="op">+</span> <span class="ident">x</span> <span class="paren">)</span>
+<span class="keyword">let</span> <span class="variable">x</span> <span class="punctuation">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="variable">x</span> <span class="operator">+</span> <span class="paren">(</span> <span class="keyword">let</span> <span class="variable">y</span> <span class="punctuation">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="variable">y</span> <span class="operator">+</span> <span class="variable">x</span> <span class="paren">)</span>
     ▴                                  <span class="comment">#1</span>
-    │                                   ┬
+    │                                  ─┬
     └───────────────────────────────────┘
 </pre></figure>
 
