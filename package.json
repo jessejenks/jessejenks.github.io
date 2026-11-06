@@ -11,7 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bidirectional-typechecking-dk": "file:../bidirectional-typechecking-dk"
+    "bidirectional-typechecking-dk": "file:../bidirectional-typechecking-dk",
+    "zinc": "file:../ZINC"
   },
   "devDependencies": {
     "esbuild": "^0.28.1",

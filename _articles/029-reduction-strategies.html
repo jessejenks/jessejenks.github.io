@@ -1,0 +1,227 @@
+---
+slug: reduction-strategies
+layout: post
+title: Reduction Strategies
+subtitle: mini CAML part 2
+date: 2026-11-05
+tags: [lambda calculus]
+published: true
+---
+
+{% include footnotes/use %}
+
+<style>
+    .post figure.center {
+        min-height: 50px;
+        max-height: 500px;
+        align-items: start;
+        overflow-x: auto;
+        overflow-y: auto;
+        background-color: var(--nord0);
+        color: var(--nord6);
+        font-size: 1.25rem;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+
+    .post figure.center.wide {
+        --width: 75vw;
+        width: max(100%, var(--width));
+        margin-left: min(0px, calc(50% - max(100%, var(--width)) / 2));
+    }
+
+    .post figure.center pre {
+        line-height: 1;
+    }
+
+    .row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .col {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .panel.show.list-of-examples {
+        display: flex;
+        flex-flow: column;
+        align-items: flex-end;
+        gap: 0.5rem;
+    }
+
+    .panel .row.example {
+        width: 95%;
+        justify-content: space-between;
+        /* flex-wrap: wrap; */
+    }
+
+    .panel .row.example .description {
+        margin: 0;
+        margin-left: 2rem;
+    }
+
+    input.expr-input {
+        width: 100%;
+        max-width: 50%;
+        min-width: 20px;
+        padding: 0.5rem;
+    }
+
+    pre.error-message {
+        color: var(--nord11);
+        vertical-align: middle;
+        white-space: pre-wrap;
+    }
+
+    pre span.literal-unit { color: var(--nord4); }
+    pre span.literal-int { color: var(--nord15); }
+    pre span.paren { color: var(--nord7); }
+    pre span.punctuation { color: var(--nord9); }
+    pre span.operator { color: var(--nord7); }
+    pre span.keyword { color: var(--nord9); }
+    pre span.label { color: var(--nord3); }
+    pre span.connector { color: var(--nord3); }
+    pre span.comment { color: var(--nord3); }
+</style>
+
+<section>
+    <p>
+        This is part 2 of a series on implementing a simple CAML language. Previous parts:
+        <ol>
+            <li><a href="/blog/stack-machines">Stack Machines</a></li>
+        </ol>
+    </p>
+
+    <p>
+        Code for this post is {% include link href="https://github.com/jessejenks/ZINC" content="available on my GitHub"%}.
+    </p>
+
+    <p>
+        This post assumes basic familiarity with \(\lambda\)-calculus.
+    </p>
+</section>
+
+<section>
+    <h2>Lambda Calculus Reduction Strategies</h2>
+
+    <p>
+        The Church-Rosser theorem says that the pure lambda calculus is a <strong>confluent</strong> system. This means that if a term has a normal form (it can't be reduced further), it is unique, and it doesn't matter what order you reduce terms in.
+    </p>
+
+    <p>
+        But there are some very useful terms which don't have a normal form, and there are practical reasons why reducing some part first is better than another. There are also times where we don't want everything to reduce to a &ldquo;\(\beta\)-normal&rdquo; or &ldquo;\(\beta\eta\)-normal&rdquo; form, and instead want to reduce to other kinds of normal forms.
+    </p>
+
+    <p>
+        A strategy for picking what order to reduce terms is called a <strong>reduction strategy</strong>.
+        This is analogous to <em>an order of operations</em> for the lambda calculus.
+    </p>
+
+    <p>
+        Two common strategies are call-by-name (CBN) and call-by-value (CBV). These are both so-called &ldquo;weak&rdquo; strategies, which means they never reduce inside of an abstraction (and thus neither reduce to \(\beta\)-normal form). Instead, CBV reduces to something called <strong>weak normal form</strong> and CBN reduces to <strong>weak head normal form</strong>.
+    </p>
+
+    <p>
+        The practical difference between these strategies is this: CBV reduces arguments before applying to a function, while CBN does not.
+    </p>
+
+    <p>
+        There is a real tradeoff here. Imagine the following function <code>foo(x, y) = x + y + y</code>
+        and the function call <code>foo(1, veryExpensiveCalculation)</code>. With a CBN strategy, <em>every occurrence</em> of <code>y</code> means a re-evaluation of <code>veryExpensiveCalculation</code>. So clearly CBV is better, right?
+    </p>
+
+    <p>
+        But now consider <code>foo(x, y) = x + x</code> and the call <code>foo(1, crashesIfEvaluated)</code>. With a CBV strategy, even though the parameter <code>y</code> is completely unused, this will always crash, since we always evaluate arguments first!
+    </p>
+
+    <p>
+        Both of these scenarios can and do occur, but in most programs, the latter case is rare while the former is common, {% include footnotes/link id="call-by-need" content="so most languages use a CBV-like strategy" %}.
+    </p>
+
+    <p>
+        You can play around with the demo below to see how the same term is reduced in both strategies.
+    </p>
+
+    <div class="col demo">
+        <div>
+            <button type="button" class="show-hide-button">Examples</button>
+            <span class="panel list-of-examples">
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Reduce</button>
+                        <code>(λx.λy.x) ((λa.a) (λb.b))</code>
+                    </div>
+                    <p class="description">CBN and CBV reduce to different terms</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Reduce</button>
+                        <code>λx.x</code>
+                    </div>
+                    <p class="description">Stuck term</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Reduce</button>
+                        <code>(λx.x x) (λx.x x)</code>
+                    </div>
+                    <p class="description">The \(\Omega\) term (will error)</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Reduce</button>
+                        <code>(λa.λb.a) (λc.c) ((λx.x x) (λx.x x))</code>
+                    </div>
+                    <p class="description">CBV fails trying to evaluate \(\Omega\)</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Reduce</button>
+                        <code>(λx.λy.y (x x y)) (λx.λy.y (x x y))</code>
+                    </div>
+                    <p class="description">\(\Theta\)</p>
+                </span>
+            </span>
+        </div>
+        <div class="row">
+            <input id="reductions__input" class="expr-input" type="text" placeholder="enter expression" value="(λx.λy.x) ((λa.a) (λb.b))">
+            <button id="reductions__btn" type="button">Reduce</button>
+        </div>
+        <pre id="reductions__errors" class="error-message"></pre>
+        <figure class="highlight center wide" id="reductions"></figure>
+    </div>
+</section>
+
+<section>
+    <h2>Church-Rosser</h2>
+
+    <p>
+        I emphasized a corollary of the Church-Rosser theorem earlier, that when a term has a normal form, it is unique. But one thing that can sometimes be confusing about the Church-Rosser theorem is that it applies even to all terms, even when they do not have a normal form.
+    </p>
+
+    <p>
+        For example, writing \(I = \lambda z.z\) and \(\omega = \lambda x. x x\), there are two possible reductions of \((I \omega) (I \omega)\). But either choice is guaranteed to eventually reduce to the same term. In this case to \(\Omega = (\lambda x.x x)(\lambda x.x x)\), which is not normal and always reduces to itself.
+    </p>
+
+    <figure class="highlight center wide" id="church-rosser-example"></figure>
+</section>
+
+<section>
+    <footer class="footnotes">
+        <h3>Footnotes</h3>
+        <hr>
+        <ol>
+            {% include footnotes/backlink id="call-by-need" content="One notable exception are languages like Haskell which implement a &ldquo;lazy&rdquo;, or call-by-need strategy, which is like a memoized call-by-name. In other words, arguments are not evaluated until necessary, and the result of the evaluation is stored and used. This avoids duplicate work, but also avoids unnecessary evalutions. This seems to solve everything, but can only really work in a language with no references." %}
+        </ol>
+    </footer>
+</section>
+<script src="../js/zinc/entrypoints/reduction.js"></script>

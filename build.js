@@ -15,11 +15,11 @@ function walk(root) {
         if (statSync(path).isDirectory()) {
             const files = readdirSync(path);
             files.reverse()
-            if (files.includes("index.ts")) {
-                // only include entrypoint for TS project with index
-                tsFiles.push(join(path, "index.ts"));
-                // copy any JS files (should be uncommon)
-                stack.push(...files.filter(f => extname(f) === ".js").map(f => join(path, f)));
+            // only include entrypoint files if they exist
+            if (files.includes("entrypoints")) {
+                stack.push(join(path, "entrypoints"));
+            } else if (files.includes("index.ts")) {
+                stack.push(join(path, "index.ts"));
             } else {
                 stack.push(...files.map(f => join(path, f)));
             }

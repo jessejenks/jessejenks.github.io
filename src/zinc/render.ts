@@ -1,3 +1,5 @@
+import { render } from "zinc";
+
 export function clear(elt: HTMLElement) {
     while (elt.firstChild) {
         elt.removeChild(elt.firstChild);
@@ -40,3 +42,25 @@ export function punc(c: string) {
 export function keyword(c: string) {
     return span(c, "keyword");
 }
+
+export const htmlWriter = (parent: HTMLElement): render.Writer<render.Piece> => {
+    return {
+        width: (p) => p.text.length,
+        write: (p) => {
+            parent.append(span(p.text, p.role));
+        },
+        connector: (s) => {
+            parent.append(span(s, "connector"));
+        },
+        label: (s) => {
+            parent.append(span(s, "label"));
+        },
+        space: (n) => {
+            if (n <= 0 || !Number.isSafeInteger(n)) return;
+            parent.append(" ".repeat(n));
+        },
+        break: () => {
+            parent.append(document.createElement("br"));
+        },
+    };
+};
