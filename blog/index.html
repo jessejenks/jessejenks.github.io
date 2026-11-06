@@ -82,10 +82,10 @@ title: Blog posts
                 <span class="post-tags" title="{{ joined_tags }}">{{ joined_tags }}</span>
             {% endif %}
             <span class="post-date desktop">
-                {{ post.date | date: "%b %-d, %Y" }}
+                {{ post.date | date: "%b %Y" }}
             </span>
             <span class="post-date mobile">
-                {{ post.date | date: "%m/%d/%y" }}
+                {{ post.date | date: "%m/%y" }}
             </span>
         </a>
 	</li>

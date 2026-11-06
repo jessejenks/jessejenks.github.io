@@ -1189,8 +1189,8 @@
   };
 
   // src/zinc/example.ts
-  function useClockMachine(advance, onStateChange) {
-    let state;
+  function useClockMachine(advance, onStateChange, fps = 2) {
+    let state = 0 /* Initial */;
     const setState = (action) => {
       const nextState = typeof action === "function" ? action(state) : action;
       if (nextState === state) return;
@@ -1202,7 +1202,7 @@
       }
       onStateChange(state);
     };
-    const clock = new Clock(2, () => {
+    const clock = new Clock(fps, () => {
       advance(setState);
     });
     return setState;
@@ -1245,8 +1245,8 @@
       try {
         const parsed = parser.parse(input.value);
         clear(parsedOutput);
-        toHtml(parsedOutput, parsed);
         const expr = elaborate(parsed);
+        toHtml(parsedOutput, expr);
         compiler.compile(expr);
         renderer.load(compiler.getInstructions());
         if (haltedMessage) clear(haltedMessage);

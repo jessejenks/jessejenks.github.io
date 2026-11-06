@@ -29,8 +29,8 @@ const enum State {
 
 type SetState = (action: State | ((s: State) => State)) => void;
 
-export function useClockMachine(advance: (setState: SetState) => void, onStateChange: (s: State) => void) {
-    let state: State;
+export function useClockMachine(advance: (setState: SetState) => void, onStateChange: (s: State) => void, fps = 2) {
+    let state = State.Initial;
 
     const setState: SetState = (action) => {
         const nextState = typeof action === "function" ? action(state) : action;
@@ -44,7 +44,7 @@ export function useClockMachine(advance: (setState: SetState) => void, onStateCh
         onStateChange(state);
     };
 
-    const clock = new Clock(2, () => {
+    const clock = new Clock(fps, () => {
         advance(setState);
     });
 
@@ -57,8 +57,8 @@ export function buildExample<ES, E, I, V, C extends Compiler<E, I>, M extends In
     Compiler: new () => C,
     Renderer: new (container: HTMLElement) => Renderer<I, V, M>,
     elaborate: (expression: ES) => E,
-    toHtml: (container: HTMLElement, expression: ES) => void,
-    getFinalExpression?: (compiler: C, machine: M) => ES,
+    toHtml: (container: HTMLElement, expression: E) => void,
+    getFinalExpression?: (compiler: C, machine: M) => E,
 ) {
     const input = document.querySelector<HTMLInputElement | HTMLTextAreaElement>(`#${id}__input`)!;
     const parsedOutput = document.querySelector<HTMLPreElement>(`#${id}__parsed`)!;
@@ -103,8 +103,8 @@ export function buildExample<ES, E, I, V, C extends Compiler<E, I>, M extends In
         try {
             const parsed = parser.parse(input.value);
             clear(parsedOutput);
-            toHtml(parsedOutput, parsed);
             const expr = elaborate(parsed);
+            toHtml(parsedOutput, expr);
             compiler.compile(expr);
             renderer.load(compiler.getInstructions());
             if (haltedMessage) clear(haltedMessage);

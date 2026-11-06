@@ -19,6 +19,7 @@
 .meta .date {
     font-style: italic;
     color: var(--palette-gray-2);
+    flex-shrink: 0;
 }
 
 .post {

@@ -89,6 +89,7 @@ const example19_7 = <P>(): Not<Not<Or<P, Not<P>>>> =>
         return l(k);
     };
 {% endhighlight %}
+
     <p>
         Not very easy to read, but a pretty direct translation of the original proof. (I matched indentation to make this clearer.)
     </p>
@@ -111,7 +112,7 @@ const example19_7 = <P>(): Not<Not<Or<P, Not<P>>>> =>
     <h2>The Details of the Translation</h2>
 
     <p>
-        There are a couple of ways of defining <code>True</code> and <code>False</code>, so I did not follow Quentin Januel's approach  exactly. I used the built-in type <code>never</code> for <code>False</code>, but the effect is the same, it is a type which has no associated terms, sometimes called an "empty" type. But Dapper Mink's definition shows that there are many equivalent ways of producing types with no terms. In their case, they used a recursive type, but you can also do this by intersecting non-overlapping types, like <code>number & string</code>.
+        There are a couple of ways of defining <code>True</code> and <code>False</code>, so I did not follow Quentin's approach exactly. I used the built-in type <code>never</code> for <code>False</code>, but the effect is the same, it is a type which with no terms, sometimes called an "empty" type. But there are many equivalent ways of producing types with no terms, as Dapper Mink's definition demonstrates. In their case, they used a recursive type, but you can also do this by intersecting non-overlapping types, like <code>number & string</code>.
     </p>
 
     <p>
@@ -133,6 +134,6 @@ const example19_7 = <P>(): Not<Not<Or<P, Not<P>>>> =>
 
     <h3>What About Other Languages?</h3>
     <p>
-        A more obvious choice of language to target would be a functional one, like Elm or Haskell. While it is slightly easier to implement things this way, I wanted a more portable compiler. TypeScript is written in TypeScript, while Elm is written in Haskell, and I assume at this point GHC is also written in Haskell. Plus I wanted to keep it in the spirit of the original video.
+        A more obvious choice of language to target would be a functional one, like Elm or Haskell. While it is slightly easier to implement things this way, I wanted a more portable compiler. TypeScript is written in TypeScript, while Elm is written in Haskell, and GHC is also primarily written in Haskell. Plus I wanted to keep it in the spirit of the original video.
     </p>
 </section>

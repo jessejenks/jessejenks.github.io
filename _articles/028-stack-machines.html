@@ -313,7 +313,7 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
     <h2>The Second Machine</h2>
 
     <p>
-        Now we'll extend our machine a bit. One issue with our previous calculator machine is that we can't store and reuse intermediate answers. And this is a shame because every intermediate value is computed on the stack, but we lose it once we encounter the next operation.
+        One issue with our previous calculator machine is that we can't store and reuse intermediate answers. And this is a shame because every intermediate value is computed on the stack, but we lose it once we encounter the next operation.
     </p>
 
     <p>
@@ -377,7 +377,7 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
 <pre>
     ┌──────────┐
     │          ┴
-    ▾          <span class="comment">0</span>
+    ▾         <span class="comment">#0</span>
 <span class="keyword">let</span> <span class="ident">x</span> <span class="punc">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="ident">x</span>
 </pre></figure>
 
@@ -389,9 +389,9 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
 <pre>
     ┌──────────┐         ┌──────────┐
     │          ┴         │          ┴
-    ▾          <span class="comment">0</span>         ▾          <span class="comment">0</span>
+    ▾         <span class="comment">#0</span>         ▾         <span class="comment">#0</span>
 <span class="keyword">let</span> <span class="ident">x</span> <span class="punc">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="ident">x</span> <span class="op">+</span> <span class="paren">(</span> <span class="keyword">let</span> <span class="ident">y</span> <span class="punc">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="ident">y</span> <span class="op">+</span> <span class="ident">x</span> <span class="paren">)</span>
-    ▴                                   <span class="comment">1</span>
+    ▴                                  <span class="comment">#1</span>
     │                                   ┬
     └───────────────────────────────────┘
 </pre></figure>
