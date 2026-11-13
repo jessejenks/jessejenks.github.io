@@ -80,12 +80,10 @@ published: true
         Now we define a compilation scheme. This tells us how to translate expressions into a sequence of instructions.
     </p>
 
-<figure class="highlight">
-<pre>
+<figure class="highlight"><pre>
 1. [[    n    ]] = Push(n)
 2. [[ E1 + E2 ]] = [[ E1 ]]; [[ E2 ]]; add
-</pre>
-</figure>
+</pre></figure>
 
     <p>
         In words, this says
@@ -108,24 +106,22 @@ published: true
         With just these two rules, we can already compile simple expressions.
     </p>
 
-<figure class="highlight">
-<pre>[[ 1 + 2 ]]
+<figure class="highlight"><pre>
+[[ 1 + 2 ]]
 [[ 1 ]]; [[ 2 ]]; add  // rule 2
 Push(1); [[ 2 ]]; add  // rule 1
 Push(1); Push(2); add  // rule 1
-</pre>
-</figure>
+</pre></figure>
 
 
-<figure class="highlight">
-<pre>[[ (1 + 2) + 3 ]]
+<figure class="highlight"><pre>
+[[ (1 + 2) + 3 ]]
 [[ (1 + 2) ]];         [[ 3 ]]; add  // rule 2
 [[ 1 ]]; [[ 2 ]]; add; [[ 3 ]]; add  // rule 2
 Push(1); [[ 2 ]]; add; [[ 3 ]]; add  // rule 1
 Push(1); Push(2); add; [[ 3 ]]; add  // rule 1
 Push(1); Push(2); add; Push(3); add  // rule 1
-</pre>
-</figure>
+</pre></figure>
 
     <p>
         If we were to use more familiar notation, writing just <code>3</code> instead of <code>Push(3)</code> and <code>+</code> instead of <code>add</code>, we would get <code>1 2 + 3 +</code>. You might be more familiar with this as reverse-Polish notation (RPN).
@@ -139,13 +135,11 @@ Push(1); Push(2); add; Push(3); add  // rule 1
         Let's add some more rules for subtraction and multiplication. In fact, let's just add a single <code>Prim</code> instruction (short for &ldquo;primitive operation&rdquo;) which takes the specific operation as an argument.
     </p>
 
-<figure class="highlight">
-<pre>
+<figure class="highlight"><pre>
 2. [[ E1 + E2 ]] = [[ E1 ]]; [[ E2 ]]; Prim(add)
 3. [[ E1 - E2 ]] = [[ E1 ]]; [[ E2 ]]; Prim(sub)
 4. [[ E1 * E2 ]] = [[ E1 ]]; [[ E2 ]]; Prim(mul)
-</pre>
-</figure>
+</pre></figure>
 
     <p>
         These instructions are interpreted in straightforward ways as well. <code>Prim(add)</code> still just pops two values from the stack and pushes their sum. Similarly <code>Prim(sub)</code> pops two values from the stack and pushes their difference. However, we have to be careful here. Since subtraction is non-commutative, we need to know which value we are subtracting from. In our case, we read the instructions for the left hand side before the right hand side, which means the right hand value will be the top of the stack, and the left below that. So <code>Push(1); Push(2); Prim(sub)</code> should pop (getting 2), then pop again (getting 1) and then push (1 - 2) instead of (2 - 1).
@@ -155,11 +149,9 @@ Push(1); Push(2); add; Push(3); add  // rule 1
         Let's also add a unary operator, negation.
     </p>
 
-<figure class="highlight">
-<pre>
+<figure class="highlight"><pre>
 5. [[ - E ]] = [[ E ]]; Prim(negate)
-</pre>
-</figure>
+</pre></figure>
 
     <p>
         Unlike our previous operations, this instruction will pop just a single value, and then push the negation of that value.
@@ -173,8 +165,8 @@ Push(1); Push(2); add; Push(3); add  // rule 1
         Let's walk through a slightly more complex example with this updated set of instructions.
     </p>
 
-<figure class="highlight">
-<pre>[[ (1 + ((- 2) * 3)) - 4 ]]
+<figure class="highlight"><pre>
+[[ (1 + ((- 2) * 3)) - 4 ]]
 [[ 1 + ((- 2) * 3) ]];                                         [[ 4 ]]; Prim(sub)  // rule 3
 [[ 1 ]]; [[ (- 2) * 3 ]];                           Prim(add); [[ 4 ]]; Prim(sub)  // rule 2
 Push(1); [[ (- 2) * 3 ]];                           Prim(add); [[ 4 ]]; Prim(sub)  // rule 1
@@ -183,8 +175,7 @@ Push(1); [[ 2 ]]; Prim(negate); [[ 3 ]]; Prim(mul); Prim(add); [[ 4 ]]; Prim(sub
 Push(1); Push(2); Prim(negate); [[ 3 ]]; Prim(mul); Prim(add); [[ 4 ]]; Prim(sub)  // rule 1
 Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); [[ 4 ]]; Prim(sub)  // rule 1
 Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub)  // rule 1
-</pre>
-</figure>
+</pre></figure>
 
     <p>
         Below is a demo which lets you enter an expression and see the stack machine calculate the final answer.
@@ -275,11 +266,10 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
         In <code>let x = 1 in x</code>, the variable <code>x</code> is referenced in the scope it was introduced, So it has an index of 0.
     </p>
 
-<figure class="highlight center">
-<pre>
+<figure class="highlight center"><pre>
     ┌──────────┐
     │         ─┴
-    ▾         <span class="comment">#0</span>
+    ▼         <span class="comment">#0</span>
 <span class="keyword">let</span> <span class="variable">x</span> <span class="punctuation">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="variable">x</span>
 
 </pre></figure>
@@ -292,9 +282,9 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
 <pre>
     ┌──────────┐         ┌──────────┐
     │         ─┴         │         ─┴
-    ▾         <span class="comment">#0</span>         ▾         <span class="comment">#0</span>
+    ▼         <span class="comment">#0</span>         ▼         <span class="comment">#0</span>
 <span class="keyword">let</span> <span class="variable">x</span> <span class="punctuation">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="variable">x</span> <span class="operator">+</span> <span class="paren">(</span> <span class="keyword">let</span> <span class="variable">y</span> <span class="punctuation">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="variable">y</span> <span class="operator">+</span> <span class="variable">x</span> <span class="paren">)</span>
-    ▴                                  <span class="comment">#1</span>
+    ▲                                  <span class="comment">#1</span>
     │                                  ─┬
     └───────────────────────────────────┘
 </pre></figure>
@@ -318,7 +308,7 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
     </p>
 
     <p>
-        Despite the increase in expressive power this gives us, we still have a surprisingly simple compilation scheme.
+        Despite the increase in expressive power this gives us, we only need to add 2 new rules for compilation.
     </p>
 
 <figure class="highlight"><pre>
@@ -330,8 +320,8 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
         Let's walk through compiling the example from before.
     </p>
 
-<figure class="highlight">
-<pre>[[ let x = 1 + 2 in (x * x) ]]
+<figure class="highlight"><pre>
+[[ let x = 1 + 2 in (x * x) ]]
 [[ 1 + 2 ]];                 Bind; [[ x * x ]];                     Drop  // rule 7
 [[ 1 ]]; [[ 2 ]]; Prim(add); Bind; [[ x * x ]];                     Drop  // rule 2
 Push(1); [[ 2 ]]; Prim(add); Bind; [[ x * x ]];                     Drop  // rule 1
@@ -340,8 +330,7 @@ Push(1); Push(2); Prim(add); Bind; [[ x * x ]];                     Drop  // rul
 Push(1); Push(2); Prim(add); Bind; [[ x ]];   [[ x ]];   Prim(mul); Drop  // rule 4
 Push(1); Push(2); Prim(add); Bind; Access(0); [[ x ]];   Prim(mul); Drop  // rule 6
 Push(1); Push(2); Prim(add); Bind; Access(0); Access(0); Prim(mul); Drop  // rule 6
-</pre>
-</figure>
+</pre></figure>
 
     <p>
         Try playing with the demo below, and notice how the second stack lets us reuse calculations.

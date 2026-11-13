@@ -24,7 +24,11 @@ published: true
     </p>
 
     <p>
-        This post assumes basic familiarity with \(\lambda\)-calculus.
+        {% include footnotes/link id="basic-lambda-calculus" content="This post assumes basic familiarity with \(\lambda\)-calculus" %}
+    </p>
+
+    <p>
+        In the next post, we will try to extend our stack machines to compute with \(\lambda\)-calculus instead of arithmetic. But first, we'll need to understand what a reduction strategy is.
     </p>
 </section>
 
@@ -32,20 +36,21 @@ published: true
     <h2>Lambda Calculus Reduction Strategies</h2>
 
     <p>
-        The Church-Rosser theorem says that the pure lambda calculus is a <strong>confluent</strong> system. This means that if a term has a normal form (it can't be reduced further), it is unique, and it doesn't matter what order you reduce terms in.
+        In a lambda calculus, a term is in {% include footnotes/link id="normal-form" content="<em>normal form</em> if it can't be \(\beta\)-reduced" %}. A term that is not normal can sometimes be turned into one which is normal through reductions. When this is possible, we say the term <em>has</em> a normal form.
     </p>
 
     <p>
-        But there are some very useful terms which don't have a normal form, and there are practical reasons why reducing some part first is better than another. There are also times where we don't want everything to reduce to a &ldquo;\(\beta\)-normal&rdquo; or &ldquo;\(\beta\eta\)-normal&rdquo; form, and instead want to reduce to other kinds of normal forms.
-    </p>
-
-    <p>
-        A strategy for picking what order to reduce terms is called a <strong>reduction strategy</strong>.
+        But even when a term has a normal form, not every possible ordering of reduction is guaranteed to reach it (we'll see a concrete example later). A strategy for picking what order to reduce terms is called a <strong>reduction strategy</strong>.
         This is analogous to <em>an order of operations</em> for the lambda calculus.
     </p>
 
     <p>
-        Two common strategies are call-by-name (CBN) and call-by-value (CBV). These are both so-called &ldquo;weak&rdquo; strategies, which means they never reduce inside of an abstraction (and thus neither reduce to \(\beta\)-normal form). Instead, CBV reduces to something called <strong>weak normal form</strong> and CBN reduces to <strong>weak head normal form</strong>.
+        There is a special reduction strategy called normal order reduction which does guarantee this. But in real languages, there are some practical reasons why normal order reduction is not desirable.
+        And there are some {% include footnotes/link id="fixed-points" content="very useful terms which don't have a normal form" %}.
+    </p>
+
+    <p>
+        Two common strategies are call-by-name (CBN) and call-by-value (CBV). These are both so-called &ldquo;weak&rdquo; strategies, which means they never reduce inside of an abstraction (and thus neither will always reduce to full \(\beta\)-normal form). Instead, CBV reduces to something called <strong>weak normal form</strong> and CBN reduces to <strong>weak head normal form</strong>.
     </p>
 
     <p>
@@ -53,8 +58,8 @@ published: true
     </p>
 
     <p>
-        There is a real tradeoff here. Imagine the following function <code>foo(x, y) = x + y + y</code>
-        and the function call <code>foo(1, veryExpensiveCalculation)</code>. With a CBN strategy, <em>every occurrence</em> of <code>y</code> means a re-evaluation of <code>veryExpensiveCalculation</code>. So clearly CBV is better, right?
+        There is a real tradeoff here. Imagine the following function in your favorite programming language: <code>foo(x, y) = x + y + y</code>.
+        And suppose we call it with <code>foo(1, veryExpensiveCalculation)</code>. With a CBN strategy, <em>every occurrence</em> of <code>y</code> means a re-evaluation of <code>veryExpensiveCalculation</code>. So clearly CBV is better, right?
     </p>
 
     <p>
@@ -63,6 +68,10 @@ published: true
 
     <p>
         Both of these scenarios can and do occur, but in most programs, the latter case is rare while the former is common, {% include footnotes/link id="call-by-need" content="so most languages use a CBV-like strategy" %}.
+    </p>
+
+    <p>
+        In lambda calculus, <code>crashesIfEvaluated</code> is something like the &ldquo;\(\Omega\)&rdquo; term <code>(λx.x x) (λx.x x)</code>, so <code>(λx.λy.x) (λz.z) Ω</code> will reduce to normal form with CBN but not CBV.
     </p>
 
     <p>
@@ -85,19 +94,33 @@ published: true
                         <button type="button" class="load-example">Reduce</button>
                         <code>λx.x</code>
                     </div>
-                    <p class="description">Stuck term</p>
+                    <p class="description">In normal form</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Reduce</button>
+                        <code>λx.(λy.y) x</code>
+                    </div>
+                    <p class="description">Not normal, but weak normal form</p>
+                </span>
+                <span class="row example">
+                    <div class="row">
+                        <button type="button" class="load-example">Reduce</button>
+                        <code>(λx. x x) ((λa.a) (λb.b))</code>
+                    </div>
+                    <p class="description">CBN computes the right side twice</p>
                 </span>
                 <span class="row example">
                     <div class="row">
                         <button type="button" class="load-example">Reduce</button>
                         <code>(λx.x x) (λx.x x)</code>
                     </div>
-                    <p class="description">The \(\Omega\) term (will error)</p>
+                    <p class="description">The \(\Omega\) term (will show error)</p>
                 </span>
                 <span class="row example">
                     <div class="row">
                         <button type="button" class="load-example">Reduce</button>
-                        <code>(λa.λb.a) (λc.c) ((λx.x x) (λx.x x))</code>
+                        <code>(λx.λy.x) (λz.z) ((λw.w w) (λw.w w))</code>
                     </div>
                     <p class="description">CBV fails trying to evaluate \(\Omega\)</p>
                 </span>
@@ -106,7 +129,7 @@ published: true
                         <button type="button" class="load-example">Reduce</button>
                         <code>(λx.λy.y (x x y)) (λx.λy.y (x x y))</code>
                     </div>
-                    <p class="description">\(\Theta\)</p>
+                    <p class="description">\(\Theta\), a &ldquo;fixed point combinator&rdquo;</p>
                 </span>
             </span>
         </div>
@@ -120,25 +143,31 @@ published: true
 </section>
 
 <section>
-    <h2>Church-Rosser</h2>
-
-    <p>
-        I emphasized a corollary of the Church-Rosser theorem earlier, that when a term has a normal form, it is unique. But one thing that can sometimes be confusing about the Church-Rosser theorem is that it applies even to all terms, even when they do not have a normal form.
-    </p>
-
-    <p>
-        For example, writing \(I = \lambda z.z\) and \(\omega = \lambda x. x x\), there are two possible reductions of \((I \omega) (I \omega)\). But either choice is guaranteed to eventually reduce to the same term. In this case to \(\Omega = (\lambda x.x x)(\lambda x.x x)\), which is not normal and always reduces to itself.
-    </p>
-
-    <figure class="highlight center wide" id="church-rosser-example"></figure>
-</section>
-
-<section>
     <footer class="footnotes">
         <h3>Footnotes</h3>
         <hr>
         <ol>
-            {% include footnotes/backlink id="call-by-need" content="One notable exception are languages like Haskell which implement a &ldquo;lazy&rdquo;, or call-by-need strategy, which is like a memoized call-by-name. In other words, arguments are not evaluated until necessary, and the result of the evaluation is stored and used. This avoids duplicate work, but also avoids unnecessary evalutions. This seems to solve everything, but can only really work in a language with no references." %}
+            {% capture basic-lambda-calculus %}
+                <p>
+                    I give a brief overview here, but there are many good resources on the topic. In \(\lambda\) calculus, we have &ldquo;terms&rdquo;. A term can be a variable, an abstraction, or an application. A variable is just a lower-case letter, while an application is just two terms next to each other. An abstraction looks like <code>λx. M</code> where <code>x</code> is a variable (a binding) and <code>M</code> is another term.
+                </p>
+
+                <p>
+                    The most important rule is \(\beta\)-reduction. Given an application with an abstraction on the left, that is, a term like <code>(λx.M) N</code> where <code>M</code> and <code>N</code> are arbitrary terms, you can <em>rewrite</em> this term to <code>M</code> where every occurrence of <code>x</code> has been replaced with <code>N</code>. This is usually called <strong>substitution</strong>.
+                </p>
+
+                <p>
+                    In more day-to-day programming terminology, abstractions are function definitions, and applications are function applications. So \(\beta\)-reduction corresponds to actually carrying out the computation of applying a function.
+                </p>
+
+                <p>
+                    There is some extra bookkeeping required to precisely define \(\beta\)-reduction. For instance <code>(λx.λx.x) x</code> is a perfectly legal term, but it's not obvious how substitution should work, or how to distinguish the various <code>x</code>s anymore. We'll see in the next post that this won't really be an issue by taking advantage of de Bruijn indices again.
+                </p>
+            {% endcapture %}
+            {% include footnotes/backlink id="basic-lambda-calculus" content=basic-lambda-calculus %}
+            {% include footnotes/backlink id="normal-form" content="Usually by normal form we mean &ldquo;\(\beta\)-normal&rdquo; form. But there is also &ldquo;\(\beta\eta\)-normal&rdquo;. This has to do with which terms are considered equivalent." %}
+            {% include footnotes/backlink id="fixed-points" content="The most common useful terms without normal forms are &ldquo;fixed-point&rdquo; combinators. These allow you to implement recursion despite the language having no explicit recursive constructions. You may have heard of the Y-combinator or its cousins. The examples include the \(\Theta\) combinator first described by Alan Turing." %}
+            {% include footnotes/backlink id="call-by-need" content="One notable exception are languages like Haskell which implement a &ldquo;lazy&rdquo;, or call-by-need strategy, which is like a memoized call-by-name. In other words, arguments are not evaluated until necessary, and the result of the evaluation is stored and used. This avoids duplicate work, but also avoids unnecessary evaluations. This seems to solve everything, but can only really work in a language without side-effects, or at least makes no guarantees about the order and how often side effects occur." %}
         </ol>
     </footer>
 </section>
