@@ -1,0 +1,154 @@
+---
+slug: ocaml-strings
+layout: post
+title: OCaml strings
+date: 2026-11-12
+published: true
+tags: [compilers]
+---
+
+{% include footnotes/use %}
+
+<section>
+    <p>
+        As part of my ZINC project and {% include link href="https://github.com/jessejenks/miniml" content="miniml language" %}, I've been carefully reading {% include footnotes/link id="zinc-experiment" content="<em>The ZINC Experiment</em> paper by Xavier Leroy" %}.
+    </p>
+
+    <p>
+        In Section 4.3.1, he outlines a scheme for encoding strings developed by Damien Doligez, which is quite clever and solves several problems at once.
+    </p>
+
+    <p>
+        We would like our encoding to have the following 3 properties.
+    </p>
+
+    <ol>
+        <li>the data should be {% include footnotes/link id="word-sizes" content="be 8-byte aligned" %},</li>
+        <li>finding the length should be possible in constant time, and</li>
+        <li>the string to be a valid, null-terminated C string.</li>
+    </ol>
+
+    <p>
+        In OCaml, heap-allocated objects are all stored in words, and all have a 1-word header that records their size (in words).
+        A 64-bit word can hold 8 bytes. Since we already store the number of words, the length in bytes is <code>8 * size - r</code> where <code>r</code> is <code>(- length) mod 8</code>. So we could get property 2 if we could just store this difference <code>r</code>. But where?
+    </p>
+
+    <p>
+        What if we just store <code>r</code> in the very last byte?
+    </p>
+
+    <p>
+        Suppose we have a string of 47 bytes. Then <code>47 = 8 * 6 - 1</code>, so we just store a 1 in the last byte. But that means our string nearly fits in exactly 6 words, with only 1 byte to spare, so we can't add a null byte, and we lose property 3.
+    </p>
+
+<pre>
+               ! No room for null byte
+               ▼
+────┬──────────┬──────────┐
+... │ -------- │ 00000001 │
+────┴──────────┴──────────┘
+</pre>
+
+    <p>
+        What if we found <code>r</code> in the range 2 to 9 instead of 0 to 7? These are equivalent <code>mod 8</code>, so it should work. This always gives us room for at least 1 null byte, so now both properties 2 and 3 are satisfied. We just have to pad the end of the string. So we pad with <code>r - 1</code> null bytes, and end with the number <code>r</code> itself. This satisfies all 3 properties and is the scheme outlined in the original paper.
+    </p>
+
+    <p>
+        I was surprised to find that {% include footnotes/link id="ocaml-string-docs" content="OCaml uses basically this method to this day" %}.
+        But there's a small issue, or at least inefficiency, with this scheme.
+    </p>
+
+    <p>
+        For our string of 47 bytes, since <code>47 = 8 * 7 - 9</code>, our size is <code>7</code> and the last two words of the string look like
+    </p>
+
+<pre>
+                 1            2          3-7   8          9
+────┬──────────┬──────────┐ ┌──────────┬─────┬──────────┬──────────┐
+... │ -------- │ 00000000 │ │ 00000000 │ ... │ 00000000 │ 00001001 │
+────┴──────────┴──────────┘ └──────────┴─────┴──────────┴──────────┘
+</pre>
+
+    <p>
+        We have an entire word of padding. That alone isn't too bad. But we get an entire word of padding whenever the length of the string is <code>0</code> or <code>-1 mod 8</code>, a full 1/4 of the time.
+    </p>
+
+    <p>
+        Instead, we could shrink everything by 1, and compensate when we need to compute the length of the string.
+        That is, find <code>r</code> in the range 1 to 8, and store <code>r - 1</code> in the last byte.
+    </p>
+
+    <p>
+        The last word of our string of 47 bytes would now just have a single null byte.
+    </p>
+
+<pre>
+                 1
+────┬──────────┬──────────┐
+... │ -------- │ 00000000 │
+────┴──────────┴──────────┘
+</pre>
+
+    <p>
+        Now we only have 1 case where a full word is for padding, and we can still easily compute the length as <code>8 * size - r</code> where <code>r = last byte + 1</code>.
+    </p>
+
+    <p>
+        In summary, we can work out the padding needed directly from the length.
+    </p>
+
+<pre>
+(-length) mod 8    length mod 8    old scheme                 new scheme
+8                  0             | 00 00 00 00 00 00 00 08    00 00 00 00 00 00 00 07
+7                  1             |    00 00 00 00 00 00 07       00 00 00 00 00 00 06
+6                  2             |       00 00 00 00 00 06          00 00 00 00 00 05
+5                  3             |          00 00 00 00 05             00 00 00 00 04
+4                  4             |             00 00 00 04                00 00 00 03
+3                  5             |                00 00 03                   00 00 02
+2                  6             |                   00 02                      00 01
+9 = 1              7          00 | 00 00 00 00 00 00 00 09                         00
+</pre>
+
+    <h3>Example</h3>
+
+    <p>
+        Let's see how this works with <code>"hello world"</code>. The length is <code>11 = 8 * 2 - 5</code>, so we have a size of <code>2</code>, and we pad with four null bytes and a <code>4</code>, for a total of 3 words, including the header.
+    </p>
+
+<pre>
+header word
+  size                                                     GC   tag
+┌────────────────────────────────────────────────────────┬────┬──────────┐
+│ 000000000000000000000000000000000000000000000000000010 │ 00 │ 11111100 │
+└────────────────────────────────────────────────────────┴────┴──────────┘
+  h          e          l          l          o          &lt;space&gt;    w          o
+┌──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┐
+│ 01101000 │ 01100101 │ 01101100 │ 01101100 │ 01101111 │ 00100000 │ 01110111 │ 01101111 │
+└──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┘
+  r          l          d
+┌──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┬──────────┐
+│ 01110010 │ 01101100 │ 01100100 │ 00000000 │ 00000000 │ 00000000 │ 00000000 │ 00000100 │
+└──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┴──────────┘
+</pre>
+
+</section>
+
+<section>
+    <footer class="footnotes">
+        <h3>Footnotes</h3>
+        <hr>
+        <ol>
+            {% capture zinc-experiment %}
+                The paper is {% include link href="https://xavierleroy.org/publi/ZINC.pdf" content="available on Leroy's website" %}.
+            {% endcapture %}
+            {% include footnotes/backlink id="zinc-experiment" content=zinc-experiment %}
+
+            {% include footnotes/backlink id="word-sizes" content="The paper uses 32-bit words, so the numbers here are slightly different." %}
+
+            {% capture ocaml-string-docs %}
+                {% include link href="https://ocaml.org/docs/memory-representation#string-values" content="The OCaml documentation" %}
+            {% endcapture %}
+            {% include footnotes/backlink id="ocaml-string-docs" content=ocaml-string-docs %}
+        </ol>
+    </footer>
+</section>
