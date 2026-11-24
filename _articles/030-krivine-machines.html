@@ -1,0 +1,449 @@
+---
+slug: krivines-machines
+layout: post
+title: Krivine's Machines
+subtitle: mini CAML part 3
+series: mini-caml
+date: 2026-11-23
+tags: [lambda calculus, abstract machine, compiler]
+published: true
+---
+
+{% include footnotes/use %}
+
+<section>
+    <p>
+        This is part 3 of a series on implementing a simple CAML language. Previous parts:
+        <ol>
+            <li><a href="/blog/stack-machines">Stack Machines</a></li>
+            <li><a href="/blog/reduction-strategies">Reduction Strategies</a></li>
+        </ol>
+    </p>
+
+    <p>
+        Code for this post is {% include link href="https://github.com/jessejenks/ZINC" content="available on my GitHub"%}.
+    </p>
+
+    <p>
+        In <a href="/blog/reduction-strategies">part 2</a>, we discussed two reduction strategies for lambda calculus. Following <a href="/blog/stack-machines">part 1</a>, we'd like to use a stack machine to implement these. But instead of integers and arithmetic operations, we somehow need to encode the more abstract lambda calculus.
+        In this post, we will explore two abstract machines implementing each strategy.
+    </p>
+</section>
+
+<section>
+    <h2>Krivine's Original Machine</h2>
+
+    <p>
+        The Krivine machine is an {% include footnotes/link id="krivine-writeup" content="abstract stack machine" %}, named for {% include link href="https://www.irif.fr/~krivine/" content="Jean-Louis Krivine" %}, that implements the <strong>call-by-name</strong> strategy.
+    </p>
+
+    <p>
+        Below is a demo that lets you step through the execution of the Krivine machine. Click &ldquo;Load&rdquo; to compile the program, and &ldquo;Run&rdquo; or &ldquo;Step&rdquo; to see the machine execute the program. The final computed term will appear once the execution finishes.
+    </p>
+
+    <p>
+        The rest of this post is dedicated to interpreting what is actually happening. Try running a program and seeing it in action first.
+    </p>
+
+    <div class="demo">
+        <h3>Demo</h3>
+        <!-- <textarea id="example-1__input" rows="4" cols="40">(λx. (x x)) ((λa.a) (λb.b))</textarea> -->
+        <textarea id="example-1__input" rows="4" cols="40">(λx.λy.x) ((λa.a) (λb.b))</textarea>
+        <div>
+            <button id="example-1__load-btn" type="button">Load</button>
+            <button id="example-1__run-btn" type="button">Run</button>
+            <button id="example-1__step-btn" type="button">Step</button>
+            <button id="example-1__reset-btn" type="button">Reset</button>
+        </div>
+        <pre id="example-1__parsed" class="parse-output syntax"></pre>
+        <pre id="example-1__errors"></pre>
+        <pre id="example-1__halted" class="parse-output syntax"></pre>
+        <figure class="syntax">
+            <div id="example-1" class="example"></div>
+        </figure>
+    </div>
+
+<section>
+    <h3>de Bruijn revisited</h3>
+
+    <p>
+        I first introduced de Bruijn indices in the context of <code>let</code> expressions, but this term really comes from lambda calculus. It's very similar, instead of the number of <code>let</code> bindings, it's the number of lambda bindings. Actually, it's not just similar, it's the same thing, because <code>let x = e in b</code> is {% include footnotes/link id="let-derived-form" content="just shorthand" %} for <code>(λx.b) e</code>!
+    </p>
+
+<figure class="highlight center"><pre>
+    ┌──────────┐
+    │         ─┴
+    ▼         <span class="comment">#0</span>
+<span class="keyword">let</span> <span class="variable">x</span> <span class="punctuation">=</span> <span class="comment">...</span> <span class="keyword">in</span> <span class="variable">x</span>
+
+    ┌──────────┐
+    │         ─┴
+    ▼         <span class="comment">#0</span>
+ <span class="paren">(</span><span class="keyword">λ</span> <span class="ident">x</span> <span class="punctuation">.</span>        <span class="ident">x</span><span class="paren">)</span> <span class="comment">...</span>
+
+</pre></figure>
+
+    <p>
+        And for nested lambda expressions.
+    </p>
+
+<figure class="highlight center"><pre>
+ ┌──┐   ┌──┐
+ │ ─┴   │ ─┴
+ ▼ <span class="comment">#0</span>   ▼ <span class="comment">#0</span>
+<span class="keyword">λ</span><span class="ident">x</span><span class="punctuation">.</span> <span class="ident">x</span> <span class="paren">(</span><span class="keyword">λ</span><span class="ident">y</span><span class="punctuation">.</span> <span class="ident">y</span>  <span class="ident">x</span><span class="paren">)</span>
+ ▲           <span class="comment">#1</span>
+ │           ─┬
+ └────────────┘
+</pre></figure>
+
+    <p>
+        It's common to see lambda terms written with no variable names at all. For example, <code>λ 0 (λ 0 1)</code>. But I prefer the notation <code>λ. #0 (λ. #0 #1)</code> to make the indices extra clear.
+    </p>
+
+    <p>
+        We get the same benefits as before, it's unambiguous which variable is associated with which binder, and {% include footnotes/link id="de-bruijn-benefits" content="it makes looking up values in a stack easy too" %}.
+    </p>
+</section>
+
+<section>
+    <h3>Compilation</h3>
+
+    <p>
+        The compilation scheme is remarkably simple, with only 3 instructions, <code>Access</code>, <code>Push</code>, and <code>Grab</code> corresponding to the three kinds of terms of the lambda calculus. We've already seen <code>Access</code>, in fact it has the exact same scheme as our last stack machine! <code>Push</code>, however, is quite different. Instead of pushing a number, we push <strong>entire compiled expressions</strong>.
+    </p>
+
+<figure class="highlight"><pre data-derivation>
+1. [[   x   ]] = Access(<span class="variable">#i</span>)  // where i is the de Bruijn index of x
+2. [[  M N  ]] = Push([[ N ]]); [[ M ]]
+3. [[  λ.M  ]] = Grab; [[ M ]]
+</pre></figure>
+
+        <p>
+            Let's work through a simple example: <code>λx.x</code> (or <code>λ.#0</code>).
+        </p>
+
+<figure class="highlight"><pre data-derivation>
+[[ λx.x ]]
+Grab; [[ x ]]    // rule 3
+Grab; Access(#0) // rule 1
+</pre></figure>
+
+        <p>
+            While the derivation is straightforward in this case, things get more complicated when there are applications, because of the nested instructions in <code>Push</code>.
+            And, as written, the rule flips argument and caller ordering, which can also be confusing.
+        </p>
+<!--
+        <p>
+            Let's work through <code>(λx.λy.x) (λz.z)</code> (or <code>(λ.λ.#1) (λ.#0)</code>)
+        </p>
+
+<figure class="highlight"><pre data-derivation>
+[[ (λx.λy.x) (λz.z) ]]
+Push([[ λz.z ]]);       [[ λx.λy.x ]]          // rule 2
+Push([[ λz.z ]]);       Grab; [[ λy.x ]]       // rule 3
+Push([[ λz.z ]]);       Grab; Grab; [[ x ]]    // rule 3
+Push([[ λz.z ]]);       Grab; Grab; Access(#1) // rule 1
+Push(Grab; [[ z ]]);    Grab; Grab; Access(#1) // rule 3
+Push(Grab; Access(#0)); Grab; Grab; Access(#1) // rule 1
+</pre></figure> -->
+
+        <p>For instance, in just a slightly more complex example <code>((λf.λx.f x) (λy.y)) (λz.z)</code> (or <code>((λ.λ.#1 #0) (λ.#0)) (λ.#0)</code>).</p>
+
+<figure class="highlight"><pre data-derivation>
+[[ ((λf.λx.(f x)) (λy.y)) (λz.z) ]]
+Push([[ λz.z ]]); [[ (λf.λx.(f x)) (λy.y) ]]                              // rule 2
+Push([[ λz.z ]]); Push([[ λy.y ]]); [[ λf.λx.(f x) ]]                     // rule 2
+Push([[ λz.z ]]); Push([[ λy.y ]]); Grab; [[ λx.(f x) ]]                  // rule 3
+Push([[ λz.z ]]); Push([[ λy.y ]]); Grab; Grab; [[ f x ]]                 // rule 3
+Push([[ λz.z ]]); Push([[ λy.y ]]); Grab; Grab; Push([[ x ]]); [[ f ]]    // rule 2
+Push([[ λz.z ]]); Push([[ λy.y ]]); Grab; Grab; Push([[ x ]]); Access(#1) // rule 1
+</pre></figure>
+
+    <p>
+        Where do these rules come from? One hint is that the outermost instructions (<code>Push</code>, <code>Push</code>, <code>Grab</code>, <code>Grab</code>, <code>Push</code>, <code>Access</code>) correspond exactly to
+        {% include footnotes/link id="head-spine-rib" content="the &ldquo;head spine&rdquo; of the term, and each <code>Push</code> contains the head spine of the &ldquo;ribs&rdquo;" %}. And these are exactly the terms we need in order to perform call-by-name reductions.
+    </p>
+
+    <p>
+        I prefer to flatten everything by giving each instruction a number, and having the the <code>Push</code> instruction refer the number of the first instruction it contains, rather than actually storing a tree of instructions. This is more convenient for implementation, but it also makes the underlying structure more apparent. We'll use the notation <code>@9</code> to indicate instruction number 9, so <code>Push(@9)</code> means &ldquo;push the instructions starting from instruction number 9&rdquo;.
+    </p>
+
+<figure class="highlight"><pre data-derivation>
+[[ ((λf.λx.f x) (λy.y)) (λz.z) ]] =>  <span class="comment">0.</span> Push(@9)   ───────┐
+[[ ((λf.λx.f x) (λy.y)) ]]        =>  <span class="comment">1.</span> Push(@7)   ─────┐ │
+  [[ λf.λx.f x ]]                 =>  <span class="comment">2.</span> Grab            │ │
+     [[ λx.f x ]]                 =>  <span class="comment">3.</span> Grab            │ │
+        [[ f x ]]                 =>  <span class="comment">4.</span> Push(@6)   ───┐ │ │
+        [[ f ]]                   =>  <span class="comment">5.</span> Access(#1)    │ │ │
+          [[ x ]]                 =>  <span class="comment">6.</span> Access(#0) ◀──┘ │ │
+              [[ λy.y ]]          =>  <span class="comment">7.</span> Grab       ◀────┘ │
+                 [[ y ]]          =>  <span class="comment">8.</span> Access(#0)        │
+                      [[ λz.z ]]  =>  <span class="comment">9.</span> Grab       ◀──────┘
+                         [[ z ]]  => <span class="comment">10.</span> Access(#0)
+</pre></figure>
+
+    <p>
+        Notice that instructions 0-5 are our original outer-most instructions, and each sub-tree of a <code>Push</code> appears later.
+    </p>
+
+    <p>
+        This is the flat representation you'll see in the demo.
+    </p>
+</section>
+
+<section>
+    <h3>Execution</h3>
+
+    <p>
+        Like the stack machine from the first post, we have two stacks, an environment and a value stack.
+        The simplest is the <code>Grab</code> instruction, which is roughly our old <code>Bind</code>. It pops a value off of the stack, and pushes it onto the environment.
+    </p>
+
+    <p>
+        Our execution completes, not when we reach the end of our instructions, but when we reach a <code>Grab</code> instruction with an empty stack.
+    </p>
+
+    <p>
+        What are our values? Since we're not computing arithmetic expressions anymore, they aren't just numbers. So what do we actually put on the stack?
+    </p>
+
+    <p>
+        Given that our push instructions look like <code>Push(@3)</code>, our first instinct might be to just push the <code>3</code>, meaning something like &ldquo;push the block of code held by this <code>Push</code> instruction&rdquo;
+    </p>
+
+    <p>
+        But that's not enough information. We also need to capture the <em>environment when the push occurred</em>.
+        The code together with an environment is called a <strong>closure</strong>.
+    </p>
+
+    <p>
+        The reason we need to capture the environment is because <code>Access(#0)</code> is relative. If the environment changes before evaluating the access, we'll read the wrong value.
+    </p>
+
+    <p>
+        For our purposes, a closure is just a pair with an instruction and an environment stack. For instance <code>(@3, [])</code>, with an empty environment, or <code>(@7, [(@9, [])])</code> with an environment containing a single closure, <code>(@9, [])</code>.
+    </p>
+
+    <p>
+        Finally, the trickiest is <code>Access</code>.
+        Our previous <code>Access</code> was non-destructive. <code>Access(#3)</code> just meant copy the value at index 3 from the environment into the value stack. This time, we actually change the environment.
+    </p>
+
+    <p>
+        Let's see a concrete example, Suppose our machine is in the following state, where we are about to execute <Code>Access(#1)</Code>.
+    </p>
+
+<figure class="highlight center"><pre>
+┌─ Instructions ─┐┌─ Stack ─┬─ Environment ─────┐
+│⟩ 4. Access(#1) ││         │ (@6,  [])         │ #0
+│  5. ...        ││         │ (@7,  [(@9, [])]) │ #1
+│  6. ...        ││         │ (@13, [])         │ #2
+│  7. ...        │└─────────┴───────────────────┘
+└────────────────┘
+</pre></figure>
+
+    <p>
+        First, we access #1 in the environment, <code>(@7, [(@9, [])])</code>
+    </p>
+
+    <p>
+        Now we <strong>replace</strong> the current environment with the environment held in the closure, <code>[(@9, [])]</code>.
+    </p>
+
+<figure class="highlight center"><pre>
+┌─ Instructions ─┐┌─ Stack ─┬─ Environment ────┐
+│⟩ 4. Access(#1) ││         │                  │
+│  5. ...        ││         │                  │
+│  6. ...        ││         │ (@9, [])         │
+│  7. ...        │└─────────┴──────────────────┘
+└────────────────┘
+</pre></figure>
+
+    <p>
+        Finally, we jump to the instruction held in the closure, <code>@7</code>.
+    </p>
+
+<figure class="highlight center"><pre>
+┌─ Instructions ─┐┌─ Stack ─┬─ Environment ────┐
+│  4. Access(#1) ││         │                  │
+│  5. ...        ││         │                  │
+│  6. ...        ││         │ (@9, [])         │
+│⟩ 7. ...        │└─────────┴──────────────────┘
+└────────────────┘
+</pre></figure>
+
+    <p>
+        That was all in a single instruction!
+    </p>
+
+    <p>
+        In summary
+    </p>
+
+<figure class="highlight center wide"><pre>
+Move closure from top of stack to environment
+┌─ Instr ──────────┐┌─ Stack ─┬─ Env ───┐        ┌─ Instr ────────┐┌─ Stack ─┬─ Env ───┐
+│⟩ n. Grab         ││ (@m, e) │         │     => │  n. Grab       ││         │ (@m, e) │
+│     ...          ││ ...     │ ...     │        │⟩    ...        ││ ...     │ ...     │
+└──────────────────┘└─────────┴─────────┘        └────────────────┘└─────────┴─────────┘
+
+Push closure onto stack
+┌─ Instr ──────────┐┌─ Stack ─┬─ Env ───┐        ┌─ Instr ────────┐┌─ Stack ─┬─ Env ───┐
+│⟩ n. Push(@m)     ││         │         │     => │  n. Push(@m)   ││ (@m, e) │         │
+│     ...          ││ ...     │ e       │        │⟩    ...        ││ ...     │ e       │
+└──────────────────┘└─────────┴─────────┘        └────────────────┘└─────────┴─────────┘
+
+Get closure, replace environment, and jump to new location
+┌─ Instr ──────────┐┌─ Stack ─┬─ Env ───┐        ┌─ Instr ────────┐┌─ Stack ─┬─ Env ───┐
+│⟩ n. Access(#i)   ││ ...     │ ...     │ #0  => │  n. Access(#i) ││ ...     │         │
+│     ...          ││ ...     │ ...     │ ...    │     ...        ││ ...     │         │
+│     ...          ││ ...     │ (@m, e) │ #i     │⟩ m. ...        ││ ...     │         │
+└──────────────────┘│ ...     │ ...     │ ...    └────────────────┘│ ...     │ e       │
+                    └─────────┴─────────┘                          └─────────┴─────────┘
+</pre></figure>
+
+</section>
+</section>
+
+<section>
+    <h2>Tweaking the Machine for CBV</h2>
+
+    <p>
+        The next machine implements a call-by-value strategy. Surprisingly, it is nearly identical to the first Krivine machine. In fact Leroy simply calls it {% include footnotes/link id="marked-krivine-presentation" content="&ldquo;Krivine's machine with marks on the stack&rdquo;" %}.
+    </p>
+
+    <div class="demo">
+        <h3>Demo</h3>
+        <textarea id="example-2__input" rows="4" cols="40">(λx.λy.x) ((λa.a) (λb.b))</textarea>
+        <div>
+            <button id="example-2__load-btn" type="button">Load</button>
+            <button id="example-2__run-btn" type="button">Run</button>
+            <button id="example-2__step-btn" type="button">Step</button>
+            <button id="example-2__reset-btn" type="button">Reset</button>
+        </div>
+        <pre id="example-2__parsed" class="parse-output syntax"></pre>
+        <pre id="example-2__errors"></pre>
+        <pre id="example-2__halted" class="parse-output syntax"></pre>
+        <figure class="syntax">
+            <div id="example-2" class="example"></div>
+        </figure>
+    </div>
+
+    <p>
+        The previous machine delayed evaluation of arguments in applications by pushing them onto the stack to be grabbed and accessed at some later point. If the value is never accessed, it is simply never evaluated.
+    </p>
+
+    <p>
+        So, to get call-by-value, we just need to avoid deferring the values. Seems simple enough, just immediately execute the code for the argument before moving on to the caller. But this alone does not work. We need to somehow keep track of where to return to, once we are done evaluating the argument.
+    </p>
+
+    <p>
+        To do this, we can &ldquo;mark&rdquo; a closure, which we'll indicate with an exclamation point, like <code>(!@3, [])</code>. The mark will mean &ldquo;return to this location&rdquo;.
+    </p>
+
+    <p>
+        The compilation scheme for our new machine is exactly the same. But, we'll use the name <code>Reduce</code> instead of <code>Push</code>, since we now reduce arguments first.
+    </p>
+
+<figure class="highlight"><pre data-derivation>
+1. [[   x   ]] = Access(<span class="variable">#i</span>)
+2. [[  M N  ]] = Reduce([[ N ]]); [[ M ]]
+3. [[  λ.M  ]] = Grab; [[ M ]]
+</pre></figure>
+
+    <p>
+        The behavior of <code>Access</code> is also unchanged. The real difference is in how <code>Reduce</code> works, and how <code>Grab</code> treats marked vs. unmarked closures.
+    </p>
+
+    <p>
+        <!-- As we said before, to get call-by-value, we just need to evaluate arguments right away instead of deferring. -->
+        If instruction <code>n</code> is <code>Reduce(@m)</code>, we push a marked closure <code>(!@n+1, e)</code> onto the stack, and immediately jump to <code>m</code>. In other words, push a closure that starts from the <em>next</em> instruction after the <code>Reduce</code>.
+    </p>
+
+    <p>
+        Grab is like a dual instruction to <code>Push</code>. And with marked closures, it acts like a dual to <code>Reduce</code>.
+        When we see an unmarked closure, we move the closure from the stack to the environment.
+        But when we see a marked closure, we <em>return</em> to that location.
+    </p>
+
+<figure class="highlight center wide"><pre>
+Push a closure starting from the next instruction and current environment
+┌─ Instr ────────┐┌─ Stack ──┬─ Env ───┐        ┌─ Instr ────────┐┌─ Stack ────┬─ Env ───┐
+│⟩ n. Reduce(@m) ││          │         │     => │  n. Reduce(@m) ││ (!@n+1, e) │         │
+│     ...        ││ ...      │ e       │        │     ...        ││ ...        │ e       │
+│     ...        │└──────────┴─────────┘        │⟩ m. ...        │└────────────┴─────────┘
+└────────────────┘                              └────────────────┘
+
+For unmarked closures, move closure from top of stack to environment as before
+┌─ Instr ────────┐┌─ Stack ──┬─ Env ───┐        ┌─ Instr ────────┐┌─ Stack ────┬─ Env ───┐
+│⟩ n. Grab       ││ (@m, e)  │         │     => │  n. Grab       ││            │ (@m, e) │
+│     ...        ││ ...      │ ...     │        │⟩    ...        ││ ...        │ ...     │
+└────────────────┘└──────────┴─────────┘        └────────────────┘└────────────┴─────────┘
+
+For marked closures, save current instruction and env to stack
+and replace current env and jump to closure instruction
+┌─ Instr ────────┐┌─ Stack ──┬─ Env ───┐        ┌─ Instr ────────┐┌─ Stack ────┬─ Env ───┐
+│⟩ n. Grab       ││ (!@m, e) │         │     => │  n. Grab       ││ (@n, e')   │         │
+│     ...        ││ ...      │ e'      │        │     ...        ││ ...        │ e       │
+│     ...        │└──────────┴─────────┘        │⟩ m. ...        │└────────────┴─────────┘
+└────────────────┘                              └────────────────┘
+</pre></figure>
+</section>
+
+<section>
+    <h2>Arithmetic</h2>
+
+    <p>
+        As we noted, our <code>let</code> expressions from the first post are secretly just lambda expressions. So <code>let x = N in M</code> is shorthand for <code>(λx. M) N</code>.
+    </p>
+
+    <p>
+        Let's compare how these get compiled in the arithmetic stack machines and in our marked Krivine machine.
+    </p>
+
+<figure class="highlight"><pre data-derivation>
+// Arithmetic
+<span><span class="semantic">[[</span> <span class="keyword">let</span> <span class="variable">x</span> <span class="operator">=</span> <span class="variable">N</span> <span class="keyword">in</span> <span class="variable">M</span> <span class="semantic">]]</span></span> =        [[ N ]];  Bind; [[ M ]]; Drop
+// Marked Krivine
+[[ (λx. M) N ]]      = Reduce([[ N ]]); Grab; [[ M ]]
+</pre></figure>
+
+    <p>
+        The arithmetic machine compiles and evaluates expressions in the same order that the marked Krivine machine does! So our choice to avoid recomputing expressions with <code>let</code> was call-by-value all along.
+    </p>
+
+</section>
+
+<section>
+    <footer class="footnotes">
+        <h3>Footnotes</h3>
+        <hr>
+        <ol>
+            {% capture de-bruijn-benefits %}
+                Another key property is that this representation makes \(\alpha\)-equivalent terms syntactically equal.
+                This was important for de Bruijn, because he was working on his theorem proving language AUTOMATH, which often requires comparing terms for equality.
+
+                Read more about {% include link href="https://blueberrywren.dev/blog/debruijn-explanation" content="how substitution works with indices here"%}.
+
+                Read about the {% include link href="https://jesper.sikanda.be/posts/1001-syntax-representations.html" content="many, many ways to handle variable bindings here" %}
+            {% endcapture %}
+            {% include footnotes/backlink id="de-bruijn-benefits" content=de-bruijn-benefits %}
+
+            {% capture krivine-writeup %}
+            Krivine's own description of his machine came decades after it was already popularized. ({% include link href="https://www.irif.fr/~krivine/articles/lazymach.pdf" content="source" %})
+            {% endcapture %}
+            {% include footnotes/backlink id="krivine-writeup" content=krivine-writeup %}
+
+            {% include footnotes/backlink id="let-derived-form" content="We will revisit the interpretation of let expressions in the post on type checking." %}
+
+            {% capture head-spine-rib %}
+            I'm not sure of the history of this biologically inspired terminology, but this may have been popularized by chapter 11 of Simon L. Peyton Jones' <em>The Implementation of Functional Programming Languages</em>. For a precise definition of head spine, see section 4 of Barendregt et al <em>Needed Reduction and Spine Strategies for the Lambda Calculus</em> ({% include link href="https://ir.cwi.nl/pub/1726/1726D.pdf" content="source" %})
+            {% endcapture %}
+            {% include footnotes/backlink id="head-spine-rib" content=head-spine-rib %}
+            {% include footnotes/backlink id="marked-krivine-presentation" content="The presentation given here is a slightly simplified version." %}
+        </ol>
+    </footer>
+</section>
+
+<script src="../js/zinc/entrypoints/krivine.js"></script>
