@@ -10,12 +10,15 @@ export interface Column<T> {
     title: string;
     policy: WindowPolicy;
     items(): readonly T[];
-    label(value: T): string;
+    label(parent: HTMLElement, value: T): void;
     indexLabel?(i: number, length: number): number;
     focus?(): number;
 }
 
-export function instructionColumn<I, V>(machine: InspectableMachine<I, V>, label: (instr: I) => string): Column<I> {
+export function instructionColumn<I, V>(
+    machine: InspectableMachine<I, V>,
+    label: (parent: HTMLElement, instr: I) => void,
+): Column<I> {
     return {
         title: "Instructions",
         policy: WindowPolicy.Follow,
@@ -29,7 +32,7 @@ export function instructionColumn<I, V>(machine: InspectableMachine<I, V>, label
 export function stackColumn<T>(
     title: string,
     items: () => readonly T[],
-    label: (v: T) => string,
+    label: (p: HTMLElement, v: T) => void,
     withIndex = false,
 ): Column<T> {
     return {
@@ -139,11 +142,10 @@ class ColumnView<T> {
                     row.value.textContent = "";
                     break;
                 case SlotKind.Item: {
-                    const text = this.column.label(items[slot.index]);
                     if (row.index)
                         row.index.textContent = this.column.indexLabel?.(slot.index, items.length).toString() ?? "";
-                    row.value.textContent = text;
-                    row.root.title = text;
+                    render.clear(row.value);
+                    this.column.label(row.value, items[slot.index]);
                     if (this.column.policy === WindowPolicy.Follow && slot.index === focus) {
                         row.root.classList.add("highlighted");
                     }

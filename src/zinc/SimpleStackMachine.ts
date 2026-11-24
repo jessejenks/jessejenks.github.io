@@ -1,3 +1,4 @@
+import { instr, int, paren } from "./render";
 import { BasicStackMachine } from "./StackMachine";
 import {
     StackMachineRenderer as BaseStackMachineRenderer,
@@ -117,6 +118,7 @@ class Tokenizer {
                     this.index++;
                     this.row++;
                     this.col = 1;
+                    break;
                 default:
                     return;
             }
@@ -225,12 +227,14 @@ export class StackMachine extends BasicStackMachine<Instr, number> {
     }
 }
 
-function instructionToLabel(instruction: Instr): string {
+function instructionToLabel(parent: HTMLElement, instruction: Instr) {
     switch (instruction.kind) {
         case InstrKind.Push:
-            return `Push(${instruction.value})`;
+            parent.append(instr("Push"), paren("("), int(instruction.value), paren(")"));
+            break;
         case InstrKind.Pop:
-            return "Pop";
+            parent.append(instr("Pop"));
+            break;
     }
 }
 
@@ -242,7 +246,7 @@ export class StackMachineRenderer extends BaseStackMachineRenderer<Instr, number
             stackColumn(
                 "Stack",
                 () => m.stackView(),
-                (n) => n.toString(),
+                (p, n) => p.append(int(n)),
             ),
         ]);
     }

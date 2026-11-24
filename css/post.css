@@ -57,7 +57,13 @@
 }
 
 .post h3 {
-    margin-top: 0.75rem;
+    font-size: 1.5em;
+    margin-top: 0.5rem;
+}
+
+.post h4 {
+    font-size: 1.25em;
+    margin-top: 0.25rem;
 }
 
 .post .show-hide-button {

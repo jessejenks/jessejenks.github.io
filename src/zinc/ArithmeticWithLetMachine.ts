@@ -1,3 +1,4 @@
+import { instr, int, paren, span } from "./render";
 import { BasicStackMachine } from "./StackMachine";
 import {
     StackMachineRenderer as BaseStackMachineRenderer,
@@ -5,7 +6,7 @@ import {
     stackColumn,
 } from "./StackMachineRenderer";
 
-const enum TokenKind {
+export const enum TokenKind {
     EOF,
     LParen,
     RParen,
@@ -19,7 +20,7 @@ const enum TokenKind {
     In,
 }
 
-type Token =
+export type Token =
     | {
           kind:
               | TokenKind.EOF
@@ -35,7 +36,7 @@ type Token =
     | { kind: TokenKind.Identifier; name: string }
     | { kind: TokenKind.Int; value: number };
 
-class Tokenizer {
+export class Tokenizer {
     protected index = 0;
     protected row = 1;
     protected col = 1;
@@ -162,6 +163,12 @@ class Tokenizer {
                     return;
             }
         }
+    }
+
+    readWhiteSpace() {
+        const start = this.index;
+        this.skipWhiteSpace();
+        return { text: this.input.slice(start, this.index) };
     }
 
     protected char(): number {
@@ -498,27 +505,38 @@ export class StackMachine extends BasicStackMachine<Instr, number> {
     }
 }
 
-function instructionToLabel(instruction: Instr): string {
+function instructionToLabel(parent: HTMLElement, instruction: Instr) {
     switch (instruction.kind) {
         case InstrKind.Push:
-            return `Push(${instruction.value})`;
+            parent.append(instr("Push"), paren("("), int(instruction.value), paren(")"));
+            break;
         case InstrKind.Prim:
+            parent.append(instr("Prim"), paren("("));
             switch (instruction.op) {
                 case PrimOp.Negate:
-                    return "Prim(negate)";
+                    parent.append(instr("negate"));
+                    break;
                 case PrimOp.Add:
-                    return "Prim(add)";
+                    parent.append(instr("add"));
+                    break;
                 case PrimOp.Sub:
-                    return "Prim(sub)";
+                    parent.append(instr("sub"));
+                    break;
                 case PrimOp.Mul:
-                    return "Prim(mul)";
+                    parent.append(instr("mul"));
+                    break;
             }
+            parent.append(paren(")"));
+            break;
         case InstrKind.Access:
-            return `Access(${instruction.index})`;
+            parent.append(instr("Access"), paren("("), span(`#${instruction.index}`, "variable"), paren(")"));
+            break;
         case InstrKind.Bind:
-            return "Bind";
+            parent.append(instr("Bind"));
+            break;
         case InstrKind.Drop:
-            return "Drop";
+            parent.append(instr("Drop"));
+            break;
     }
 }
 
@@ -530,12 +548,12 @@ export class StackMachineRenderer extends BaseStackMachineRenderer<Instr, number
             stackColumn(
                 "Stack",
                 () => m.stackView(),
-                (n) => n.toString(),
+                (p, n) => p.append(int(n)),
             ),
             stackColumn(
                 "Env",
                 () => m.envView(),
-                (n) => n.toString(),
+                (p, n) => p.append(int(n)),
                 true,
             ),
         ]);

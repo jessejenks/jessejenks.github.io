@@ -47,6 +47,10 @@ export function keyword(c: string) {
     return span(c, "keyword");
 }
 
+export function instr(c: string) {
+    return span(c, "instr");
+}
+
 export const htmlWriter = (parent: HTMLElement): render.Writer<render.Piece> => {
     return {
         width: (p) => p.text.length,

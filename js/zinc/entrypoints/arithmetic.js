@@ -1,5 +1,62 @@
 "use strict";
 (() => {
+  // src/zinc/render.ts
+  function clear(elt) {
+    while (elt.firstChild) {
+      elt.removeChild(elt.firstChild);
+    }
+  }
+  function span(txt, className) {
+    const s = document.createElement("span");
+    s.append(txt);
+    if (className) {
+      s.classList.add(className);
+    }
+    return s;
+  }
+  function int(n) {
+    return span(n.toString(), "literal-int");
+  }
+  function ident(c) {
+    return span(c, "variable");
+  }
+  function paren(c) {
+    return span(c, "paren");
+  }
+  function op(c) {
+    return span(c, "operator");
+  }
+  function punc(c) {
+    return span(c, "punctuation");
+  }
+  function keyword(c) {
+    return span(c, "keyword");
+  }
+  function instr(c) {
+    return span(c, "instr");
+  }
+  var htmlWriter = (parent) => {
+    return {
+      width: (p) => p.text.length,
+      write: (p) => {
+        parent.append(span(p.text, p.role));
+      },
+      connector: (s) => {
+        parent.append(span(s, "connector"));
+      },
+      label: (s) => {
+        parent.append(span(s, "label"));
+      },
+      space: (n) => {
+        if (n <= 0 || !Number.isSafeInteger(n)) return;
+        parent.append(" ".repeat(n));
+      },
+      break: () => {
+        parent.append(document.createElement("br"));
+      }
+    };
+  };
+
   // src/zinc/StackMachine.ts
   var BasicStackMachine = class {
     constructor() {
@@ -35,39 +92,6 @@
       return this.stack;
     }
   };
-
-  // src/zinc/render.ts
-  function clear(elt) {
-    while (elt.firstChild) {
-      elt.removeChild(elt.firstChild);
-    }
-  }
-  function span(txt, className) {
-    const s = document.createElement("span");
-    s.append(txt);
-    if (className) {
-      s.classList.add(className);
-    }
-    return s;
-  }
-  function int(n) {
-    return span(n.toString(), "literal-int");
-  }
-  function ident(c) {
-    return span(c, "variable");
-  }
-  function paren(c) {
-    return span(c, "paren");
-  }
-  function op(c) {
-    return span(c, "operator");
-  }
-  function punc(c) {
-    return span(c, "punctuation");
-  }
-  function keyword(c) {
-    return span(c, "keyword");
-  }
 
   // src/zinc/StackMachineRenderer.ts
   function instructionColumn(machine, label) {
@@ -164,11 +188,10 @@
             row.value.textContent = "";
             break;
           case 1 /* Item */: {
-            const text = this.column.label(items[slot.index]);
             if (row.index)
               row.index.textContent = this.column.indexLabel?.(slot.index, items.length).toString() ?? "";
-            row.value.textContent = text;
-            row.root.title = text;
+            clear(row.value);
+            this.column.label(row.value, items[slot.index]);
             if (this.column.policy === 0 /* Follow */ && slot.index === focus) {
               row.root.classList.add("highlighted");
             }
@@ -307,6 +330,7 @@
             this.index++;
             this.row++;
             this.col = 1;
+            break;
           default:
             return;
         }
@@ -394,12 +418,14 @@
       }
     }
   };
-  function instructionToLabel(instruction) {
+  function instructionToLabel(parent, instruction) {
     switch (instruction.kind) {
       case 0 /* Push */:
-        return `Push(${instruction.value})`;
+        parent.append(instr("Push"), paren("("), int(instruction.value), paren(")"));
+        break;
       case 1 /* Pop */:
-        return "Pop";
+        parent.append(instr("Pop"));
+        break;
     }
   }
   var StackMachineRenderer2 = class extends StackMachineRenderer {
@@ -410,7 +436,7 @@
         stackColumn(
           "Stack",
           () => m.stackView(),
-          (n) => n.toString()
+          (p, n) => p.append(int(n))
         )
       ]);
     }
@@ -703,21 +729,29 @@
       return this.stack[this.stack.length - 1];
     }
   };
-  function instructionToLabel2(instruction) {
+  function instructionToLabel2(parent, instruction) {
     switch (instruction.kind) {
       case 0 /* Push */:
-        return `Push(${instruction.value})`;
+        parent.append(instr("Push"), paren("("), int(instruction.value), paren(")"));
+        break;
       case 1 /* Prim */:
+        parent.append(instr("Prim"), paren("("));
         switch (instruction.op) {
           case 0 /* Negate */:
-            return "Prim(negate)";
+            parent.append(instr("negate"));
+            break;
           case 1 /* Add */:
-            return "Prim(add)";
+            parent.append(instr("add"));
+            break;
           case 2 /* Sub */:
-            return "Prim(sub)";
+            parent.append(instr("sub"));
+            break;
           case 3 /* Mul */:
-            return "Prim(mul)";
+            parent.append(instr("mul"));
+            break;
         }
+        parent.append(paren(")"));
+        break;
     }
   }
   var StackMachineRenderer3 = class extends StackMachineRenderer {
@@ -728,7 +762,7 @@
         stackColumn(
           "Stack",
           () => m.stackView(),
-          (n) => n.toString()
+          (p, n) => p.append(int(n))
         )
       ]);
     }
@@ -852,6 +886,11 @@
             return;
         }
       }
+    }
+    readWhiteSpace() {
+      const start = this.index;
+      this.skipWhiteSpace();
+      return { text: this.input.slice(start, this.index) };
     }
     char() {
       return this.input.charCodeAt(this.index);
@@ -1111,27 +1150,38 @@
       return this.stack[this.stack.length - 1];
     }
   };
-  function instructionToLabel3(instruction) {
+  function instructionToLabel3(parent, instruction) {
     switch (instruction.kind) {
       case 0 /* Push */:
-        return `Push(${instruction.value})`;
+        parent.append(instr("Push"), paren("("), int(instruction.value), paren(")"));
+        break;
       case 1 /* Prim */:
+        parent.append(instr("Prim"), paren("("));
         switch (instruction.op) {
           case 0 /* Negate */:
-            return "Prim(negate)";
+            parent.append(instr("negate"));
+            break;
           case 1 /* Add */:
-            return "Prim(add)";
+            parent.append(instr("add"));
+            break;
           case 2 /* Sub */:
-            return "Prim(sub)";
+            parent.append(instr("sub"));
+            break;
           case 3 /* Mul */:
-            return "Prim(mul)";
+            parent.append(instr("mul"));
+            break;
         }
+        parent.append(paren(")"));
+        break;
       case 2 /* Access */:
-        return `Access(${instruction.index})`;
+        parent.append(instr("Access"), paren("("), span(`#${instruction.index}`, "variable"), paren(")"));
+        break;
       case 3 /* Bind */:
-        return "Bind";
+        parent.append(instr("Bind"));
+        break;
       case 4 /* Drop */:
-        return "Drop";
+        parent.append(instr("Drop"));
+        break;
     }
   }
   var StackMachineRenderer4 = class extends StackMachineRenderer {
@@ -1142,12 +1192,12 @@
         stackColumn(
           "Stack",
           () => m.stackView(),
-          (n) => n.toString()
+          (p, n) => p.append(int(n))
         ),
         stackColumn(
           "Env",
           () => m.envView(),
-          (n) => n.toString(),
+          (p, n) => p.append(int(n)),
           true
         )
       ]);
@@ -1272,19 +1322,187 @@
     setState(0 /* Initial */);
   }
 
+  // src/zinc/renderUtils.ts
+  function highlightCompilationSteps(writer, input, highlightInner) {
+    let index = 0;
+    while (index < input.length) {
+      switch (input[index]) {
+        case ";":
+          index++;
+          writer.write({ text: ";", role: "punctuation" });
+          break;
+        case "(":
+          index++;
+          writer.write({ text: "(", role: "paren" });
+          break;
+        case ")":
+          index++;
+          writer.write({ text: ")", role: "paren" });
+          break;
+        case "[": {
+          index++;
+          if (input[index] !== "[") {
+            writer.write({ text: "[" });
+            break;
+          }
+          index++;
+          writer.write({ text: "[[", role: "semantic" });
+          const start = index;
+          while (index < input.length && input[index] !== "]") index++;
+          if (input[index + 1] !== "]") {
+            throw new Error("Expected second closing ']'");
+          }
+          const innerInput = input.slice(start, index);
+          index += 2;
+          try {
+            highlightInner(writer, innerInput);
+          } catch (e) {
+            console.error(e);
+            writer.write({ text: innerInput });
+          }
+          writer.write({ text: "]]", role: "semantic" });
+          break;
+        }
+        case "]":
+          index++;
+          if (input[index] == "]") {
+            index++;
+            writer.write({ text: "]]", role: "semantic" });
+          } else {
+            writer.write({ text: "]" });
+          }
+          break;
+        case "/": {
+          const start = index;
+          index++;
+          if (input[index] !== "/") {
+            throw new Error("Expected second '/'");
+          }
+          index++;
+          while (index < input.length && input[index] !== "\n") index++;
+          writer.write({ text: input.slice(start, index), role: "comment" });
+          break;
+        }
+        case "#": {
+          const start = index;
+          index++;
+          while (index < input.length && /[0-9]/.test(input[index])) index++;
+          writer.write({ text: input.slice(start, index), role: "variable" });
+          break;
+        }
+        case "@": {
+          const start = index;
+          index++;
+          while (index < input.length && /[0-9]/.test(input[index])) index++;
+          writer.write({ text: input.slice(start, index), role: "pointer" });
+          break;
+        }
+        case "0":
+        case "1":
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+        case "6":
+        case "7":
+        case "8":
+        case "9": {
+          const start = index;
+          index++;
+          while (index < input.length && /[0-9]/.test(input[index])) index++;
+          writer.write({ text: input.slice(start, index), role: "literal-int" });
+          break;
+        }
+        default: {
+          const start = index;
+          if (/[A-Za-z]/.test(input[index])) {
+            index++;
+            while (index < input.length && /[A-Za-z]/.test(input[index])) index++;
+            writer.write({ text: input.slice(start, index), role: "instr" });
+            break;
+          }
+          while (index < input.length && !/[#;()\[\]\/A-Za-z0-9]/.test(input[index])) index++;
+          if (index === start) {
+            index++;
+          }
+          writer.write({ text: input.slice(start, index) });
+          break;
+        }
+      }
+    }
+  }
+
   // src/zinc/entrypoints/arithmetic.ts
+  function highlightArithmetic(writer, input) {
+    const tokenizer = new Tokenizer3(input);
+    let ws = tokenizer.readWhiteSpace();
+    if (ws.text) {
+      writer.write(ws);
+    }
+    while (!tokenizer.eof()) {
+      ws = tokenizer.readWhiteSpace();
+      if (ws.text) {
+        writer.write(ws);
+      }
+      let tok;
+      try {
+        tok = tokenizer.next();
+      } catch (e) {
+        console.error(e);
+        return;
+      }
+      switch (tok.kind) {
+        case 0 /* EOF */:
+          break;
+        case 1 /* LParen */:
+          writer.write({ text: "(", role: "paren" });
+          break;
+        case 2 /* RParen */:
+          writer.write({ text: ")", role: "paren" });
+          break;
+        case 3 /* Star */:
+          writer.write({ text: "*", role: "operator" });
+          break;
+        case 4 /* Plus */:
+          writer.write({ text: "+", role: "operator" });
+          break;
+        case 5 /* Dash */:
+          writer.write({ text: "-", role: "operator" });
+          break;
+        case 6 /* Equal */:
+          writer.write({ text: "=", role: "operator" });
+          break;
+        case 7 /* Int */:
+          writer.write({ text: tok.value.toString(), role: "literal-int" });
+          break;
+        case 8 /* Identifier */:
+          writer.write({ text: tok.name, role: "variable" });
+          break;
+        case 9 /* Let */:
+          writer.write({ text: "let", role: "keyword" });
+          break;
+        case 10 /* In */:
+          writer.write({ text: "in", role: "keyword" });
+          break;
+      }
+      ws = tokenizer.readWhiteSpace();
+      if (ws.text) {
+        writer.write(ws);
+      }
+    }
+  }
   function stackInstrsToHtml(parent, instrs) {
     for (let i = 0; i < instrs.length; i++) {
       if (i > 0) {
         parent.append(punc(";"));
         parent.append(" ");
       }
-      const instr = instrs[i];
-      switch (instr.kind) {
+      const instr2 = instrs[i];
+      switch (instr2.kind) {
         case 0 /* Push */:
           parent.append(keyword("push"));
           parent.append(" ");
-          parent.append(int(instr.value));
+          parent.append(int(instr2.value));
           break;
         case 1 /* Pop */:
           parent.append(keyword("pop"));
@@ -1292,7 +1510,6 @@
       }
     }
   }
-  buildExample("stack-example", Parser, Compiler, StackMachineRenderer2, (x) => x, stackInstrsToHtml);
   function arithExpressionToHtml(parent, expr) {
     switch (expr.kind) {
       case 0 /* Int */:
@@ -1384,6 +1601,7 @@
         parent.append(paren(")"));
     }
   }
+  buildExample("stack-example", Parser, Compiler, StackMachineRenderer2, (x) => x, stackInstrsToHtml);
   buildExample(
     "example-1",
     Parser2,
@@ -1402,4 +1620,26 @@
     arithWithLetExpressionToHtml,
     (_, m) => ({ kind: 0 /* Int */, value: m.peek() })
   );
+  for (const elt of document.querySelectorAll("pre[data-derivation]")) {
+    const nodes = [...elt.childNodes];
+    for (const node of nodes) {
+      const tmp = document.createElement("span");
+      const writer = htmlWriter(tmp);
+      if (node instanceof Text) {
+        try {
+          highlightCompilationSteps(writer, node.data, highlightArithmetic);
+        } catch (e) {
+          console.error(e, node.data);
+          continue;
+        }
+        node.replaceWith(...tmp.childNodes);
+      }
+    }
+  }
+  for (const elt of document.querySelectorAll('pre[data-tokenize="let"]')) {
+    const input = elt.innerText;
+    clear(elt);
+    const writer = htmlWriter(elt);
+    highlightArithmetic(writer, input);
+  }
 })();

@@ -1,3 +1,4 @@
+import { instr, int, paren } from "./render";
 import { BasicStackMachine } from "./StackMachine";
 import {
     StackMachineRenderer as BaseStackMachineRenderer,
@@ -373,21 +374,29 @@ export class StackMachine extends BasicStackMachine<Instr, number> {
     }
 }
 
-function instructionToLabel(instruction: Instr): string {
+function instructionToLabel(parent: HTMLElement, instruction: Instr) {
     switch (instruction.kind) {
         case InstrKind.Push:
-            return `Push(${instruction.value})`;
+            parent.append(instr("Push"), paren("("), int(instruction.value), paren(")"));
+            break;
         case InstrKind.Prim:
+            parent.append(instr("Prim"), paren("("));
             switch (instruction.op) {
                 case PrimOp.Negate:
-                    return "Prim(negate)";
+                    parent.append(instr("negate"));
+                    break;
                 case PrimOp.Add:
-                    return "Prim(add)";
+                    parent.append(instr("add"));
+                    break;
                 case PrimOp.Sub:
-                    return "Prim(sub)";
+                    parent.append(instr("sub"));
+                    break;
                 case PrimOp.Mul:
-                    return "Prim(mul)";
+                    parent.append(instr("mul"));
+                    break;
             }
+            parent.append(paren(")"));
+            break;
     }
 }
 
@@ -399,7 +408,7 @@ export class StackMachineRenderer extends BaseStackMachineRenderer<Instr, number
             stackColumn(
                 "Stack",
                 () => m.stackView(),
-                (n) => n.toString(),
+                (p, n) => p.append(int(n)),
             ),
         ]);
     }

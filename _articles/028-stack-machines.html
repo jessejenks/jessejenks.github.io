@@ -50,9 +50,9 @@ published: true
                     <button id="stack-example__step-btn" type="button">Step</button>
                     <button id="stack-example__reset-btn" type="button">Reset</button>
                 </div>
-                <pre id="stack-example__parsed" class="parse-output"></pre>
+                <pre id="stack-example__parsed" class="parse-output syntax"></pre>
                 <pre id="stack-example__errors" class="error-message"></pre>
-                <figure>
+                <figure class="syntax">
                     <div id="stack-example" class="example"></div>
                 </figure>
             </div>
@@ -80,9 +80,9 @@ published: true
         Now we define a compilation scheme. This tells us how to translate expressions into a sequence of instructions.
     </p>
 
-<figure class="highlight"><pre>
-1. [[    n    ]] = Push(n)
-2. [[ E1 + E2 ]] = [[ E1 ]]; [[ E2 ]]; add
+<figure class="highlight"><pre data-derivation>
+<span class="comment">1.</span> <span><span class="semantic">[[</span>    n    <span class="semantic">]]</span></span> = Push(<span class="variable">n</span>)
+<span class="comment">2.</span> <span><span class="semantic">[[</span> E1 <span class="operator">+</span> E2 <span class="semantic">]]</span></span> = <span><span class="semantic">[[</span> E1 <span class="semantic">]]</span></span>; <span><span class="semantic">[[</span> E2 <span class="semantic">]]</span></span>; add
 </pre></figure>
 
     <p>
@@ -106,21 +106,22 @@ published: true
         With just these two rules, we can already compile simple expressions.
     </p>
 
-<figure class="highlight"><pre>
+<figure class="highlight"><pre data-derivation>
 [[ 1 + 2 ]]
 [[ 1 ]]; [[ 2 ]]; add  // rule 2
-Push(1); [[ 2 ]]; add  // rule 1
-Push(1); Push(2); add  // rule 1
+Push(<span class="literal-int">1</span>); [[ 2 ]]; add  // rule 1
+Push(<span class="literal-int">1</span>); Push(<span class="literal-int">2</span>); add  // rule 1
 </pre></figure>
 
+    <p>or slightly more complex case:</p>
 
-<figure class="highlight"><pre>
+<figure class="highlight"><pre data-derivation>
 [[ (1 + 2) + 3 ]]
 [[ (1 + 2) ]];         [[ 3 ]]; add  // rule 2
 [[ 1 ]]; [[ 2 ]]; add; [[ 3 ]]; add  // rule 2
-Push(1); [[ 2 ]]; add; [[ 3 ]]; add  // rule 1
-Push(1); Push(2); add; [[ 3 ]]; add  // rule 1
-Push(1); Push(2); add; Push(3); add  // rule 1
+Push(<span class="literal-int">1</span>); [[ 2 ]]; add; [[ 3 ]]; add  // rule 1
+Push(<span class="literal-int">1</span>); Push(<span class="literal-int">2</span>); add; [[ 3 ]]; add  // rule 1
+Push(<span class="literal-int">1</span>); Push(<span class="literal-int">2</span>); add; Push(<span class="literal-int">3</span>); add  // rule 1
 </pre></figure>
 
     <p>
@@ -135,10 +136,10 @@ Push(1); Push(2); add; Push(3); add  // rule 1
         Let's add some more rules for subtraction and multiplication. In fact, let's just add a single <code>Prim</code> instruction (short for &ldquo;primitive operation&rdquo;) which takes the specific operation as an argument.
     </p>
 
-<figure class="highlight"><pre>
-2. [[ E1 + E2 ]] = [[ E1 ]]; [[ E2 ]]; Prim(add)
-3. [[ E1 - E2 ]] = [[ E1 ]]; [[ E2 ]]; Prim(sub)
-4. [[ E1 * E2 ]] = [[ E1 ]]; [[ E2 ]]; Prim(mul)
+<figure class="highlight"><pre data-derivation>
+<span class="comment">2.</span> <span><span class="semantic">[[</span> E1 <span class="operator">+</span> E2 <span class="semantic">]]</span></span> = <span><span class="semantic">[[</span> E1 <span class="semantic">]]</span></span>; <span><span class="semantic">[[</span> E2 <span class="semantic">]]</span></span>; Prim(add)
+<span class="comment">3.</span> <span><span class="semantic">[[</span> E1 <span class="operator">-</span> E2 <span class="semantic">]]</span></span> = <span><span class="semantic">[[</span> E1 <span class="semantic">]]</span></span>; <span><span class="semantic">[[</span> E2 <span class="semantic">]]</span></span>; Prim(sub)
+<span class="comment">4.</span> <span><span class="semantic">[[</span> E1 <span class="operator">*</span> E2 <span class="semantic">]]</span></span> = <span><span class="semantic">[[</span> E1 <span class="semantic">]]</span></span>; <span><span class="semantic">[[</span> E2 <span class="semantic">]]</span></span>; Prim(mul)
 </pre></figure>
 
     <p>
@@ -149,8 +150,8 @@ Push(1); Push(2); add; Push(3); add  // rule 1
         Let's also add a unary operator, negation.
     </p>
 
-<figure class="highlight"><pre>
-5. [[ - E ]] = [[ E ]]; Prim(negate)
+<figure class="highlight"><pre data-derivation>
+5. <span><span class="semantic">[[</span> <span class="operator">-</span> E <span class="semantic">]]</span></span> = <span><span class="semantic">[[</span> E <span class="semantic">]]</span></span>; Prim(negate)
 </pre></figure>
 
     <p>
@@ -165,7 +166,7 @@ Push(1); Push(2); add; Push(3); add  // rule 1
         Let's walk through a slightly more complex example with this updated set of instructions.
     </p>
 
-<figure class="highlight"><pre>
+<figure class="highlight"><pre data-derivation>
 [[ (1 + ((- 2) * 3)) - 4 ]]
 [[ 1 + ((- 2) * 3) ]];                                         [[ 4 ]]; Prim(sub)  // rule 3
 [[ 1 ]]; [[ (- 2) * 3 ]];                           Prim(add); [[ 4 ]]; Prim(sub)  // rule 2
@@ -192,10 +193,10 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
                 <button id="example-1__step-btn" type="button">Step</button>
                 <button id="example-1__reset-btn" type="button">Reset</button>
             </div>
-            <pre id="example-1__parsed" class="parse-output"></pre>
+            <pre id="example-1__parsed" class="parse-output syntax"></pre>
             <pre id="example-1__errors" class="error-message"></pre>
-            <pre id="example-1__halted" class="parse-output"></pre>
-            <figure>
+            <pre id="example-1__halted" class="parse-output syntax"></pre>
+            <figure class="syntax">
                 <div id="example-1" class="example"></div>
             </figure>
         </div>
@@ -213,8 +214,9 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
         For example <code>(1 + 2) * (1 + 2)</code>, we recompute the expression <code>1 + 2</code> twice. It would be nice if we could say &ldquo;compute <code>1 + 2</code>, then reuse that answer twice&rdquo;. To accomplish this, we'll add a new kind of expression to our language called a <strong>let expression</strong>.
     </p>
 
-<figure class="highlight"><pre><span class="keyword">let</span> <span class="variable">x</span> <span class="punctuation">=</span> <span class="literal-int">1</span> <span class="operator">+</span> <span class="literal-int">2</span> <span class="keyword">in</span>
-    <span class="variable">x</span> <span class="operator">*</span> <span class="variable">x</span>
+<figure class="highlight"><pre data-tokenize="let">
+let x = 1 + 2 in
+    x * x
 </pre></figure>
 
     <p>
@@ -238,8 +240,8 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
 
         <p>Consider the following examples.</p>
 
-<figure class="highlight"><pre>
-<span class="comment">1.</span> <span class="keyword">let</span> <span class="variable">x</span> <span class="punctuation">=</span> <span class="literal-int">1</span> <span class="keyword">in</span> <span class="variable">x</span> <span class="operator">+</span> <span class="paren">(</span> <span class="keyword">let</span> <span class="variable">y</span> <span class="punctuation">=</span> <span class="literal-int">2</span> <span class="keyword">in</span> <span class="variable">x</span> <span class="operator">+</span> <span class="variable">y</span> <span class="paren">)</span> <span class="operator">+</span> <span class="variable">x</span>
+<figure class="highlight"><pre data-tokenize="let">
+let x = 1 in x + ( let y = 2 in x + y ) + x
 </pre></figure>
 
         <p>
@@ -311,25 +313,25 @@ Push(1); Push(2); Prim(negate); Push(3); Prim(mul); Prim(add); Push(4); Prim(sub
         Despite the increase in expressive power this gives us, we only need to add 2 new rules for compilation.
     </p>
 
-<figure class="highlight"><pre>
-6. [[ x ]]                = Access(i)  // where i is the de Bruijn index of x
-7. [[ let x = E1 in E2 ]] = [[ E1 ]]; Bind; [[ E2 ]]; Drop
+<figure class="highlight"><pre data-derivation>
+<span class="comment">6.</span> [[ x ]]                = Access(<span class="variable">#i</span>)  // where i is the de Bruijn index of x
+<span class="comment">7.</span> <span><span class="semantic">[[</span> <span class="keyword">let</span> <span class="variable">x</span> <span class="operator">=</span> <span class="variable">E1</span> <span class="keyword">in</span> <span class="variable">E2</span> <span class="semantic">]]</span></span> = <span class="semantic">[[</span> <span class="variable">E1</span> <span class="semantic">]]</span>; Bind; <span class="semantic">[[</span> <span class="variable">E2</span> <span class="semantic">]]</span>; Drop
 </pre></figure>
 
     <p>
         Let's walk through compiling the example from before.
     </p>
 
-<figure class="highlight"><pre>
+<figure class="highlight"><pre data-derivation>
 [[ let x = 1 + 2 in (x * x) ]]
-[[ 1 + 2 ]];                 Bind; [[ x * x ]];                     Drop  // rule 7
-[[ 1 ]]; [[ 2 ]]; Prim(add); Bind; [[ x * x ]];                     Drop  // rule 2
-Push(1); [[ 2 ]]; Prim(add); Bind; [[ x * x ]];                     Drop  // rule 1
-Push(1); Push(2); Prim(add); Bind; [[ x * x ]];                     Drop  // rule 1
-Push(1); Push(2); Prim(add); Bind; [[ x * x ]];                     Drop  // rule 4
-Push(1); Push(2); Prim(add); Bind; [[ x ]];   [[ x ]];   Prim(mul); Drop  // rule 4
-Push(1); Push(2); Prim(add); Bind; Access(0); [[ x ]];   Prim(mul); Drop  // rule 6
-Push(1); Push(2); Prim(add); Bind; Access(0); Access(0); Prim(mul); Drop  // rule 6
+[[ 1 + 2 ]];                 Bind; [[ x * x ]];                       Drop  // rule 7
+[[ 1 ]]; [[ 2 ]]; Prim(add); Bind; [[ x * x ]];                       Drop  // rule 2
+Push(1); [[ 2 ]]; Prim(add); Bind; [[ x * x ]];                       Drop  // rule 1
+Push(1); Push(2); Prim(add); Bind; [[ x * x ]];                       Drop  // rule 1
+Push(1); Push(2); Prim(add); Bind; [[ x * x ]];                       Drop  // rule 4
+Push(1); Push(2); Prim(add); Bind; [[ x ]];    [[ x ]];    Prim(mul); Drop  // rule 4
+Push(1); Push(2); Prim(add); Bind; Access(#0); [[ x ]];    Prim(mul); Drop  // rule 6
+Push(1); Push(2); Prim(add); Bind; Access(#0); Access(#0); Prim(mul); Drop  // rule 6
 </pre></figure>
 
     <p>
@@ -350,10 +352,10 @@ Push(1); Push(2); Prim(add); Bind; Access(0); Access(0); Prim(mul); Drop  // rul
                 <button id="example-2__step-btn" type="button">Step</button>
                 <button id="example-2__reset-btn" type="button">Reset</button>
             </div>
-            <pre id="example-2__parsed" class="parse-output"></pre>
+            <pre id="example-2__parsed" class="parse-output syntax"></pre>
             <pre id="example-2__errors"></pre>
-            <pre id="example-2__halted" class="parse-output"></pre>
-            <figure>
+            <pre id="example-2__halted" class="parse-output syntax"></pre>
+            <figure class="syntax">
                 <div id="example-2" class="example"></div>
             </figure>
         </div>

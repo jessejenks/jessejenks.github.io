@@ -1,3 +1,33 @@
+:root {
+    /* Catppuccin Mocha — https://catppuccin.com/palette */
+    --ctp-rosewater: #f5e0dc;
+    --ctp-flamingo: #f2cdcd;
+    --ctp-pink: #f5c2e7;
+    --ctp-mauve: #cba6f7;
+    --ctp-red: #f38ba8;
+    --ctp-maroon: #eba0ac;
+    --ctp-peach: #fab387;
+    --ctp-yellow: #f9e2af;
+    --ctp-green: #a6e3a1;
+    --ctp-teal: #94e2d5;
+    --ctp-sky: #89dceb;
+    --ctp-sapphire: #74c7ec;
+    --ctp-blue: #89b4fa;
+    --ctp-lavender: #b4befe;
+    --ctp-text: #cdd6f4;
+    --ctp-subtext1: #bac2de;
+    --ctp-subtext0: #a6adc8;
+    --ctp-overlay2: #9399b2;
+    --ctp-overlay1: #7f849c;
+    --ctp-overlay0: #6c7086;
+    --ctp-surface2: #585b70;
+    --ctp-surface1: #45475a;
+    --ctp-surface0: #313244;
+    --ctp-base: #1e1e2e;
+    --ctp-mantle: #181825;
+    --ctp-crust: #11111b;
+}
+
 .row {
     display: flex;
     flex-direction: row;
@@ -21,19 +51,12 @@ section .demo {
     margin: unset;
 }
 
-.post figure pre {
-    font-size: 1.25rem;
-}
-
 .post figure.center {
     min-height: 50px;
-    max-height: 500px;
+    max-height: 700px;
     align-items: start;
     overflow-x: auto;
     overflow-y: auto;
-    background-color: var(--nord0);
-    color: var(--nord6);
-    font-size: 1.25rem;
 
     display: flex;
     flex-direction: row;
@@ -49,7 +72,7 @@ section .demo {
 }
 
 .post figure.center pre {
-    line-height: 1;
+    line-height: 1.25;
 }
 
 .panel.show.list-of-examples {
@@ -62,7 +85,6 @@ section .demo {
 .panel .row.example {
     width: 95%;
     justify-content: space-between;
-    /* flex-wrap: wrap; */
 }
 
 .panel .row.example .description {
@@ -85,7 +107,6 @@ input.expr-input {
 
 pre.parse-output {
     padding: 0.5rem;
-    background-color: var(--nord0);
     border: 1px solid var(--palette-blue-3);
     border-radius: 0.25rem;
     min-height: calc(2.5rem + 2px);
@@ -93,27 +114,36 @@ pre.parse-output {
 }
 
 pre.error-message {
-    color: var(--nord11);
+    color: var(--ctp-red);
     vertical-align: middle;
     white-space: pre-wrap;
 }
 
-pre span.literal-unit { color: var(--nord4); }
-pre span.literal-int { color: var(--nord15); }
-pre span.literal-bool { color: var(--nord15); }
-pre span.variable { color: var(--nord4); }
-pre span.paren { color: var(--nord4); }
-pre span.punctuation { color: var(--nord9); }
-pre span.operator { color: var(--nord7); }
-pre span.keyword { color: var(--nord9); }
-pre span.label { color: var(--nord3); }
-pre span.connector { color: var(--nord3); }
-pre span.comment { color: var(--nord3); }
+figure.highlight,
+.syntax {
+    background-color: var(--ctp-base);
+    color: var(--ctp-text);
+}
+
+pre span.literal-unit { color: var(--ctp-peach); }
+pre span.literal-int { color: var(--ctp-peach); }
+pre span.literal-bool { color: var(--ctp-peach); }
+pre span.variable { color: var(--ctp-text); }
+pre span.paren { color: var(--ctp-overlay2); }
+pre span.punctuation { color: var(--ctp-overlay2); }
+pre span.operator { color: var(--ctp-sky); }
+pre span.keyword { color: var(--ctp-mauve); }
+pre span.label { color: var(--ctp-overlay0); }
+pre span.connector { color: var(--ctp-overlay0); }
+pre span.comment { color: var(--ctp-overlay2); }
+pre span.instr { color: var(--ctp-blue); }
+pre span.semantic { color: var(--ctp-teal); }
+pre span.pointer { color: var(--ctp-yellow); }
 
 .machine {
     display: grid;
     grid-auto-flow: column;
-    grid-auto-columns: 10rem;
+    grid-auto-columns: 14rem;
     column-gap: 0.5rem;
 }
 
@@ -150,21 +180,18 @@ pre span.comment { color: var(--nord3); }
 
 .machine .column .row.indexed .index {
     text-align: right;
-    color: var(--nord3);
+    color: var(--ctp-overlay2);
 }
 
 .machine .column .row.highlighted {
-    border-left: 1px solid var(--nord4);
+    background-color: var(--ctp-crust);
 }
 
-.machine .column .row.highlighted .index {
-    color: var(--nord4);
-}
-
-.machine .column .row.highlighted .value {
-    font-weight: bold;
+.machine .column .row.highlighted::before {
+    content: "⟩";
+    position: absolute;
 }
 
 .machine .column .row.more {
-    color: var(--nord3);
+    color: var(--ctp-overlay2);
 }

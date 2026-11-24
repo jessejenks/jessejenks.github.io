@@ -7,7 +7,9 @@
     "allowJs": true,
     "checkJs": false,
     "rootDir": "src",
-    "noEmit": true
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true
+
   },
   "include": ["src"]
 }
